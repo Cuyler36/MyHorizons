@@ -1,7 +1,14 @@
-﻿namespace MyHorizons.Encryption
+﻿using MyHorizons.Data.Save;
+
+namespace MyHorizons.Encryption
 {
     public sealed class EncryptedInt32
     {
+        // Encryption constant used to encrypt the int.
+        private const uint ENCRYPTION_CONSTANT = 0x80E32B11;
+        // Base shift count used in the encryption.
+        private const byte SHIFT_BASE = 3;
+
         private uint EncryptedValue;
 
         private ushort Adjust;
@@ -24,8 +31,13 @@
             Checksum = checksum;
         }
 
-        public EncryptedInt32(uint value) => SetEncryptedValue(value);
+        public EncryptedInt32(int offset)
+            : this(SaveBase.Singleton().ReadU32(offset), SaveBase.Singleton().ReadU16(offset + 4),
+                   SaveBase.Singleton().ReadU8(offset + 6), SaveBase.Singleton().ReadU8(offset + 7)) { }
 
+        public EncryptedInt32(uint value) => Set(value);
+
+        // Quickhand method to determine if the encrypted int is still valid.
         public bool IsValid() => Checksum == CalculateChecksum();
 
         // Calculates a checksum for a given encrypted value
@@ -40,7 +52,7 @@
         //  ushort adjust -- changes the constant value, additive
         //  byte    shift -- shifts the encrypted int. 3 is the current base.
         //  byte checksum -- the embedded checksum for the encrypted int.
-        public uint GetDecryptedValue()
+        public uint Decrypt()
         {
             // If both are 0, then it's just 0.
             if (EncryptedValue == 0 && Adjust == 0 && Shift == 0 && Checksum == 0) return 0;
@@ -48,17 +60,18 @@
             if (IsValid())
             {
                 // Decrypt the encrypted int using the given params.
-                ulong val = ((ulong)EncryptedValue) << ((0x1D - Shift) & 0x3F);
+                ulong val = ((ulong)EncryptedValue) << (((32 - SHIFT_BASE) - Shift) & 0x3F);
                 int valConcat = (int)val + (int)(val >> 32);
-                return (uint)((0x80E32B11u - Adjust) + valConcat);
+                return (uint)((ENCRYPTION_CONSTANT - Adjust) + valConcat);
             }
             return 0;
         }
 
-        public (uint, uint) GetEncryptedValue() => (EncryptedValue, (((uint)Adjust) << 16) | (((uint)Shift) << 8) | Checksum);
+        // NOTE: The params must be written as a byte array or a struct.
+        public (uint, uint) Get() => (EncryptedValue, (((uint)Adjust) << 16) | (((uint)Shift) << 8) | Checksum);
 
         // Encrypts a given uint. See above for encrypt params.
-        public (uint, uint) SetEncryptedValue(uint value)
+        public (uint, uint) Set(uint value)
         {
             // Create random generator
             var random = new SEADRandom();
@@ -67,10 +80,20 @@
             // Get our shift value
             Shift = (byte)((((ulong)random.GetU32()) * 0x1B) >> 32);
             // Do the encryption
-            ulong adjustedValue = (ulong)(value + (Adjust - 0x80E32B11u)) << (Shift + 3);
+            ulong adjustedValue = (ulong)(value + (Adjust - ENCRYPTION_CONSTANT)) << (Shift + SHIFT_BASE);
             EncryptedValue = (uint)((adjustedValue >> 32) + adjustedValue);
             Checksum = CalculateChecksum();
-            return GetEncryptedValue();
+            return Get();
+        }
+
+        // Writes the encrypted int directly to the loaded save at a given offset
+        public void Write(int offset)
+        {
+            var save = SaveBase.Singleton();
+            save.WriteU32(offset, EncryptedValue);
+            save.WriteU16(offset + 4, Adjust);
+            save.WriteU8(offset + 6, Shift);
+            save.WriteU8(offset + 7, Checksum);
         }
     }
 }
