@@ -43,19 +43,7 @@ namespace MyHorizons.Encryption
             }
         }
 
-        private static readonly uint[] PrependedData =
-        {
-            0x00000067, 0x0000006F, 0x00000002, 0x00000002, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-            0x00000067, 0x0000006F, 0x00000002, 0x00000002, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-            0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
-        };
-
-        private static (byte[] headerData, byte[] key, byte[] ctr) GenerateHeaderFile(uint seed)
+        private static (byte[] headerData, byte[] key, byte[] ctr) GenerateHeaderFile(uint seed, in byte[] versionData)
         {
             // Generate 128 Random uints which will be used for params
             var random = new SEADRandom(seed);
@@ -64,7 +52,7 @@ namespace MyHorizons.Encryption
                 encryptData[i] = random.GetU32();
 
             var headerData = new byte[0x300];
-            Buffer.BlockCopy(PrependedData, 0, headerData, 0, 0x100);
+            Buffer.BlockCopy(versionData, 0, headerData, 0, 0x100);
             Buffer.BlockCopy(encryptData, 0, headerData, 0x100, 0x200);
             return (headerData, GetParam(encryptData, 0), GetParam(encryptData, 2));
         }
@@ -72,7 +60,7 @@ namespace MyHorizons.Encryption
         public static (byte[] encData, byte[] headerData) Encrypt(byte[] data, uint seed)
         {
             // Generate header file and get key and counter
-            var (headerData, key, ctr) = GenerateHeaderFile(seed);
+            var (headerData, key, ctr) = GenerateHeaderFile(seed, data);
 
             // Encrypt file
             using (var aesCtr = new Aes128CounterMode(ctr))
