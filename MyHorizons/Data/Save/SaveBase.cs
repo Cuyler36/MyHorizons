@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MyHorizons.Encryption;
+using MyHorizons.Hash;
+using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -20,11 +22,14 @@ namespace MyHorizons.Data.Save
         {
             try
             {
-                using (var reader = File.OpenRead(headerPath))
+                if (new FileInfo(headerPath).Length == HEADER_FILE_SIZE)
                 {
-                    var data = new byte[128];
-                    if (reader.Read(data, 0, 128) == 128)
-                        return (_revision = RevisionManager.GetFileRevision(data)) != null;
+                    using (var reader = File.OpenRead(headerPath))
+                    {
+                        var data = new byte[128];
+                        if (reader.Read(data, 0, 128) == 128)
+                            return (_revision = RevisionManager.GetFileRevision(data)) != null;
+                    }
                 }
             }
             finally { }
@@ -33,8 +38,73 @@ namespace MyHorizons.Data.Save
 
         public virtual bool Load(in string headerPath, in string filePath, IProgress<float> progress)
             => Load(File.ReadAllBytes(headerPath), File.ReadAllBytes(filePath), progress);
-        public abstract bool Load(in byte[] headerData, in byte[] fileData, IProgress<float> progress);
-        public abstract bool Save(in string filePath, IProgress<float> progress);
+
+        public virtual bool Load(in byte[] headerData, in byte[] fileData, IProgress<float> progress)
+        {
+            _rawData = null;
+            try
+            {
+                _rawData = SaveEncryption.Decrypt(headerData, fileData);
+            }
+            finally { }
+            return _rawData != null;
+        }
+
+        public virtual bool Save(in string filePath, IProgress<float> progress)
+        {
+            if (_rawData != null)
+            {
+                try
+                {
+                    // Update hashes
+                    TryUpdateFileHashes(_rawData);
+
+                    // Encrypt and save file + header
+                    var (fileData, headerData) = SaveEncryption.Encrypt(_rawData, (uint)DateTime.Now.Ticks);
+                    var headerFilePath = Path.Combine(Path.GetDirectoryName(filePath), $"{Path.GetFileNameWithoutExtension(filePath)}Header.dat");
+                    File.WriteAllBytes(filePath, fileData);
+                    File.WriteAllBytes(headerFilePath, headerData);
+                    return true;
+                }
+                finally { }
+            }
+            return false;
+        }
+
+        private static void TryUpdateFileHashes(in byte[] data)
+        {
+            HashInfo selectedInfo = null;
+            foreach (var info in HashInfo.VersionHashInfoList)
+            {
+                var valid = true;
+                for (var i = 0; i < 4; i++)
+                {
+                    if (info.RevisionMagic[i] != BitConverter.ToUInt32(data, i * 4))
+                    {
+                        valid = false;
+                        break;
+                    }
+                }
+                if (valid)
+                {
+                    selectedInfo = info;
+                    break;
+                }
+            }
+
+            if (selectedInfo != null)
+            {
+                HashRegionSet thisFileSet = selectedInfo[(uint)data.Length];
+                if (thisFileSet != null)
+                {
+                    Console.WriteLine($"{thisFileSet.FileName} rev {selectedInfo.RevisionId} detected!");
+                    foreach (var hashRegion in thisFileSet)
+                    {
+                        Murmur3.UpdateMurmur32(data, hashRegion.HashOffset, hashRegion.BeginOffset, hashRegion.Size);
+                    }
+                }
+            }
+        }
 
         public sbyte ReadS8(int offset) => (sbyte)_rawData[offset];
 
@@ -119,59 +189,84 @@ namespace MyHorizons.Data.Save
             return arr;
         }
 
-        public void WriteS8(int offset, sbyte value)
+        public unsafe void WriteS8(int offset, sbyte value) => _rawData[offset] = (byte)value;
+
+        public unsafe void WriteU8(int offset, byte value) => _rawData[offset] = value;
+
+        public unsafe void WriteS16(int offset, short value)
         {
-            throw new NotImplementedException();
+            fixed (byte* p = _rawData)
+            {
+                *(short*)(p + offset) = value;
+            }
         }
 
-        public void WriteU8(int offset, byte value)
+        public unsafe void WriteU16(int offset, ushort value)
         {
-            throw new NotImplementedException();
+            fixed (byte* p = _rawData)
+            {
+                *(ushort*)(p + offset) = value;
+            }
         }
 
-        public void WriteS16(int offset, short value)
+        public unsafe void WriteS32(int offset, int value)
         {
-            throw new NotImplementedException();
+            fixed (byte* p = _rawData)
+            {
+                *(int*)(p + offset) = value;
+            }
         }
 
-        public void WriteU16(int offset, ushort value)
+        public unsafe void WrtieU32(int offset, uint value)
         {
-            throw new NotImplementedException();
+            fixed (byte* p = _rawData)
+            {
+                *(uint*)(p + offset) = value;
+            }
         }
 
-        public void WriteS32(int offset, int value)
+        public unsafe void WriteS64(int offset, long value)
         {
-            throw new NotImplementedException();
+            fixed (byte* p = _rawData)
+            {
+                *(long*)(p + offset) = value;
+            }
         }
 
-        public void WrtieU32(int offset, uint value)
+        public unsafe void WriteU64(int offset, ulong value)
         {
-            throw new NotImplementedException();
+            fixed (byte* p = _rawData)
+            {
+                *(ulong*)(p + offset) = value;
+            }
         }
 
-        public void WriteS64(int offset, long value)
+        public unsafe void WriteF32(int offset, float value)
         {
-            throw new NotImplementedException();
+            fixed (byte* p = _rawData)
+            {
+                *(float*)(p + offset) = value;
+            }
         }
 
-        public void WriteU64(int offset, ulong value)
+        public unsafe void WriteF64(int offset, double value)
         {
-            throw new NotImplementedException();
+            fixed (byte* p = _rawData)
+            {
+                *(double*)(p + offset) = value;
+            }
         }
 
-        public void WriteF32(int offset, float value)
+        public unsafe void WriteArray<T>(int offset, T[] values)
         {
-            throw new NotImplementedException();
-        }
-
-        public void WriteF64(int offset, double value)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void WriteArray<T>(int offset, T[] values)
-        {
-            throw new NotImplementedException();
+            var typeSize = Marshal.SizeOf<T>();
+            for (int i = 0; i < values.Length; i++)
+            {
+                fixed (byte* p = _rawData)
+                {
+                    Unsafe.WriteUnaligned((void*)(p + offset + i * typeSize), values[i]);
+                }
+            }
         }
     }
 }

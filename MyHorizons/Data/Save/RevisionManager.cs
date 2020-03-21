@@ -2,16 +2,16 @@
 
 namespace MyHorizons.Data.Save
 {
-    public struct SaveRevision
+    public readonly struct SaveRevision
     {
-        public uint Major;
-        public uint Minor;
-        public ushort HeaderFileRevision; // ?
-        public ushort Unk1;
-        public ushort SaveFileRevision; // ?
-        public ushort Unk2;
+        public readonly uint Major;
+        public readonly uint Minor;
+        public readonly ushort HeaderFileRevision; // ?
+        public readonly ushort Unk1;
+        public readonly ushort SaveFileRevision; // ?
+        public readonly ushort Unk2;
 
-        public string GameVersion;
+        public readonly string GameVersion;
 
         public SaveRevision(uint maj, uint min, ushort headerR, ushort u1, ushort saveR, ushort u2, string gameVersion)
         {
@@ -25,13 +25,22 @@ namespace MyHorizons.Data.Save
         }
     }
 
-    public struct SaveFileSizes
+    public readonly struct SaveFileSizes
     {
-        public uint Size_main;
-        public uint Size_personal;
-        public uint Size_photo_studio_island;
-        public uint Size_photobox;
-        public uint Size_profile;
+        public readonly uint Size_main;
+        public readonly uint Size_personal;
+        public readonly uint Size_photo_studio_island;
+        public readonly uint Size_postbox;
+        public readonly uint Size_profile;
+
+        public SaveFileSizes(uint main, uint personal, uint photo, uint postbox, uint profile)
+        {
+            Size_main = main;
+            Size_personal = personal;
+            Size_photo_studio_island = photo;
+            Size_postbox = postbox;
+            Size_profile = profile;
+        }
     }
 
     public static class RevisionManager
@@ -46,22 +55,8 @@ namespace MyHorizons.Data.Save
         // Table of save file sizes by revision
         private static readonly SaveFileSizes[] SizesByRevision =
         {
-            new SaveFileSizes
-            {
-                Size_main = 0xAC0938,
-                Size_personal = 0x6BC50,
-                Size_photo_studio_island = 0x263B4,
-                Size_photobox = 0xB44580,
-                Size_profile = 0x69508
-            },
-            new SaveFileSizes
-            {
-                Size_main = 0xAC2AA0,
-                Size_personal = 0x6BED0,
-                Size_photo_studio_island = 0x263C0,
-                Size_photobox = 0xB44590,
-                Size_profile = 0x69560
-            },
+            new SaveFileSizes(0xAC0938, 0x6BC50, 0x263B4, 0xB44580, 0x69508),
+            new SaveFileSizes(0xAC2AA0, 0x6BED0, 0x263C0, 0xB44590, 0x69560)
         };
 
         // Gets the revision info for a given file data.
@@ -71,10 +66,10 @@ namespace MyHorizons.Data.Save
             if (data.Length < 0x80) return null;
             var maj = BitConverter.ToUInt32(data, 0);
             var min = BitConverter.ToUInt32(data, 4);
-            var headerRev = BitConverter.ToUInt16(data, 8);
-            var unk1 = BitConverter.ToUInt16(data, 10);
-            var saveRev = BitConverter.ToUInt16(data, 12);
-            var unk2 = BitConverter.ToUInt16(data, 14);
+            var unk1 = BitConverter.ToUInt16(data, 8);
+            var headerRev = BitConverter.ToUInt16(data, 10);
+            var unk2 = BitConverter.ToUInt16(data, 12);
+            var saveRev = BitConverter.ToUInt16(data, 14);
 
             foreach (var revision in KnownRevisions)
                 if (revision.Major == maj && revision.Minor == min
@@ -106,7 +101,7 @@ namespace MyHorizons.Data.Save
         {
             var sizes = GetSaveFileSizes(data);
             return data.Length == sizes?.Size_main || data.Length == sizes?.Size_personal || data.Length == sizes?.Size_photo_studio_island
-                || data.Length == sizes?.Size_photobox || data.Length == sizes?.Size_profile;
+                || data.Length == sizes?.Size_postbox || data.Length == sizes?.Size_profile;
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MyHorizons.Hash
 {
-    public struct HashRegion
+    public readonly struct HashRegion
     {
         public readonly int HashOffset;
         public readonly int BeginOffset;
