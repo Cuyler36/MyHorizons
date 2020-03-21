@@ -28,7 +28,7 @@ namespace MyHorizons.Data.Save
         void WriteS16(int offset, short value);
         void WriteU16(int offset, ushort value);
         void WriteS32(int offset, int value);
-        void WrtieU32(int offset, uint value);
+        void WriteU32(int offset, uint value);
         void WriteS64(int offset, long value);
         void WriteU64(int offset, ulong value);
         void WriteF32(int offset, float value);

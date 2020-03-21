@@ -217,7 +217,7 @@ namespace MyHorizons.Data.Save
             }
         }
 
-        public unsafe void WrtieU32(int offset, uint value)
+        public unsafe void WriteU32(int offset, uint value)
         {
             fixed (byte* p = _rawData)
             {
