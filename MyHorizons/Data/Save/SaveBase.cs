@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace MyHorizons.Data.Save
 {
@@ -15,6 +16,8 @@ namespace MyHorizons.Data.Save
         protected SaveRevision? _revision = null;
 
         protected static SaveBase _saveFile;
+
+        public bool Loaded { get; protected set; } = false;
 
         public static SaveBase Singleton() => _saveFile;
 
@@ -45,6 +48,7 @@ namespace MyHorizons.Data.Save
             try
             {
                 _rawData = SaveEncryption.Decrypt(headerData, fileData);
+                Loaded = true;
             }
             finally { }
             return _rawData != null;
@@ -70,6 +74,8 @@ namespace MyHorizons.Data.Save
             }
             return false;
         }
+
+        public virtual int GetRevision() => _revision?.SaveFileRevision ?? -1;
 
         private static void TryUpdateFileHashes(in byte[] data)
         {
@@ -174,6 +180,8 @@ namespace MyHorizons.Data.Save
             }
         }
 
+        public string ReadString(int offset, int size) => Encoding.Unicode.GetString(_rawData, offset, size * 2);
+
         public unsafe T[] ReadArray<T>(int offset, int count)
         {
             // This is probably not that performant and overall is bad.
@@ -267,6 +275,14 @@ namespace MyHorizons.Data.Save
                     Unsafe.WriteUnaligned((void*)(p + offset + i * typeSize), values[i]);
                 }
             }
+        }
+
+        
+
+        public void WriteString(int offset, string value, int maxSize)
+        {
+            var bytes = Encoding.Unicode.GetBytes(value);
+            Array.Copy(bytes, _rawData, maxSize * 2);
         }
     }
 }

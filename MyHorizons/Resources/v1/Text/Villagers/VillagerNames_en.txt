@@ -392,3 +392,4 @@
 22, 05, Freya
 22, 06, Fang
 22, 08, Vivian
+23, 00, No Villager

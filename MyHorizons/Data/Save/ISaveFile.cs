@@ -9,6 +9,8 @@ namespace MyHorizons.Data.Save
         bool Load(in byte[] headerData, in byte[] fileData, IProgress<float> progress);
         bool Save(in string filePath, IProgress<float> progress);
 
+        int GetRevision();
+
         // Read Helpers
         sbyte ReadS8(int offset);
         byte ReadU8(int offset);
@@ -20,6 +22,7 @@ namespace MyHorizons.Data.Save
         ulong ReadU64(int offset);
         float ReadF32(int offset);
         double ReadF64(int offset);
+        string ReadString(int offset, int size);
         T[] ReadArray<T>(int offset, int count);
 
         // Write Helpers
@@ -33,6 +36,7 @@ namespace MyHorizons.Data.Save
         void WriteU64(int offset, ulong value);
         void WriteF32(int offset, float value);
         void WriteF64(int offset, double value);
+        void WriteString(int offset, string value, int maxSize);
         void WriteArray<T>(int offset, T[] values);
 
     }

@@ -58,8 +58,8 @@ namespace MyHorizons.Utility
                 var itemDatabasePath = Path.Combine(resourcesDir, $"v{revision}", "Text", "Villagers", "VillagerNames_en.txt");
                 if (File.Exists(itemDatabasePath))
                 {
-                    var villagersBySpecies = new Dictionary<byte, string>[NUM_ANIMAL_SPECIES];
-                    for (var i = 0; i < NUM_ANIMAL_SPECIES; i++)
+                    var villagersBySpecies = new Dictionary<byte, string>[NUM_ANIMAL_SPECIES + 1];
+                    for (var i = 0; i < NUM_ANIMAL_SPECIES + 1; i++)
                         villagersBySpecies[i] = new Dictionary<byte, string>();
 
                     using (var reader = File.OpenText(itemDatabasePath))
@@ -68,7 +68,7 @@ namespace MyHorizons.Utility
                         while ((line = reader.ReadLine()) != null)
                         {
                             if (line.Length > 8 && byte.TryParse(line.Substring(0, 2), NumberStyles.HexNumber, null, out var speciesIdx)
-                                && speciesIdx < NUM_ANIMAL_SPECIES && byte.TryParse(line.Substring(4, 2), NumberStyles.HexNumber, null, out var animalIdx))
+                                && speciesIdx <= NUM_ANIMAL_SPECIES && byte.TryParse(line.Substring(4, 2), NumberStyles.HexNumber, null, out var animalIdx))
                             {
                                 villagersBySpecies[speciesIdx].Add(animalIdx, line.Substring(8));
                             }
