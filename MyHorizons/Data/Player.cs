@@ -9,7 +9,6 @@ namespace MyHorizons.Data
         public string TownName;
         public uint TownUID;
         public Item[] Pockets;
-        public Item HeldItem;
         public EncryptedInt32 Wallet;
         public EncryptedInt32 Bank;
         public EncryptedInt32 NookMiles;

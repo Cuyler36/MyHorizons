@@ -45,4 +45,39 @@ namespace MyHorizons.Utility
             return null;
         }
     }
+
+    public static class VillagerDatabaseLoader
+    {
+        public const int NUM_ANIMAL_SPECIES = 35;
+        public static Dictionary<byte, string>[] LoadVillagerDatabase(uint revision)
+        {
+            var resourcesDir = FileUtils.GetResourcesPath();
+            if (Directory.Exists(resourcesDir))
+            {
+                // TODO: other languages
+                var itemDatabasePath = Path.Combine(resourcesDir, $"v{revision}", "Text", "Villagers", "VillagerNames_en.txt");
+                if (File.Exists(itemDatabasePath))
+                {
+                    var villagersBySpecies = new Dictionary<byte, string>[NUM_ANIMAL_SPECIES];
+                    for (var i = 0; i < NUM_ANIMAL_SPECIES; i++)
+                        villagersBySpecies[i] = new Dictionary<byte, string>();
+
+                    using (var reader = File.OpenText(itemDatabasePath))
+                    {
+                        string line;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            if (line.Length > 8 && byte.TryParse(line.Substring(0, 2), NumberStyles.HexNumber, null, out var speciesIdx)
+                                && speciesIdx < NUM_ANIMAL_SPECIES && byte.TryParse(line.Substring(4, 2), NumberStyles.HexNumber, null, out var animalIdx))
+                            {
+                                villagersBySpecies[speciesIdx].Add(animalIdx, line.Substring(8));
+                            }
+                        }
+                    }
+                    return villagersBySpecies;
+                }
+            }
+            return null;
+        }
+    }
 }
