@@ -6,6 +6,49 @@
         x:Class="MyHorizons.Avalonia.MainWindow"
         Title="MyHorizons"
         HasSystemDecorations="False">
+  <Window.Styles>
+
+    <Style Selector="TabControl">
+      <Setter Property="Background" Value="#F0F0F0"/>
+      <Setter Property="Height" Value="120"/>
+    </Style>
+    <Style Selector="TabControl WrapPanel">
+      <Setter Property="Background" Value="#7EA9AE"/>
+    </Style>
+
+    <Style Selector="TabItem">
+      <Setter Property="FontSize" Value="12"/>
+      <Setter Property="Height" Value="16"/>
+      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="Background" Value="#7EA9AE"/>
+      <Setter Property="Foreground" Value="#F0F0F0"/>
+      <Setter Property="Margin" Value="0 0 0 0"/>
+      <Setter Property="Padding" Value="10 0"/>
+    </Style>
+    <Style Selector="TabItem:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#648589"/>
+    </Style>
+
+    <Style Selector="TabItem:focus">
+      <Setter Property="Foreground" Value="#648589"/>
+      <Setter Property="Margin" Value="0 0 0 0"/>
+      <Setter Property="Padding" Value="10 0"/>
+    </Style>
+    <Style Selector="TabItem:focus /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#f0f0f0"/>
+    </Style>
+
+    <Style Selector="TabItem:selected">
+      <Setter Property="Foreground" Value="#648589"/>
+      <Setter Property="FontWeight" Value="Bold"/>
+      <Setter Property="Margin" Value="0 0 0 0"/>
+      <Setter Property="Padding" Value="10 0"/>
+    </Style>
+    <Style Selector="TabItem:selected /template/ ContentPresenter#PART_ContentPresenter">
+      <Setter Property="Background" Value="#f0f0f0"/>
+    </Style>
+
+  </Window.Styles>
   <Grid RowDefinitions="2,36,*,2" ColumnDefinitions="2,*,2">
     <Grid x:Name="TitleBarGrid" Height="36" Background="#7EA9AE" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1">
       <Image Width="36" Height="36" HorizontalAlignment="Left" Source="resm:MyHorizons.Avalonia.Resources.Logo.png"/>
@@ -27,7 +70,20 @@
       </Grid>
     </Grid>
     <Grid Grid.Row="2" Grid.Column="1" x:Name="MainContentGrid">
-        
+      <TabControl x:Name="EditorTabControl" VerticalAlignment="Top" IsVisible="False">
+        <TabItem Header="Players">
+          
+        </TabItem>
+        <TabItem Header="Villagers">
+          
+        </TabItem>
+        <TabItem Header="Town">
+          
+        </TabItem>
+      </TabControl>
+      <Button x:Name="OpenSaveButton" Height="40" Width="300" FontSize="22" FontWeight="Bold">
+        Open Save File
+      </Button>
     </Grid>
 
     <Border Name="TopLeft" Background="#7EA9AE"/>

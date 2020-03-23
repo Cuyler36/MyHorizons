@@ -1,16 +1,22 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using MyHorizons.Data.Save;
 using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace MyHorizons.Avalonia
 {
     public class MainWindow : Window
     {
+        private MainSaveFile saveFile;
+
         private Grid TitleBarGrid;
 
         private Grid CloseGrid;
@@ -66,6 +72,8 @@ namespace MyHorizons.Avalonia
             MinimizeButton.Click += MinimizeButton_Click;
 
             PlatformImpl.WindowStateChanged = WindowStateChanged;
+
+            this.FindControl<Button>("OpenSaveButton").Click += OpenFileButton_Click;
         }
 
         private void SetupSide(string name, StandardCursorType cursor, WindowEdge edge)
@@ -97,23 +105,83 @@ namespace MyHorizons.Avalonia
             }
         }
 
-        private void CloseButton_Click(object sender, global::Avalonia.Interactivity.RoutedEventArgs e) => Close();
+        private async void OpenFileButton_Click(object o, RoutedEventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog
+            {
+                Filters = new List<FileDialogFilter>
+                    {
+                        new FileDialogFilter
+                        {
+                            Name = "New Horizons Save File",
+                            Extensions = new List<string>
+                            {
+                                "dat"
+                            }
+                        },
+                        new FileDialogFilter
+                        {
+                            Name = "All Files",
+                            Extensions = new List<string>
+                            {
+                                "*"
+                            }
+                        }
+                    }
+            };
 
-        private void ResizeButton_Click(object sender, global::Avalonia.Interactivity.RoutedEventArgs e)
+            var files = await openFileDialog.ShowAsync(this);
+            if (files.Length > 0)
+            {
+                // Determine whether they selected the header file or the main file
+                var file = files[0];
+                string headerPath;
+                string filePath;
+                if (file.EndsWith("Header.dat"))
+                {
+                    headerPath = file;
+                    filePath = Path.Combine(Path.GetDirectoryName(file), $"{Path.GetFileNameWithoutExtension(file).Replace("Header", "")}.dat");
+                }
+                else
+                {
+                    filePath = file;
+                    headerPath = Path.Combine(Path.GetDirectoryName(file), $"{Path.GetFileNameWithoutExtension(file)}Header.dat");
+                }
+
+                if (File.Exists(headerPath) && File.Exists(filePath))
+                {
+                    saveFile = new MainSaveFile(headerPath, filePath);
+                    if (saveFile.Loaded)
+                    {
+                        (o as Button).IsVisible = false;
+                        this.FindControl<TabControl>("EditorTabControl").IsVisible = true;
+                    }
+                    else
+                    {
+                        saveFile = null;
+
+                    }
+                }
+            }
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
+
+        private void ResizeButton_Click(object sender, RoutedEventArgs e)
             => WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
 
-        private void MinimizeButton_Click(object sender, global::Avalonia.Interactivity.RoutedEventArgs e) => WindowState = WindowState.Minimized;
+        private void MinimizeButton_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
 
-        private void CloseGrid_PointerEnter(object sender, global::Avalonia.Input.PointerEventArgs e) => CloseGrid.Background = new SolidColorBrush(0xFF648589);
+        private void CloseGrid_PointerEnter(object sender, PointerEventArgs e) => CloseGrid.Background = new SolidColorBrush(0xFF648589);
 
-        private void CloseGrid_PointerLeave(object sender, global::Avalonia.Input.PointerEventArgs e) => CloseGrid.Background = Brushes.Transparent;
+        private void CloseGrid_PointerLeave(object sender, PointerEventArgs e) => CloseGrid.Background = Brushes.Transparent;
 
-        private void ResizeGrid_PointerEnter(object sender, global::Avalonia.Input.PointerEventArgs e) => ResizeGrid.Background = new SolidColorBrush(0xFF648589);
+        private void ResizeGrid_PointerEnter(object sender, PointerEventArgs e) => ResizeGrid.Background = new SolidColorBrush(0xFF648589);
 
-        private void ResizeGrid_PointerLeave(object sender, global::Avalonia.Input.PointerEventArgs e) => ResizeGrid.Background = Brushes.Transparent;
+        private void ResizeGrid_PointerLeave(object sender, PointerEventArgs e) => ResizeGrid.Background = Brushes.Transparent;
 
-        private void MinimizeButton_PointerEnter(object sender, global::Avalonia.Input.PointerEventArgs e) => MinimizeGrid.Background = new SolidColorBrush(0xFF648589);
+        private void MinimizeButton_PointerEnter(object sender, PointerEventArgs e) => MinimizeGrid.Background = new SolidColorBrush(0xFF648589);
 
-        private void MinimizeButton_PointerLeave(object sender, global::Avalonia.Input.PointerEventArgs e) => MinimizeGrid.Background = Brushes.Transparent;
+        private void MinimizeButton_PointerLeave(object sender, PointerEventArgs e) => MinimizeGrid.Background = Brushes.Transparent;
     }
 }
