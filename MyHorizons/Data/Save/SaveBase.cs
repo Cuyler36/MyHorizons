@@ -15,11 +15,7 @@ namespace MyHorizons.Data.Save
         protected byte[] _rawData;
         protected SaveRevision? _revision = null;
 
-        protected static SaveBase _saveFile;
-
         public bool Loaded { get; protected set; } = false;
-
-        public static SaveBase Singleton() => _saveFile;
 
         public virtual bool AcceptsFile(in string headerPath, in string filePath)
         {

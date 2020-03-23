@@ -20,7 +20,7 @@ namespace MyHorizons.Data
         }
 
         public Item(int offset)
-            : this(SaveBase.Singleton().ReadU16(offset + 0), SaveBase.Singleton().ReadU16(offset + 2),
-                   SaveBase.Singleton().ReadU16(offset + 4), SaveBase.Singleton().ReadU16(offset + 6)) { }
+            : this(MainSaveFile.Singleton().ReadU16(offset + 0), MainSaveFile.Singleton().ReadU16(offset + 2),
+                   MainSaveFile.Singleton().ReadU16(offset + 4), MainSaveFile.Singleton().ReadU16(offset + 6)) { }
     }
 }

@@ -1,15 +1,30 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace MyHorizons.Data.Save
 {
     public sealed class MainSaveFile : SaveBase
     {
+        private static SaveBase _saveFile;
+        private readonly List<PlayerSave> _playerSaves;
+
+        public static SaveBase Singleton() => _saveFile;
+
         public MainSaveFile(in string headerPath, in string filePath)
         {
             // TODO: IProgress<float> needs to be passed to load
             if (AcceptsFile(headerPath, filePath) && Load(File.ReadAllBytes(headerPath), File.ReadAllBytes(filePath), null))
             {
                 _saveFile = this;
+
+                // Load player save files
+                _playerSaves = new List<PlayerSave>();
+                foreach (var dir in Directory.GetDirectories(Path.GetDirectoryName(filePath)))
+                {
+                    var playerSave = new PlayerSave(dir, _revision.Value);
+                    if (playerSave.Valid)
+                        _playerSaves.Add(playerSave);
+                }
             }
         }
 

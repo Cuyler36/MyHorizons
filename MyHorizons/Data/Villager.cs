@@ -38,11 +38,11 @@ namespace MyHorizons.Data
             new Offsets(0x120, 0x12AB0, 0, 1, 2, 0x10014)
         };
 
-        private static Offsets GetOffsetsFromRevision() => VillagerOffsetsByRevision[SaveBase.Singleton().GetRevision()];
+        private static Offsets GetOffsetsFromRevision() => VillagerOffsetsByRevision[MainSaveFile.Singleton().GetRevision()];
 
         public Villager(int idx)
         {
-            var save = SaveBase.Singleton();
+            var save = MainSaveFile.Singleton();
             var offsets = GetOffsetsFromRevision();
             var villagerOffset = offsets.BaseOffset + idx * offsets.Size;
             Species = save.ReadU8(villagerOffset + offsets.Species);

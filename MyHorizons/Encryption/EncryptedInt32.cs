@@ -31,9 +31,9 @@ namespace MyHorizons.Encryption
             Checksum = checksum;
         }
 
-        public EncryptedInt32(int offset)
-            : this(SaveBase.Singleton().ReadU32(offset), SaveBase.Singleton().ReadU16(offset + 4),
-                   SaveBase.Singleton().ReadU8(offset + 6), SaveBase.Singleton().ReadU8(offset + 7)) { }
+        public EncryptedInt32(ISaveFile save, int offset)
+            : this(save.ReadU32(offset), save.ReadU16(offset + 4),
+                   save.ReadU8(offset + 6), save.ReadU8(offset + 7)) { }
 
         public EncryptedInt32(uint value) => Set(value);
 
@@ -87,13 +87,14 @@ namespace MyHorizons.Encryption
         }
 
         // Writes the encrypted int directly to the loaded save at a given offset
-        public void Write(int offset)
+        public void Write(ISaveFile save, int offset)
         {
-            var save = SaveBase.Singleton();
             save.WriteU32(offset, EncryptedValue);
             save.WriteU16(offset + 4, Adjust);
             save.WriteU8(offset + 6, Shift);
             save.WriteU8(offset + 7, Checksum);
         }
+
+        public override string ToString() => Decrypt().ToString();
     }
 }
