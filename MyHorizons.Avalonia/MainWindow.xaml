@@ -1,0 +1,42 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="MyHorizons.Avalonia.MainWindow"
+        Title="MyHorizons"
+        HasSystemDecorations="False">
+  <Grid RowDefinitions="2,36,*,2" ColumnDefinitions="2,*,2">
+    <Grid x:Name="TitleBarGrid" Height="36" Background="#7EA9AE" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1">
+      <Image Width="36" Height="36" HorizontalAlignment="Left" Source="resm:MyHorizons.Avalonia.Resources.Logo.png"/>
+      <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontWeight="Bold" FontSize="14">MyHorizons</TextBlock>
+      <Grid x:Name="CloseGrid" HorizontalAlignment="Right" VerticalAlignment="Top" Width="32" Height="24">
+        <Button x:Name="CloseButton" Background="Transparent" BorderThickness="0">
+          <Image HorizontalAlignment="Center" VerticalAlignment="Center" Width="24" Height="12" Source="resm:MyHorizons.Avalonia.Resources.Close.png"/>
+        </Button>
+      </Grid>
+      <Grid x:Name="ResizeGrid" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,32,0" Width="32" Height="24">
+        <Button x:Name="ResizeButton" Background="Transparent" BorderThickness="0">
+          <Image x:Name="ResizeImage" HorizontalAlignment="Center" VerticalAlignment="Center" Width="24" Height="12" Source="resm:MyHorizons.Avalonia.Resources.Maximize.png"/>
+        </Button>
+      </Grid>
+      <Grid x:Name="MinimizeGrid" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,64,0" Width="32" Height="24">
+        <Button x:Name="MinimizeButton" Background="Transparent" BorderThickness="0">
+          <Image x:Name="MinimizeImage" HorizontalAlignment="Center" VerticalAlignment="Center" Width="24" Height="12" Source="resm:MyHorizons.Avalonia.Resources.Minimize.png"/>
+        </Button>
+      </Grid>
+    </Grid>
+    <Grid Grid.Row="2" Grid.Column="1" x:Name="MainContentGrid">
+        
+    </Grid>
+
+    <Border Name="TopLeft" Background="#7EA9AE"/>
+    <Border Name="TopRight" Background="#7EA9AE" Grid.Column="2"/>
+    <Border Name="BottomLeft" Background="#7EA9AE" Grid.Row="3"/>
+    <Border Name="BottomRight" Background="#7EA9AE" Grid.Row="3" Grid.Column="2"/>
+    <Border Name="Top" Background="#7EA9AE" Grid.Column="1"/>
+    <Border Name="Right" Background="#7EA9AE" Grid.Row="1" Grid.RowSpan="2" Grid.Column="2"/>
+    <Border Name="Bottom" Background="#7EA9AE" Grid.Row="4" Grid.Column="1"/>
+    <Border Name="Left" Background="#7EA9AE" Grid.Row="1" Grid.RowSpan="2"/>
+  </Grid>
+</Window>
