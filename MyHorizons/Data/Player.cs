@@ -65,11 +65,11 @@ namespace MyHorizons.Data
         public byte[] GetPhotoData()
         {
             var offset = GetOffsetsFromRevision().Photo;
-            if (_personalFile.ReadU8(offset) != 0xFF || _personalFile.ReadU8(offset + 1) != 0xD8)
+            if (_personalFile.ReadU16(offset) != 0xD8FF)
                 return null;
             // TODO: Determine actual size buffer instead of using this.
             var size = 2;
-            while (_personalFile.ReadU8(offset + size) != 0xFF || _personalFile.ReadU8(offset + size + 1) != 0xD9)
+            while (_personalFile.ReadU16(offset + size) != 0xD9FF)
                 size++;
             return _personalFile.ReadArray<byte>(offset, size + 2);
         }
