@@ -40,8 +40,8 @@ namespace MyHorizons.Data
 
         private static readonly Offsets[] PlayerOffsetsByRevision =
         {
-            new Offsets(0xB0A0, 0x35BD4, 0x11578, -1, 0x11570, 0x11598),
-            new Offsets(0xB0B8, 0x35C20, 0x11590, -1, 0x11588, 0x115C4)
+            new Offsets(0xB0A0, 0x35BD4, 0x11578, 0x68BE4, 0x11570, 0x11598),
+            new Offsets(0xB0B8, 0x35C20, 0x11590, 0x68C34, 0x11588, 0x115C4)
         };
 
         private static Offsets GetOffsetsFromRevision() => PlayerOffsetsByRevision[MainSaveFile.Singleton().GetRevision()];
