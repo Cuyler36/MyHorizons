@@ -6,6 +6,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using MyHorizons.Data;
 using MyHorizons.Data.Save;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace MyHorizons.Avalonia
     public class MainWindow : Window
     {
         private MainSaveFile saveFile;
+        private Player selectedPlayer;
 
         private Grid TitleBarGrid;
 
@@ -73,7 +75,12 @@ namespace MyHorizons.Avalonia
 
             PlatformImpl.WindowStateChanged = WindowStateChanged;
 
-            this.FindControl<Button>("OpenSaveButton").Click += OpenFileButton_Click;
+            var openBtn = this.FindControl<Button>("OpenSaveButton");
+            openBtn.Click += OpenFileButton_Click;
+
+            openBtn.IsVisible = true;
+            this.FindControl<TabControl>("EditorTabControl").IsVisible = false;
+            
         }
 
         private void SetupSide(string name, StandardCursorType cursor, WindowEdge edge)
@@ -103,6 +110,29 @@ namespace MyHorizons.Avalonia
                 img.Source?.Dispose();
                 img.Source = bitmap;
             }
+        }
+
+        private void AddPlayerImages()
+        {
+            var contentHolder = this.FindControl<StackPanel>("PlayerSelectorPanel");
+            foreach (var playerSave in saveFile.GetPlayerSaves())
+            {
+                var img = new Image
+                {
+                    Width = 120,
+                    Height = 120,
+                    Source = LoadPlayerPhoto(playerSave.Index)
+                };
+                contentHolder.Children.Add(img);
+            }
+        }
+
+        private void LoadPlayer(Player player)
+        {
+            selectedPlayer = player;
+            this.FindControl<TextBox>("PlayerNameBox").Text = player.Name;
+            this.FindControl<NumericUpDown>("WalletBox").Value = player.Wallet.Decrypt();
+            this.FindControl<NumericUpDown>("NookMilesBox").Value = player.NookMiles.Decrypt();
         }
 
         private async void OpenFileButton_Click(object o, RoutedEventArgs e)
@@ -155,11 +185,12 @@ namespace MyHorizons.Avalonia
                     {
                         (o as Button).IsVisible = false;
                         this.FindControl<TabControl>("EditorTabControl").IsVisible = true;
+                        AddPlayerImages();
+                        LoadPlayer(saveFile.GetPlayerSaves()[0].Player);
                     }
                     else
                     {
                         saveFile = null;
-
                     }
                 }
             }
@@ -183,5 +214,11 @@ namespace MyHorizons.Avalonia
         private void MinimizeButton_PointerEnter(object sender, PointerEventArgs e) => MinimizeGrid.Background = new SolidColorBrush(0xFF648589);
 
         private void MinimizeButton_PointerLeave(object sender, PointerEventArgs e) => MinimizeGrid.Background = Brushes.Transparent;
+
+        private Bitmap LoadPlayerPhoto(int index)
+        {
+            using var memStream = new MemoryStream(saveFile.GetPlayer(index).GetPhotoData());
+            return new Bitmap(memStream);
+        }
     }
 }

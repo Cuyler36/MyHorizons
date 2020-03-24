@@ -10,16 +10,17 @@
 
     <Style Selector="TabControl">
       <Setter Property="Background" Value="#F0F0F0"/>
-      <Setter Property="Height" Value="120"/>
     </Style>
     <Style Selector="TabControl WrapPanel">
       <Setter Property="Background" Value="#7EA9AE"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="VerticalAlignment" Value="Stretch"/>
     </Style>
 
     <Style Selector="TabItem">
       <Setter Property="FontSize" Value="12"/>
       <Setter Property="Height" Value="16"/>
-      <Setter Property="VerticalAlignment" Value="Center"/>
+      <Setter Property="VerticalAlignment" Value="Stretch"/>
       <Setter Property="Background" Value="#7EA9AE"/>
       <Setter Property="Foreground" Value="#F0F0F0"/>
       <Setter Property="Margin" Value="0 0 0 0"/>
@@ -70,9 +71,25 @@
       </Grid>
     </Grid>
     <Grid Grid.Row="2" Grid.Column="1" x:Name="MainContentGrid">
-      <TabControl x:Name="EditorTabControl" VerticalAlignment="Top" IsVisible="False">
+      <TabControl x:Name="EditorTabControl" VerticalAlignment="Stretch">
         <TabItem Header="Players">
-          
+          <Grid>
+            <StackPanel x:Name="PlayerSelectorPanel" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="120" Orientation="Horizontal" Spacing="20"/>
+            <StackPanel>
+              <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
+                <TextBlock Height="26" FontSize="16">Player Name:</TextBlock>
+                <TextBox x:Name="PlayerNameBox" MaxLength="10" MinWidth="120"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
+                <TextBlock Height="26" FontSize="16">Wallet:</TextBlock>
+                <NumericUpDown x:Name="WalletBox" Height="34" MinWidth="100" Maximum="99999" Minimum="0"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
+                <TextBlock Height="26" FontSize="16">Nook Miles:</TextBlock>
+                <NumericUpDown x:Name="NookMilesBox" Height="34" MinWidth="100" Maximum="99999" Minimum="0"/>
+              </StackPanel>
+            </StackPanel>
+          </Grid>
         </TabItem>
         <TabItem Header="Villagers">
           
@@ -81,7 +98,7 @@
           
         </TabItem>
       </TabControl>
-      <Button x:Name="OpenSaveButton" Height="40" Width="300" FontSize="22" FontWeight="Bold">
+      <Button x:Name="OpenSaveButton" Height="40" Width="300" FontSize="22" FontWeight="Bold" IsVisible="False">
         Open Save File
       </Button>
     </Grid>

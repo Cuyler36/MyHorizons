@@ -10,6 +10,8 @@ namespace MyHorizons.Data.Save
 
         public static SaveBase Singleton() => _saveFile;
 
+        public int NumPlayers => _playerSaves.Count;
+
         public MainSaveFile(in string headerPath, in string filePath)
         {
             // TODO: IProgress<float> needs to be passed to load
@@ -32,5 +34,9 @@ namespace MyHorizons.Data.Save
         {
             return base.AcceptsFile(headerPath, filePath) && new FileInfo(filePath).Length == RevisionManager.GetSaveFileSizes(_revision)?.Size_main;
         }
+
+        public Player GetPlayer(int index) => _playerSaves[index].Player;
+
+        public List<PlayerSave> GetPlayerSaves() => _playerSaves;
     }
 }
