@@ -58,8 +58,21 @@ namespace MyHorizons.Data
             Name = personalSave.ReadString(offsets.PersonalId + 0x20, 10);
 
             Wallet = new EncryptedInt32(personalSave, offsets.Wallet);
-            // Bank
+            Bank = new EncryptedInt32(personalSave, offsets.Bank);
             NookMiles = new EncryptedInt32(personalSave, offsets.NookMiles);
+        }
+
+        void Save()
+        {
+            var offsets = GetOffsetsFromRevision();
+            _personalFile.WriteU32(offsets.PersonalId, TownUID);
+            _personalFile.WriteString(offsets.PersonalId + 4, TownName, 10);
+            _personalFile.WriteU32(offsets.PersonalId + 0x1C, PlayerUID);
+            _personalFile.WriteString(offsets.PersonalId + 0x28, Name, 10);
+
+            Wallet.Write(_personalFile, offsets.Wallet);
+            Bank.Write(_personalFile, offsets.Bank);
+            NookMiles.Write(_personalFile, offsets.NookMiles);
         }
 
         public byte[] GetPhotoData()

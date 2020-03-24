@@ -77,22 +77,28 @@
             <StackPanel x:Name="PlayerSelectorPanel" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="120" Orientation="Horizontal" Spacing="20"/>
             <StackPanel>
               <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
-                <TextBlock Height="26" FontSize="16">Player Name:</TextBlock>
-                <TextBox x:Name="PlayerNameBox" MaxLength="10" MinWidth="120"/>
+                <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Player Name:</TextBlock>
+                <TextBox x:Name="PlayerNameBox" MaxLength="10" MinWidth="120" FontSize="16"/>
               </StackPanel>
               <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
-                <TextBlock Height="26" FontSize="16">Wallet:</TextBlock>
+                <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Wallet:</TextBlock>
                 <NumericUpDown x:Name="WalletBox" Height="34" MinWidth="100" Maximum="99999" Minimum="0"/>
               </StackPanel>
               <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
-                <TextBlock Height="26" FontSize="16">Nook Miles:</TextBlock>
-                <NumericUpDown x:Name="NookMilesBox" Height="34" MinWidth="100" Maximum="99999" Minimum="0"/>
+                <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Bank:</TextBlock>
+                <NumericUpDown x:Name="BankBox" Height="34" MinWidth="100" Maximum="999999999" Minimum="0"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
+                <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Nook Miles:</TextBlock>
+                <NumericUpDown x:Name="NookMilesBox" Height="34" MinWidth="100" Maximum="999999999" Minimum="0"/>
               </StackPanel>
             </StackPanel>
           </Grid>
         </TabItem>
         <TabItem Header="Villagers">
-          
+          <Grid>
+            <StackPanel x:Name="VillagerPanel" HorizontalAlignment="Left" Margin="10, 0, 0, 0" Orientation="Vertical" Spacing="4"/>
+          </Grid>
         </TabItem>
         <TabItem Header="Town">
           

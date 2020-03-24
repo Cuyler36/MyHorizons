@@ -11,6 +11,7 @@ namespace MyHorizons.Data.Save
         public static SaveBase Singleton() => _saveFile;
 
         public int NumPlayers => _playerSaves.Count;
+        public readonly Villager[] Villagers = new Villager[10];
 
         public MainSaveFile(in string headerPath, in string filePath)
         {
@@ -27,6 +28,10 @@ namespace MyHorizons.Data.Save
                     if (playerSave.Valid)
                         _playerSaves.Add(playerSave);
                 }
+
+                // Load villagers
+                for (var i = 0; i < 10; i++)
+                    Villagers[i] = new Villager(i);
             }
         }
 
