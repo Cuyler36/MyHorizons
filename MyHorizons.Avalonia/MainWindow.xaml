@@ -49,8 +49,23 @@
       <Setter Property="Background" Value="#f0f0f0"/>
     </Style>
 
+    <Style Selector="Button.rounded">
+      <Setter Property="Margin" Value="6,3,6,3"/>
+      <Setter Property="Width" Value="40"/>
+      <Setter Property="Height" Value="40"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Padding" Value="3"/>
+    </Style>
+    <Style Selector="Button.rounded /template/ ContentPresenter">
+      <Setter Property="CornerRadius" Value="6"/>
+    </Style>
+    <Style Selector="Button:pointerover.rounded /template/ ContentPresenter">
+      <Setter Property="Background" Value="#587477"/>
+    </Style>
+
   </Window.Styles>
-  <Grid RowDefinitions="2,36,*,2" ColumnDefinitions="2,*,2">
+  <Grid RowDefinitions="2,36,*,30,2" ColumnDefinitions="2,*,2">
     <Grid x:Name="TitleBarGrid" Height="36" Background="#7EA9AE" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1">
       <Image Width="36" Height="36" HorizontalAlignment="Left" Source="resm:MyHorizons.Avalonia.Resources.Logo.png"/>
       <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontWeight="Bold" FontSize="14">MyHorizons</TextBlock>
@@ -108,14 +123,16 @@
         Open Save File
       </Button>
     </Grid>
-
+    <Grid x:Name="BottomBar" Grid.Row="3" Grid.Column="1" Background="#7EA9AE" IsVisible="False">
+        <Button Classes="rounded" x:Name="SaveButton" HorizontalAlignment="Right" Width="140" Background="#648589" VerticalAlignment="Center" Foreground="White" FontSize="14" FontWeight="Bold" Height="24">Save Changes</Button>
+    </Grid>
     <Border Name="TopLeft" Background="#7EA9AE"/>
     <Border Name="TopRight" Background="#7EA9AE" Grid.Column="2"/>
-    <Border Name="BottomLeft" Background="#7EA9AE" Grid.Row="3"/>
-    <Border Name="BottomRight" Background="#7EA9AE" Grid.Row="3" Grid.Column="2"/>
+    <Border Name="BottomLeft" Background="#7EA9AE" Grid.Row="4"/>
+    <Border Name="BottomRight" Background="#7EA9AE" Grid.Row="4" Grid.Column="2"/>
     <Border Name="Top" Background="#7EA9AE" Grid.Column="1"/>
-    <Border Name="Right" Background="#7EA9AE" Grid.Row="1" Grid.RowSpan="2" Grid.Column="2"/>
-    <Border Name="Bottom" Background="#7EA9AE" Grid.Row="4" Grid.Column="1"/>
-    <Border Name="Left" Background="#7EA9AE" Grid.Row="1" Grid.RowSpan="2"/>
+    <Border Name="Right" Background="#7EA9AE" Grid.Row="1" Grid.RowSpan="3" Grid.Column="2"/>
+    <Border Name="Bottom" Background="#7EA9AE" Grid.Row="5" Grid.Column="1"/>
+    <Border Name="Left" Background="#7EA9AE" Grid.Row="1" Grid.RowSpan="3"/>
   </Grid>
 </Window>

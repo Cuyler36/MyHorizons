@@ -36,6 +36,14 @@ namespace MyHorizons.Data.Save
             }
         }
 
+        public bool Save(in string folderPath)
+        {
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+            Player.Save();
+            return _personalSave.Save(null);
+        }
+
         private void ProcessFolder(in string folder)
         {
             var saveSizesNullable = RevisionManager.GetSaveFileSizes(_revision);

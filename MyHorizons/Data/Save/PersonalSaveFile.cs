@@ -7,7 +7,7 @@ namespace MyHorizons.Data.Save
         public PersonalSaveFile(in string headerPath, in string filePath)
         {
             if (AcceptsFile(headerPath, filePath))
-                Load(File.ReadAllBytes(headerPath), File.ReadAllBytes(filePath), null);
+                Load(headerPath, filePath, null);
         }
 
         public override bool AcceptsFile(in string headerPath, in string filePath)

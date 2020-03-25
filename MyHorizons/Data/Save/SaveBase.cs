@@ -13,6 +13,7 @@ namespace MyHorizons.Data.Save
         protected const int HEADER_FILE_SIZE = 0x300;
 
         protected byte[] _rawData;
+        protected string _filePath;
         protected SaveRevision? _revision = null;
 
         public bool Loaded { get; protected set; } = false;
@@ -36,7 +37,10 @@ namespace MyHorizons.Data.Save
         }
 
         public virtual bool Load(in string headerPath, in string filePath, IProgress<float> progress)
-            => Load(File.ReadAllBytes(headerPath), File.ReadAllBytes(filePath), progress);
+        {
+            _filePath = filePath;
+            return Load(File.ReadAllBytes(headerPath), File.ReadAllBytes(filePath), progress);
+        }
 
         public virtual bool Load(in byte[] headerData, in byte[] fileData, IProgress<float> progress)
         {
@@ -70,6 +74,8 @@ namespace MyHorizons.Data.Save
             }
             return false;
         }
+
+        public virtual bool Save(IProgress<float> progress) => Save(_filePath, progress);
 
         public virtual int GetRevision() => _revision?.SaveFileRevision ?? -1;
 
@@ -277,8 +283,9 @@ namespace MyHorizons.Data.Save
 
         public void WriteString(int offset, string value, int maxSize)
         {
+            Array.Clear(_rawData, offset, maxSize * 2);
             var bytes = Encoding.Unicode.GetBytes(value);
-            Array.Copy(bytes, _rawData, maxSize * 2);
+            Array.Copy(bytes, 0, _rawData, offset, maxSize * 2);
         }
     }
 }

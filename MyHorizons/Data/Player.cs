@@ -62,13 +62,13 @@ namespace MyHorizons.Data
             NookMiles = new EncryptedInt32(personalSave, offsets.NookMiles);
         }
 
-        void Save()
+        public void Save()
         {
             var offsets = GetOffsetsFromRevision();
             _personalFile.WriteU32(offsets.PersonalId, TownUID);
             _personalFile.WriteString(offsets.PersonalId + 4, TownName, 10);
             _personalFile.WriteU32(offsets.PersonalId + 0x1C, PlayerUID);
-            _personalFile.WriteString(offsets.PersonalId + 0x28, Name, 10);
+            _personalFile.WriteString(offsets.PersonalId + 0x20, Name, 10);
 
             Wallet.Write(_personalFile, offsets.Wallet);
             Bank.Write(_personalFile, offsets.Bank);
