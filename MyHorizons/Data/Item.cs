@@ -35,9 +35,9 @@ namespace MyHorizons.Data
             UseCount = useCount;
         }
 
-        public Item(int offset)
-            : this(MainSaveFile.Singleton().ReadU16(offset + 0), MainSaveFile.Singleton().ReadU8(offset + 2), MainSaveFile.Singleton().ReadU8(offset + 3),
-                   MainSaveFile.Singleton().ReadU16(offset + 4), MainSaveFile.Singleton().ReadU16(offset + 6)) { }
+        public Item(ISaveFile save, int offset)
+            : this(save.ReadU16(offset + 0), save.ReadU8(offset + 2), save.ReadU8(offset + 3),
+                   save.ReadU16(offset + 4), save.ReadU16(offset + 6)) { }
 
         public ushort GetInventoryNameFromFlags()
         {
