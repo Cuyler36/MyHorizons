@@ -285,7 +285,7 @@ namespace MyHorizons.Data.Save
         {
             Array.Clear(_rawData, offset, maxSize * 2);
             var bytes = Encoding.Unicode.GetBytes(value);
-            Array.Copy(bytes, 0, _rawData, offset, maxSize * 2);
+            Array.Copy(bytes, 0, _rawData, offset, bytes.Length);
         }
     }
 }
