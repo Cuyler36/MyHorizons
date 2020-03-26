@@ -182,7 +182,7 @@ namespace MyHorizons.Data.Save
             }
         }
 
-        public string ReadString(int offset, int size) => Encoding.Unicode.GetString(_rawData, offset, size * 2);
+        public string ReadString(int offset, int size) => Encoding.Unicode.GetString(_rawData, offset, size * 2).Trim('\0');
 
         public unsafe T[] ReadArray<T>(int offset, int count)
         {
@@ -278,8 +278,6 @@ namespace MyHorizons.Data.Save
                 }
             }
         }
-
-        
 
         public void WriteString(int offset, string value, int maxSize)
         {

@@ -43,8 +43,13 @@ namespace MyHorizons.Data.Save
 
         public override bool Save(in string filePath, IProgress<float> progress)
         {
+            // Save Villagers
+            foreach (var villager in Villagers)
+                villager.Save();
+
             if (base.Save(filePath, progress))
             {
+                // Save Players
                 var dir = Path.GetDirectoryName(filePath);
                 foreach (var playerSave in _playerSaves)
                 {

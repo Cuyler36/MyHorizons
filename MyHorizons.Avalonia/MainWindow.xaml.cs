@@ -9,6 +9,7 @@ using Avalonia.Platform;
 using MyHorizons.Avalonia.Utility;
 using MyHorizons.Data;
 using MyHorizons.Data.Save;
+using MyHorizons.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,6 +20,7 @@ namespace MyHorizons.Avalonia
     {
         private MainSaveFile saveFile;
         private Player selectedPlayer;
+        private Villager selectedVillager;
 
         private Grid TitleBarGrid;
 
@@ -32,6 +34,7 @@ namespace MyHorizons.Avalonia
         private Button MinimizeButton;
 
         private bool playerLoading = false;
+        private Dictionary<byte, string>[] villagerDatabase;
 
         public MainWindow()
         {
@@ -78,9 +81,6 @@ namespace MyHorizons.Avalonia
 
             PlatformImpl.WindowStateChanged = WindowStateChanged;
 
-            // Set up connections
-            SetupPlayerTabConnections();
-
             var openBtn = this.FindControl<Button>("OpenSaveButton");
             openBtn.Click += OpenFileButton_Click;
 
@@ -113,6 +113,23 @@ namespace MyHorizons.Avalonia
                 if (!playerLoading && selectedPlayer != null)
                     selectedPlayer.NookMiles.Set((uint)e.NewValue);
             };
+        }
+
+        private void SetupVillagerTabConnections()
+        {
+            var villagerBox = this.FindControl<ComboBox>("VillagerBox");
+            villagerBox.SelectionChanged += (o, e) => SetVillagerFromIndex(villagerBox.SelectedIndex);
+            var personalityBox = this.FindControl<ComboBox>("PersonalityBox");
+            personalityBox.SelectionChanged += (o, e) =>
+            {
+                if (selectedVillager != null)
+                    selectedVillager.Personality = (byte)personalityBox.SelectedIndex;
+            };
+            this.FindControl<TextBox>("CatchphraseBox").GetObservable(TextBox.TextProperty).Subscribe(text =>
+            {
+                if (selectedVillager != null)
+                    selectedVillager.Catchphrase = text;
+            });
         }
 
         private void SetupSide(string name, StandardCursorType cursor, WindowEdge edge)
@@ -153,25 +170,103 @@ namespace MyHorizons.Avalonia
             var contentHolder = this.FindControl<StackPanel>("PlayerSelectorPanel");
             foreach (var playerSave in saveFile.GetPlayerSaves())
             {
+                var player = playerSave.Player;
                 var img = new Image
                 {
                     Width = 120,
                     Height = 120,
-                    Source = LoadPlayerPhoto(playerSave.Index)
+                    Source = LoadPlayerPhoto(playerSave.Index),
+                    Cursor = new Cursor(StandardCursorType.Hand)
                 };
-                contentHolder.Children.Add(img);
+                var button = new Button
+                {
+                    Background = Brushes.Transparent,
+                    BorderThickness = new Thickness(0),
+                    Content = img
+                };
+                button.Click += (o, e) => LoadPlayer(player);
+                ToolTip.SetTip(img, playerSave.Player.Name);
+                contentHolder.Children.Add(button);
             }
         }
 
         private void LoadPlayer(Player player)
         {
-            playerLoading = true;
-            selectedPlayer = player;
-            this.FindControl<TextBox>("PlayerNameBox").Text = player.Name;
-            this.FindControl<NumericUpDown>("WalletBox").Value = player.Wallet.Decrypt();
-            this.FindControl<NumericUpDown>("BankBox").Value = player.Bank.Decrypt();
-            this.FindControl<NumericUpDown>("NookMilesBox").Value = player.NookMiles.Decrypt();
-            playerLoading = false;
+            if (player != null && player != selectedPlayer)
+            {
+                playerLoading = true;
+                selectedPlayer = player;
+                this.FindControl<TextBox>("PlayerNameBox").Text = player.Name;
+                this.FindControl<NumericUpDown>("WalletBox").Value = player.Wallet.Decrypt();
+                this.FindControl<NumericUpDown>("BankBox").Value = player.Bank.Decrypt();
+                this.FindControl<NumericUpDown>("NookMilesBox").Value = player.NookMiles.Decrypt();
+                playerLoading = false;
+            }
+        }
+
+        private void LoadVillager(Villager villager)
+        {
+            if (villager != null && villager != selectedVillager)
+            {
+                selectedVillager = null;
+                if (villagerDatabase != null)
+                {
+                    var comboBox = this.FindControl<ComboBox>("VillagerBox");
+                    comboBox.SelectedIndex = GetIndexFromVillagerName(villagerDatabase[villager.Species][villager.VariantIdx]);
+                }
+                this.FindControl<ComboBox>("PersonalityBox").SelectedIndex = villager.Personality;
+                this.FindControl<TextBox>("CatchphraseBox").Text = villager.Catchphrase;
+                selectedVillager = villager;
+            }
+        }
+
+        private int GetIndexFromVillagerName(string name)
+        {
+            if (villagerDatabase != null)
+            {
+                var idx = 0;
+                foreach (var species in villagerDatabase)
+                {
+                    foreach (var villager in species)
+                    {
+                        if (villager.Value == name)
+                            return idx;
+                        idx++;
+                    }
+                }
+            }
+            return -1;
+        }
+
+        private void SetVillagerFromIndex(int index)
+        {
+            if (villagerDatabase != null && selectedVillager != null && index > -1)
+            {
+                var count = 0;
+                for (var i = 0; i < villagerDatabase.Length; i++)
+                {
+                    var speciesDict = villagerDatabase[i];
+                    if (count + speciesDict.Count > index)
+                    {
+                        var species = (byte)i;
+                        var variant = (byte)(index - count);
+                        if (selectedVillager.Species != species || selectedVillager.VariantIdx != variant)
+                        {
+                            selectedVillager.Species = species;
+                            selectedVillager.VariantIdx = variant;
+
+                            // Update image
+                            var panel = this.FindControl<StackPanel>("VillagerPanel");
+                            var img = (panel.Children[selectedVillager.Index] as Button).Content as Image;
+                            img.Source?.Dispose();
+                            img.Source = ImageLoadingUtil.LoadImageForVillager(selectedVillager);
+                            ToolTip.SetTip(img, villagerDatabase[species][variant]);
+                            return;
+                        }
+                    }
+                    count += speciesDict.Count;
+                }
+            }
         }
 
         private void LoadVillagers()
@@ -184,10 +279,34 @@ namespace MyHorizons.Avalonia
                 {
                     Width = 64,
                     Height = 64,
-                    Source = ImageLoadingUtil.LoadImageForVillager(villager)
+                    Source = ImageLoadingUtil.LoadImageForVillager(villager),
+                    Cursor = new Cursor(StandardCursorType.Hand)
                 };
-                villagerControl.Children.Add(img);
+                var button = new Button
+                {
+                    Background = Brushes.Transparent,
+                    BorderThickness = new Thickness(0),
+                    Name = $"Villager{i}",
+                    Content = img
+                };
+                button.Click += (o, e) => LoadVillager(villager);
+                if (villagerDatabase != null)
+                    ToolTip.SetTip(img, villagerDatabase[villager.Species][villager.VariantIdx]);
+                villagerControl.Children.Add(button);
             }
+        }
+
+        private void LoadVillagerComboBoxItems()
+        {
+            if (villagerDatabase != null)
+            {
+                var comboBox = this.FindControl<ComboBox>("VillagerBox");
+                var villagerList = new List<string>();
+                foreach (var speciesList in villagerDatabase)
+                    villagerList.AddRange(speciesList.Values);
+                comboBox.Items = villagerList;
+            }
+            this.FindControl<ComboBox>("PersonalityBox").Items = Villager.Personalities;
         }
 
         private async void OpenFileButton_Click(object o, RoutedEventArgs e)
@@ -238,12 +357,19 @@ namespace MyHorizons.Avalonia
                     saveFile = new MainSaveFile(headerPath, filePath);
                     if (saveFile.Loaded)
                     {
+                        villagerDatabase = VillagerDatabaseLoader.LoadVillagerDatabase((uint)saveFile.GetRevision());
+                        LoadVillagerComboBoxItems();
                         (o as Button).IsVisible = false;
                         this.FindControl<TabControl>("EditorTabControl").IsVisible = true;
                         this.FindControl<Grid>("BottomBar").IsVisible = true;
                         AddPlayerImages();
                         LoadPlayer(saveFile.GetPlayerSaves()[0].Player);
                         LoadVillagers();
+                        LoadVillager(saveFile.Villagers[0]);
+
+                        // Set up connections
+                        SetupPlayerTabConnections();
+                        SetupVillagerTabConnections();
                     }
                     else
                     {

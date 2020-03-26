@@ -4,7 +4,10 @@ namespace MyHorizons.Data
 {
     public sealed class Villager
     {
-        public static readonly string[] Personalities = { "Lazy ♂", "Jock ♂", "Cranky ♂", "Smug ♂", "Normal ♀", "Peppy ♀", "Snooty ♀", "Uchi ♀", "Not Set" };
+        public static readonly string[] Personalities = { "Lazy (M)", "Jock (M)", "Cranky (M)", "Smug (M)", "Normal (F)", "Peppy (F)", "Snooty (F)", "Uchi (F)", "Not Set" };
+
+        public readonly int Index;
+        private readonly int Offset;
 
         public byte Species;
         public byte VariantIdx;
@@ -42,13 +45,26 @@ namespace MyHorizons.Data
 
         public Villager(int idx)
         {
+            Index = idx;
             var save = MainSaveFile.Singleton();
             var offsets = GetOffsetsFromRevision();
-            var villagerOffset = offsets.BaseOffset + idx * offsets.Size;
-            Species = save.ReadU8(villagerOffset + offsets.Species);
-            VariantIdx = save.ReadU8(villagerOffset + offsets.Variant);
-            Personality = save.ReadU8(villagerOffset + offsets.Personality);
-            Catchphrase = save.ReadString(villagerOffset + offsets.Catchphrase, 12); // Not sure about the size.
+            Offset = offsets.BaseOffset + idx * offsets.Size;
+
+            Species = save.ReadU8(Offset + offsets.Species);
+            VariantIdx = save.ReadU8(Offset + offsets.Variant);
+            Personality = save.ReadU8(Offset + offsets.Personality);
+            Catchphrase = save.ReadString(Offset + offsets.Catchphrase, 12); // Not sure about the size.
+        }
+
+        public void Save()
+        {
+            var save = MainSaveFile.Singleton();
+            var offsets = GetOffsetsFromRevision();
+
+            save.WriteU8(Offset + offsets.Species, Species);
+            save.WriteU8(Offset + offsets.Variant, VariantIdx);
+            save.WriteU8(Offset + offsets.Personality, Personality);
+            save.WriteString(Offset + offsets.Catchphrase, Catchphrase, 12);
         }
     }
 }

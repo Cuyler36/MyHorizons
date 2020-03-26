@@ -92,7 +92,7 @@
             <StackPanel x:Name="PlayerSelectorPanel" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="120" Orientation="Horizontal" Spacing="20"/>
             <StackPanel>
               <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
-                <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Player Name:</TextBlock>
+                <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Name:</TextBlock>
                 <TextBox x:Name="PlayerNameBox" MaxLength="10" MinWidth="120" FontSize="16"/>
               </StackPanel>
               <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
@@ -112,7 +112,21 @@
         </TabItem>
         <TabItem Header="Villagers">
           <Grid>
-            <StackPanel x:Name="VillagerPanel" HorizontalAlignment="Left" Margin="10, 0, 0, 0" Orientation="Vertical" Spacing="4"/>
+            <StackPanel>
+              <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
+                <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Villager:</TextBlock>
+                <ComboBox x:Name="VillagerBox" MinWidth="130" FontSize="16"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
+                <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Personality:</TextBlock>
+                <ComboBox x:Name="PersonalityBox" MinWidth="130" FontSize="16"/>
+              </StackPanel>
+              <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
+                <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Catchphrase:</TextBlock>
+                <TextBox x:Name="CatchphraseBox" MaxLength="12" MinWidth="130" FontSize="16"/>
+              </StackPanel>
+            </StackPanel>
+            <StackPanel x:Name="VillagerPanel" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10, 0, 0, 0" Orientation="Horizontal" Spacing="4"/>
           </Grid>
         </TabItem>
         <TabItem Header="Town">
