@@ -287,6 +287,7 @@
     <None Remove="Resources\mus16.png" />
     <None Remove="Resources\mus17.png" />
     <None Remove="Resources\mus18.png" />
+    <None Remove="Resources\non00.png" />
     <None Remove="Resources\ocp00.png" />
     <None Remove="Resources\ocp01.png" />
     <None Remove="Resources\ocp02.png" />
@@ -700,6 +701,7 @@
     <EmbeddedResource Include="Resources\mus16.png" />
     <EmbeddedResource Include="Resources\mus17.png" />
     <EmbeddedResource Include="Resources\mus18.png" />
+    <EmbeddedResource Include="Resources\non00.png" />
     <EmbeddedResource Include="Resources\ocp00.png" />
     <EmbeddedResource Include="Resources\ocp01.png" />
     <EmbeddedResource Include="Resources\ocp02.png" />

@@ -2813,6 +2813,16 @@ namespace MyHorizons.Avalonia.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap non00 {
+            get {
+                object obj = ResourceManager.GetObject("non00", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ocp00 {
             get {
                 object obj = ResourceManager.GetObject("ocp00", resourceCulture);

@@ -208,6 +208,10 @@ namespace MyHorizons.Avalonia
         {
             if (villager != null && villager != selectedVillager)
             {
+                var villagerPanel = this.FindControl<StackPanel>("VillagerPanel");
+                if (selectedVillager != null)
+                    (villagerPanel.Children[selectedVillager.Index] as Button).Background = Brushes.Transparent;
+
                 selectedVillager = null;
                 if (villagerDatabase != null)
                 {
@@ -216,6 +220,7 @@ namespace MyHorizons.Avalonia
                 }
                 this.FindControl<ComboBox>("PersonalityBox").SelectedIndex = villager.Personality;
                 this.FindControl<TextBox>("CatchphraseBox").Text = villager.Catchphrase;
+                (villagerPanel.Children[villager.Index] as Button).Background = Brushes.LightGray;
                 selectedVillager = villager;
             }
         }

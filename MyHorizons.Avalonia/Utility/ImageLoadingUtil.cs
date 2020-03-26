@@ -18,7 +18,7 @@ namespace MyHorizons.Avalonia.Utility
 
         public static Bitmap LoadImageForVillager(in Villager villager)
         {
-            if (villager.Species < 0x23)
+            if (villager.Species < villagerSpeciesNameLookupTable.Length)
             {
                 // TODO: Memory could be saved here in the case of multiple villagers by caching loaded images but I'm not concerned at the moment.
                 var uri = new Uri($"resm:MyHorizons.Avalonia.Resources.{villagerSpeciesNameLookupTable[villager.Species]}{villager.VariantIdx:d2}.png");
