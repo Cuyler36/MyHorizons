@@ -12,8 +12,9 @@ namespace MyHorizons.Data.Save
         public readonly ushort Unk2;
 
         public readonly string GameVersion;
+        public readonly int Revision;
 
-        public SaveRevision(uint maj, uint min, ushort headerR, ushort u1, ushort saveR, ushort u2, string gameVersion)
+        public SaveRevision(uint maj, uint min, ushort headerR, ushort u1, ushort saveR, ushort u2, string gameVersion, int rev)
         {
             Major = maj;
             Minor = min;
@@ -22,6 +23,7 @@ namespace MyHorizons.Data.Save
             SaveFileRevision = saveR;
             Unk2 = u2;
             GameVersion = gameVersion;
+            Revision = rev;
         }
     }
 
@@ -48,8 +50,9 @@ namespace MyHorizons.Data.Save
         // Table of known revision data for each game version
         private static readonly SaveRevision[] KnownRevisions =
         {
-            new SaveRevision(0x67, 0x6F, 0, 2, 0, 2, "1.0.0"), // 1.0.0
-            new SaveRevision(0x6D, 0x78, 0, 2, 1, 2, "1.1.0")  // 1.1.0
+            new SaveRevision(0x67, 0x6F, 0, 2, 0, 2, "1.0.0", 0), // 1.0.0
+            new SaveRevision(0x6D, 0x78, 0, 2, 1, 2, "1.1.0", 1), // 1.1.0
+            new SaveRevision(0x6D, 0x78, 0, 2, 2, 2, "1.1.1", 1)  // 1.1.1
         };
 
         // Table of save file sizes by revision
@@ -91,8 +94,8 @@ namespace MyHorizons.Data.Save
         // Gets the save file sizes for a given revision
         public static SaveFileSizes? GetSaveFileSizes(SaveRevision? revision)
         {
-            if (revision?.SaveFileRevision < SizesByRevision.Length)
-                return SizesByRevision[revision.Value.SaveFileRevision];
+            if (revision?.Revision < SizesByRevision.Length)
+                return SizesByRevision[revision.Value.Revision];
             return null;
         }
 

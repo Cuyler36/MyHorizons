@@ -77,7 +77,7 @@ namespace MyHorizons.Data.Save
 
         public virtual bool Save(IProgress<float> progress) => Save(_filePath, progress);
 
-        public virtual int GetRevision() => _revision?.SaveFileRevision ?? -1;
+        public virtual int GetRevision() => _revision?.Revision ?? -1;
 
         private static void TryUpdateFileHashes(in byte[] data)
         {
