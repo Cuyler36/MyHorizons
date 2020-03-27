@@ -61,7 +61,7 @@ namespace MyHorizons.Data.Save
                 try
                 {
                     // Update hashes
-                    TryUpdateFileHashes(_rawData);
+                    TryUpdateFileHashes(_rawData, _revision.Value);
 
                     // Encrypt and save file + header
                     var (fileData, headerData) = SaveEncryption.Encrypt(_rawData, (uint)DateTime.Now.Ticks);
@@ -78,38 +78,19 @@ namespace MyHorizons.Data.Save
         public virtual bool Save(IProgress<float> progress) => Save(_filePath, progress);
 
         public virtual int GetRevision() => _revision?.Revision ?? -1;
+        public virtual string GetRevisionString() => _revision?.GameVersion ?? "Unknown";
 
-        private static void TryUpdateFileHashes(in byte[] data)
+        private static void TryUpdateFileHashes(in byte[] data, in SaveRevision revision)
         {
-            HashInfo selectedInfo = null;
-            foreach (var info in HashInfo.VersionHashInfoList)
-            {
-                var valid = true;
-                for (var i = 0; i < 4; i++)
-                {
-                    if (info.RevisionMagic[i] != BitConverter.ToUInt32(data, i * 4))
-                    {
-                        valid = false;
-                        break;
-                    }
-                }
-                if (valid)
-                {
-                    selectedInfo = info;
-                    break;
-                }
-            }
-
+            var selectedInfo = HashInfo.VersionHashInfoList[revision.HashVersion];
             if (selectedInfo != null)
             {
-                HashRegionSet thisFileSet = selectedInfo[(uint)data.Length];
+                var thisFileSet = selectedInfo[(uint)data.Length];
                 if (thisFileSet != null)
                 {
                     Console.WriteLine($"{thisFileSet.FileName} rev {selectedInfo.RevisionId} detected!");
                     foreach (var hashRegion in thisFileSet)
-                    {
                         Murmur3.UpdateMurmur32(data, hashRegion.HashOffset, hashRegion.BeginOffset, hashRegion.Size);
-                    }
                 }
             }
         }

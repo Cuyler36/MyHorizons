@@ -61,7 +61,7 @@ namespace MyHorizons.Hash
 
         public static readonly List<HashInfo> VersionHashInfoList = new List<HashInfo>
         {
-            new HashInfo(REVISION_100_ID, new uint[]{ 0x67, 0x6F, 0x02, 0x02 }, new HashRegionSet[] {
+            new HashInfo(REVISION_100_ID, new HashRegionSet[] {
                 new HashRegionSet("main.dat", MAIN_SAVE_SIZE, new HashRegion[] {
                     new HashRegion(0x000108, 0x00010C, 0x1D6D4C),
                     new HashRegion(0x1D6E58, 0x1D6E5C, 0x323384),
@@ -101,7 +101,7 @@ namespace MyHorizons.Hash
                     new HashRegion(0x000100, 0x00104, 0x69404)
                 }),
             }),
-            new HashInfo(REVISION_110_ID, new uint[]{ 0x6D, 0x78, 0x02, 0x00010002 }, new HashRegionSet[] {
+            new HashInfo(REVISION_110_ID, new HashRegionSet[] {
                 new HashRegionSet("main.dat", REV_110_MAIN_SAVE_SIZE, new HashRegion[] {
                     new HashRegion(0x000110, 0x000114, 0x1D6D5C),
                     new HashRegion(0x1D6E70, 0x1D6E74, 0x323C0C),
@@ -144,7 +144,6 @@ namespace MyHorizons.Hash
         };
 
         public readonly uint RevisionId; // Custom to us
-        public readonly uint[] RevisionMagic; // First 16 bytes of files (4 uints)
 
         private readonly Dictionary<uint, HashRegionSet> _internalHashDict = new Dictionary<uint, HashRegionSet>();
 
@@ -165,10 +164,9 @@ namespace MyHorizons.Hash
             }
         }
 
-        public HashInfo(uint revisionId, in uint[] magic, in HashRegionSet[] hashSets)
+        public HashInfo(uint revisionId, in HashRegionSet[] hashSets)
         {
             RevisionId = revisionId;
-            RevisionMagic = magic;
             foreach (var hashSet in hashSets)
                 this[hashSet.FileSize] = hashSet;
         }
