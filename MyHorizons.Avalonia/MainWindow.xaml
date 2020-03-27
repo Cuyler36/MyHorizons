@@ -138,7 +138,8 @@
       </Button>
     </Grid>
     <Grid x:Name="BottomBar" Grid.Row="3" Grid.Column="1" Background="#7EA9AE" IsVisible="False">
-        <Button Classes="rounded" x:Name="SaveButton" HorizontalAlignment="Right" Width="140" Background="#648589" VerticalAlignment="Center" Foreground="White" FontSize="14" FontWeight="Bold" Height="24">Save Changes</Button>
+      <TextBlock x:Name="SaveInfoText" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="White" FontSize="14" FontWeight="Bold">No Save File Loaded</TextBlock>
+      <Button Classes="rounded" x:Name="SaveButton" HorizontalAlignment="Right" Width="140" Background="#648589" VerticalAlignment="Center" Foreground="White" FontSize="14" FontWeight="Bold" Height="24">Save Changes</Button>
     </Grid>
     <Border Name="TopLeft" Background="#7EA9AE"/>
     <Border Name="TopRight" Background="#7EA9AE" Grid.Column="2"/>

@@ -367,6 +367,7 @@ namespace MyHorizons.Avalonia
                         (o as Button).IsVisible = false;
                         this.FindControl<TabControl>("EditorTabControl").IsVisible = true;
                         this.FindControl<Grid>("BottomBar").IsVisible = true;
+                        this.FindControl<TextBlock>("SaveInfoText").Text = $"Save File for Version {saveFile.GetRevisionString()} Loaded";
                         AddPlayerImages();
                         LoadPlayer(saveFile.GetPlayerSaves()[0].Player);
                         LoadVillagers();
