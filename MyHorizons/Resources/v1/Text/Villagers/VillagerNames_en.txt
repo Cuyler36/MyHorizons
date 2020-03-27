@@ -392,4 +392,7 @@
 22, 05, Freya
 22, 06, Fang
 22, 08, Vivian
+22, 09, Skye
+22, 0A, Kyle
+22, 0C, Audie
 23, 00, No Villager
