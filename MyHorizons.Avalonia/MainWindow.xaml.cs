@@ -13,6 +13,7 @@ using MyHorizons.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace MyHorizons.Avalonia
 {
@@ -254,7 +255,7 @@ namespace MyHorizons.Avalonia
                     if (count + speciesDict.Count > index)
                     {
                         var species = (byte)i;
-                        var variant = (byte)(index - count);
+                        var variant = speciesDict.Keys.ElementAt(index - count);
                         if (selectedVillager.Species != species || selectedVillager.VariantIdx != variant)
                         {
                             selectedVillager.Species = species;

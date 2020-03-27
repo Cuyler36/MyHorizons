@@ -344,7 +344,7 @@
 1E, 02, Spike
 1E, 04, Hornsby
 1E, 07, Merengue
-1E, 08, RenÃ©e
+1E, 08, Renée
 1F, 00, Vesta
 1F, 01, Baabara
 1F, 02, Eunice
@@ -357,7 +357,7 @@
 1F, 0B, Frita
 1F, 0C, Muffy
 1F, 0D, Pietro
-1F, 0E, Ã‰toile
+1F, 0E, Étoile
 1F, 0F, Dom
 20, 00, Peanut
 20, 01, Blaire

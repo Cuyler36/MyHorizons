@@ -91,6 +91,7 @@
     <None Remove="Resources\cbr15.png" />
     <None Remove="Resources\cbr16.png" />
     <None Remove="Resources\cbr17.png" />
+    <None Remove="Resources\cbr18.png" />
     <None Remove="Resources\cbr19.png" />
     <None Remove="Resources\chn00.png" />
     <None Remove="Resources\chn01.png" />
@@ -124,6 +125,7 @@
     <None Remove="Resources\der07.png" />
     <None Remove="Resources\der08.png" />
     <None Remove="Resources\der09.png" />
+    <None Remove="Resources\der10.png" />
     <None Remove="Resources\dog00.png" />
     <None Remove="Resources\dog01.png" />
     <None Remove="Resources\dog02.png" />
@@ -167,6 +169,7 @@
     <None Remove="Resources\elp07.png" />
     <None Remove="Resources\elp09.png" />
     <None Remove="Resources\elp10.png" />
+    <None Remove="Resources\elp11.png" />
     <None Remove="Resources\elp12.png" />
     <None Remove="Resources\flg00.png" />
     <None Remove="Resources\flg01.png" />
@@ -203,6 +206,7 @@
     <None Remove="Resources\gor08.png" />
     <None Remove="Resources\gor09.png" />
     <None Remove="Resources\gor10.png" />
+    <None Remove="Resources\gor11.png" />
     <None Remove="Resources\gul.png" />
     <None Remove="Resources\ham00.png" />
     <None Remove="Resources\ham01.png" />
@@ -360,6 +364,7 @@
     <None Remove="Resources\rbt17.png" />
     <None Remove="Resources\rbt18.png" />
     <None Remove="Resources\rbt19.png" />
+    <None Remove="Resources\rbt20.png" />
     <None Remove="Resources\rcm.png" />
     <None Remove="Resources\rco.png" />
     <None Remove="Resources\rct.png" />
@@ -382,6 +387,7 @@
     <None Remove="Resources\shp11.png" />
     <None Remove="Resources\shp12.png" />
     <None Remove="Resources\shp13.png" />
+    <None Remove="Resources\shp14.png" />
     <None Remove="Resources\shp15.png" />
     <None Remove="Resources\skk.png" />
     <None Remove="Resources\squ00.png" />
@@ -505,6 +511,7 @@
     <EmbeddedResource Include="Resources\cbr15.png" />
     <EmbeddedResource Include="Resources\cbr16.png" />
     <EmbeddedResource Include="Resources\cbr17.png" />
+    <EmbeddedResource Include="Resources\cbr18.png" />
     <EmbeddedResource Include="Resources\cbr19.png" />
     <EmbeddedResource Include="Resources\chn00.png" />
     <EmbeddedResource Include="Resources\chn01.png" />
@@ -538,6 +545,7 @@
     <EmbeddedResource Include="Resources\der07.png" />
     <EmbeddedResource Include="Resources\der08.png" />
     <EmbeddedResource Include="Resources\der09.png" />
+    <EmbeddedResource Include="Resources\der10.png" />
     <EmbeddedResource Include="Resources\dog00.png" />
     <EmbeddedResource Include="Resources\dog01.png" />
     <EmbeddedResource Include="Resources\dog02.png" />
@@ -581,6 +589,7 @@
     <EmbeddedResource Include="Resources\elp07.png" />
     <EmbeddedResource Include="Resources\elp09.png" />
     <EmbeddedResource Include="Resources\elp10.png" />
+    <EmbeddedResource Include="Resources\elp11.png" />
     <EmbeddedResource Include="Resources\elp12.png" />
     <EmbeddedResource Include="Resources\flg00.png" />
     <EmbeddedResource Include="Resources\flg01.png" />
@@ -617,6 +626,7 @@
     <EmbeddedResource Include="Resources\gor08.png" />
     <EmbeddedResource Include="Resources\gor09.png" />
     <EmbeddedResource Include="Resources\gor10.png" />
+    <EmbeddedResource Include="Resources\gor11.png" />
     <EmbeddedResource Include="Resources\gul.png" />
     <EmbeddedResource Include="Resources\ham00.png" />
     <EmbeddedResource Include="Resources\ham01.png" />
@@ -774,6 +784,7 @@
     <EmbeddedResource Include="Resources\rbt17.png" />
     <EmbeddedResource Include="Resources\rbt18.png" />
     <EmbeddedResource Include="Resources\rbt19.png" />
+    <EmbeddedResource Include="Resources\rbt20.png" />
     <EmbeddedResource Include="Resources\rcm.png" />
     <EmbeddedResource Include="Resources\rco.png" />
     <EmbeddedResource Include="Resources\rct.png" />
@@ -796,6 +807,7 @@
     <EmbeddedResource Include="Resources\shp11.png" />
     <EmbeddedResource Include="Resources\shp12.png" />
     <EmbeddedResource Include="Resources\shp13.png" />
+    <EmbeddedResource Include="Resources\shp14.png" />
     <EmbeddedResource Include="Resources\shp15.png" />
     <EmbeddedResource Include="Resources\skk.png" />
     <EmbeddedResource Include="Resources\squ00.png" />
