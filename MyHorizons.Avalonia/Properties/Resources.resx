@@ -814,6 +814,9 @@
   <data name="hrs16" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\hrs16.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ItemGridBackground" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\itemgridbackground.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="kal00" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\kal00.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

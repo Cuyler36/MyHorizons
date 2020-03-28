@@ -242,6 +242,7 @@
     <None Remove="Resources\hrs12.png" />
     <None Remove="Resources\hrs13.png" />
     <None Remove="Resources\hrs16.png" />
+    <None Remove="Resources\ItemGridBackground.png" />
     <None Remove="Resources\kal00.png" />
     <None Remove="Resources\kal01.png" />
     <None Remove="Resources\kal02.png" />
@@ -662,6 +663,7 @@
     <EmbeddedResource Include="Resources\hrs12.png" />
     <EmbeddedResource Include="Resources\hrs13.png" />
     <EmbeddedResource Include="Resources\hrs16.png" />
+    <EmbeddedResource Include="Resources\ItemGridBackground.png" />
     <EmbeddedResource Include="Resources\kal00.png" />
     <EmbeddedResource Include="Resources\kal01.png" />
     <EmbeddedResource Include="Resources\kal02.png" />

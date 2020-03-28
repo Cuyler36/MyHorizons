@@ -2353,6 +2353,16 @@ namespace MyHorizons.Avalonia.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ItemGridBackground {
+            get {
+                object obj = ResourceManager.GetObject("ItemGridBackground", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap kal00 {
             get {
                 object obj = ResourceManager.GetObject("kal00", resourceCulture);

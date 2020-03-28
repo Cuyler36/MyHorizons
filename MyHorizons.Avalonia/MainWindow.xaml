@@ -88,8 +88,11 @@
     <Grid Grid.Row="2" Grid.Column="1" x:Name="MainContentGrid">
       <TabControl x:Name="EditorTabControl" VerticalAlignment="Stretch">
         <TabItem Header="Players">
-          <Grid>
+          <Grid x:Name="PlayersGrid">
             <StackPanel x:Name="PlayerSelectorPanel" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="120" Orientation="Horizontal" Spacing="20"/>
+            <StackPanel x:Name="PocketsPanel" HorizontalAlignment="Center">
+              <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Player Pockets</TextBlock>
+            </StackPanel>
             <StackPanel>
               <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
                 <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Name:</TextBlock>

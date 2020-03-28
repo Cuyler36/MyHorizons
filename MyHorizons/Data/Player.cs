@@ -11,7 +11,7 @@ namespace MyHorizons.Data
         public uint PlayerUID;
         public string TownName;
         public uint TownUID;
-        public Item[] Pockets;
+        public ItemCollection Pockets; // TODO: Detect pockets size
         public EncryptedInt32 Wallet;
         public EncryptedInt32 Bank;
         public EncryptedInt32 NookMiles;
@@ -60,6 +60,16 @@ namespace MyHorizons.Data
             Wallet = new EncryptedInt32(personalSave, offsets.Wallet);
             Bank = new EncryptedInt32(personalSave, offsets.Bank);
             NookMiles = new EncryptedInt32(personalSave, offsets.NookMiles);
+
+            // TODO: This should be refactored to detect the "expanded pockets" state
+            var pockets = new Item[40];
+            for (var i = 0; i < 20; i++)
+            {
+                pockets[i] = new Item(personalSave, offsets.Pockets + 0xB8 + i * 8);
+                pockets[i + 20] = new Item(personalSave, offsets.Pockets + i * 8);
+            }
+
+            Pockets = new ItemCollection(pockets);
         }
 
         public void Save()

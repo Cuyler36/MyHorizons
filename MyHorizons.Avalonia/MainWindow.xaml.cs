@@ -6,6 +6,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using MyHorizons.Avalonia.Controls;
 using MyHorizons.Avalonia.Utility;
 using MyHorizons.Data;
 using MyHorizons.Data.Save;
@@ -36,6 +37,8 @@ namespace MyHorizons.Avalonia
 
         private bool playerLoading = false;
         private Dictionary<byte, string>[] villagerDatabase;
+
+        private ItemGrid playerPocketsGrid;
 
         public MainWindow()
         {
@@ -86,6 +89,11 @@ namespace MyHorizons.Avalonia
             openBtn.Click += OpenFileButton_Click;
 
             this.FindControl<Button>("SaveButton").Click += SaveButton_Click;
+
+            playerPocketsGrid = new ItemGrid(40, 10, 4, 16);
+
+            var playersGrid = this.FindControl<StackPanel>("PocketsPanel");
+            playersGrid.Children.Add(playerPocketsGrid);
 
             openBtn.IsVisible = true;
             this.FindControl<TabControl>("EditorTabControl").IsVisible = false;
@@ -201,6 +209,7 @@ namespace MyHorizons.Avalonia
                 this.FindControl<NumericUpDown>("WalletBox").Value = player.Wallet.Decrypt();
                 this.FindControl<NumericUpDown>("BankBox").Value = player.Bank.Decrypt();
                 this.FindControl<NumericUpDown>("NookMilesBox").Value = player.NookMiles.Decrypt();
+                playerPocketsGrid.Items = player.Pockets;
                 playerLoading = false;
             }
         }
