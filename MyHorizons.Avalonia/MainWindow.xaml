@@ -5,7 +5,9 @@
         mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="650"
         x:Class="MyHorizons.Avalonia.MainWindow"
         Title="MyHorizons"
-        HasSystemDecorations="False">
+        HasSystemDecorations="False"
+        MinWidth="1250"
+        MinHeight="630">
   <Window.Styles>
 
     <Style Selector="TabControl">
