@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="650"
         x:Class="MyHorizons.Avalonia.MainWindow"
         Title="MyHorizons"
         HasSystemDecorations="False">
@@ -65,7 +65,7 @@
     </Style>
 
   </Window.Styles>
-  <Grid RowDefinitions="2,36,*,30,2" ColumnDefinitions="2,*,2">
+  <Grid RowDefinitions="2,36,*,36,2" ColumnDefinitions="2,*,2">
     <Grid x:Name="TitleBarGrid" Height="36" Background="#7EA9AE" VerticalAlignment="Top" Grid.Row="1" Grid.Column="1">
       <Image Width="36" Height="36" HorizontalAlignment="Left" Source="resm:MyHorizons.Avalonia.Resources.Logo.png"/>
       <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontWeight="Bold" FontSize="14">MyHorizons</TextBlock>
@@ -90,25 +90,31 @@
         <TabItem Header="Players">
           <Grid x:Name="PlayersGrid">
             <StackPanel x:Name="PlayerSelectorPanel" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="120" Orientation="Horizontal" Spacing="20"/>
-            <StackPanel x:Name="PocketsPanel" HorizontalAlignment="Center">
-              <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Player Pockets</TextBlock>
-            </StackPanel>
-            <StackPanel>
-              <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
-                <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Name:</TextBlock>
-                <TextBox x:Name="PlayerNameBox" MaxLength="10" MinWidth="120" FontSize="16"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Spacing="20">
+              <StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
+                  <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Name:</TextBlock>
+                  <TextBox x:Name="PlayerNameBox" MaxLength="10" MinWidth="120" FontSize="16"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
+                  <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Wallet:</TextBlock>
+                  <NumericUpDown x:Name="WalletBox" Height="34" MinWidth="100" Maximum="99999" Minimum="0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
+                  <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Bank:</TextBlock>
+                  <NumericUpDown x:Name="BankBox" Height="34" MinWidth="100" Maximum="999999999" Minimum="0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
+                  <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Nook Miles:</TextBlock>
+                  <NumericUpDown x:Name="NookMilesBox" Height="34" MinWidth="100" Maximum="999999999" Minimum="0"/>
+                </StackPanel>
               </StackPanel>
-              <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
-                <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Wallet:</TextBlock>
-                <NumericUpDown x:Name="WalletBox" Height="34" MinWidth="100" Maximum="99999" Minimum="0"/>
+              <StackPanel x:Name="PocketsPanel" HorizontalAlignment="Center">
+                <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Pockets</TextBlock>
               </StackPanel>
-              <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
-                <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Bank:</TextBlock>
-                <NumericUpDown x:Name="BankBox" Height="34" MinWidth="100" Maximum="999999999" Minimum="0"/>
-              </StackPanel>
-              <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
-                <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Nook Miles:</TextBlock>
-                <NumericUpDown x:Name="NookMilesBox" Height="34" MinWidth="100" Maximum="999999999" Minimum="0"/>
+              <StackPanel x:Name="StoragePanel" HorizontalAlignment="Center">
+                <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Storage</TextBlock>
+                <ScrollViewer x:Name="StorageScroller" VerticalScrollBarVisibility="Auto" MaxHeight="500"/>
               </StackPanel>
             </StackPanel>
           </Grid>
@@ -140,8 +146,13 @@
         Open Save File
       </Button>
     </Grid>
-    <Grid x:Name="BottomBar" Grid.Row="3" Grid.Column="1" Background="#7EA9AE" IsVisible="False">
+    <Grid x:Name="BottomBar" Grid.Row="3" Grid.Column="1" Background="#7EA9AE">
       <TextBlock x:Name="SaveInfoText" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="White" FontSize="14" FontWeight="Bold">No Save File Loaded</TextBlock>
+      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+        <ComboBox x:Name="ItemSelectBox" Width="350" Height="26" Background="White" VirtualizationMode="Simple"/>
+        <TextBlock Height="26" FontWeight="SemiBold" FontSize="16" Foreground="White" Margin="10,0,0,0">Count:</TextBlock>
+        <NumericUpDown x:Name="CountBox" Margin="5,0,0,0" Height="34" Minimum="1" Maximum="65536"/>
+      </StackPanel>
       <Button Classes="rounded" x:Name="SaveButton" HorizontalAlignment="Right" Width="140" Background="#648589" VerticalAlignment="Center" Foreground="White" FontSize="14" FontWeight="Bold" Height="24">Save Changes</Button>
     </Grid>
     <Border Name="TopLeft" Background="#7EA9AE"/>

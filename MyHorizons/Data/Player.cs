@@ -12,6 +12,7 @@ namespace MyHorizons.Data
         public string TownName;
         public uint TownUID;
         public ItemCollection Pockets; // TODO: Detect pockets size
+        public ItemCollection Storage; // TODO: Same as pockets
         public EncryptedInt32 Wallet;
         public EncryptedInt32 Bank;
         public EncryptedInt32 NookMiles;
@@ -26,8 +27,9 @@ namespace MyHorizons.Data
             public readonly int Bank;
             public readonly int NookMiles;
             public readonly int Photo;
+            public readonly int Storage;
 
-            public Offsets(int pid, int pockets, int wallet, int bank, int nookMiles, int photo)
+            public Offsets(int pid, int pockets, int wallet, int bank, int nookMiles, int photo, int storage)
             {
                 PersonalId = pid;
                 Pockets = pockets;
@@ -35,13 +37,14 @@ namespace MyHorizons.Data
                 Bank = bank;
                 NookMiles = nookMiles;
                 Photo = photo;
+                Storage = storage;
             }
         }
 
         private static readonly Offsets[] PlayerOffsetsByRevision =
         {
-            new Offsets(0xB0A0, 0x35BD4, 0x11578, 0x68BE4, 0x11570, 0x11598),
-            new Offsets(0xB0B8, 0x35C20, 0x11590, 0x68C34, 0x11588, 0x115C4)
+            new Offsets(0xB0A0, 0x35BD4, 0x11578, 0x68BE4, 0x11570, 0x11598, 0x35D50),
+            new Offsets(0xB0B8, 0x35C20, 0x11590, 0x68C34, 0x11588, 0x115C4, 0x35D9C)
         };
 
         private static Offsets GetOffsetsFromRevision() => PlayerOffsetsByRevision[MainSaveFile.Singleton().GetRevision()];
@@ -70,6 +73,11 @@ namespace MyHorizons.Data
             }
 
             Pockets = new ItemCollection(pockets);
+
+            var storage = new Item[5000];
+            for (var i = 0; i < 5000; i++)
+                storage[i] = new Item(personalSave, offsets.Storage + i * 8);
+            Storage = new ItemCollection(storage);
         }
 
         public void Save()
@@ -83,6 +91,15 @@ namespace MyHorizons.Data
             Wallet.Write(_personalFile, offsets.Wallet);
             Bank.Write(_personalFile, offsets.Bank);
             NookMiles.Write(_personalFile, offsets.NookMiles);
+
+            for (var i = 0; i < 20; i++)
+            {
+                Pockets[i].Save(_personalFile, offsets.Pockets + 0xB8 + i * 8);
+                Pockets[i + 20].Save(_personalFile, offsets.Pockets + i * 8);
+            }
+
+            for (var i = 0; i < 5000; i++)
+                Storage[i].Save(_personalFile, offsets.Storage + i * 8);
         }
 
         public byte[] GetPhotoData()

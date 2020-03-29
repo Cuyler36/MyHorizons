@@ -20,6 +20,8 @@ namespace MyHorizons.Avalonia
 {
     public class MainWindow : Window
     {
+        private static MainWindow _singleton;
+
         private MainSaveFile saveFile;
         private Player selectedPlayer;
         private Villager selectedVillager;
@@ -36,9 +38,16 @@ namespace MyHorizons.Avalonia
         private Button MinimizeButton;
 
         private bool playerLoading = false;
+        private bool settingItem = false;
+        private Dictionary<ushort, string> itemDatabase;
         private Dictionary<byte, string>[] villagerDatabase;
 
         private ItemGrid playerPocketsGrid;
+        private ItemGrid playerStorageGrid;
+
+        public static Item SelectedItem;
+
+        public static MainWindow Singleton() => _singleton;
 
         public MainWindow()
         {
@@ -46,6 +55,7 @@ namespace MyHorizons.Avalonia
 #if DEBUG
             this.AttachDevTools();
 #endif
+            _singleton = this;
         }
 
         private void InitializeComponent()
@@ -91,13 +101,54 @@ namespace MyHorizons.Avalonia
             this.FindControl<Button>("SaveButton").Click += SaveButton_Click;
 
             playerPocketsGrid = new ItemGrid(40, 10, 4, 16);
+            playerStorageGrid = new ItemGrid(5000, 50, 100, 16);
 
             var playersGrid = this.FindControl<StackPanel>("PocketsPanel");
             playersGrid.Children.Add(playerPocketsGrid);
 
+            this.FindControl<ScrollViewer>("StorageScroller").Content = playerStorageGrid;
+
             openBtn.IsVisible = true;
             this.FindControl<TabControl>("EditorTabControl").IsVisible = false;
+            this.FindControl<Grid>("BottomBar").IsVisible = false;
             
+        }
+
+        public void SetItem(Item item)
+        {
+            if (SelectedItem != item)
+            {
+                SelectedItem = item.Clone();
+                for (var i = 0; i < itemDatabase.Keys.Count; i++)
+                {
+                    if (itemDatabase.Keys.ElementAt(i) == item.ItemId)
+                    {
+                        settingItem = true;
+                        this.FindControl<ComboBox>("ItemSelectBox").SelectedIndex = i;
+                        this.FindControl<NumericUpDown>("CountBox").Value = item.Count + 1;
+                        settingItem = false;
+                        return;
+                    }
+                }
+                this.FindControl<ComboBox>("ItemSelectBox").SelectedIndex = -1;
+            }
+        }
+
+        private void SetupUniversalConnections()
+        {
+            var selectBox = this.FindControl<ComboBox>("ItemSelectBox");
+            selectBox.SelectionChanged += (o, e) =>
+            {
+                if (!settingItem && selectBox.SelectedIndex > -1)
+                    SelectedItem = new Item(itemDatabase.Keys.ElementAt(selectBox.SelectedIndex),
+                        SelectedItem.Flags0, SelectedItem.Flags1, SelectedItem.Count, SelectedItem.UseCount);
+            };
+
+            this.FindControl<NumericUpDown>("CountBox").ValueChanged += (o, e) =>
+            {
+                if (!settingItem)
+                    SelectedItem.Count = (ushort)(e.NewValue - 1);
+            };
         }
 
         private void SetupPlayerTabConnections()
@@ -210,6 +261,7 @@ namespace MyHorizons.Avalonia
                 this.FindControl<NumericUpDown>("BankBox").Value = player.Bank.Decrypt();
                 this.FindControl<NumericUpDown>("NookMilesBox").Value = player.NookMiles.Decrypt();
                 playerPocketsGrid.Items = player.Pockets;
+                playerStorageGrid.Items = player.Storage;
                 playerLoading = false;
             }
         }
@@ -383,9 +435,17 @@ namespace MyHorizons.Avalonia
                         LoadVillagers();
                         LoadVillager(saveFile.Villagers[0]);
 
+                        // Load Item List
+                        itemDatabase = ItemDatabaseLoader.LoadItemDatabase((uint)saveFile.GetRevision());
+                        var itemsBox = this.FindControl<ComboBox>("ItemSelectBox");
+                        itemsBox.Items = itemDatabase.Values;
+
                         // Set up connections
+                        SetupUniversalConnections();
                         SetupPlayerTabConnections();
                         SetupVillagerTabConnections();
+
+                        SetItem(Item.NO_ITEM);
                     }
                     else
                     {

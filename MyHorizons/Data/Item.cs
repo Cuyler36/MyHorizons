@@ -39,6 +39,15 @@ namespace MyHorizons.Data
             : this(save.ReadU16(offset + 0), save.ReadU8(offset + 2), save.ReadU8(offset + 3),
                    save.ReadU16(offset + 4), save.ReadU16(offset + 6)) { }
 
+        public void Save(ISaveFile save, int offset)
+        {
+            save.WriteU16(offset, ItemId);
+            save.WriteU8(offset + 2, Flags0);
+            save.WriteU8(offset + 3, Flags1);
+            save.WriteU16(offset + 4, Count);
+            save.WriteU16(offset + 6, UseCount);
+        }
+
         public ushort GetInventoryNameFromFlags()
         {
             if ((Flags1 & 3) != 0 && ItemId != 0x16A1 && ItemId != 0x3100)
@@ -55,5 +64,30 @@ namespace MyHorizons.Data
             }
             return ItemId;
         }
+
+        public Item Clone() => new Item(ItemId, Flags0, Flags1, Count, UseCount);
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (ReferenceEquals(obj, null))
+            {
+                return false;
+            }
+
+            if (obj is Item other)
+                return ItemId == other.ItemId && Flags0 == other.Flags0 && Flags1 == other.Flags1 && Count == other.Count && UseCount == other.UseCount;
+            return false;
+        }
+
+        public static bool operator ==(Item a, Item b) => a?.Equals(b) ?? false;
+
+        public static bool operator !=(Item a, Item b) => !(a == b);
+
+        public override int GetHashCode() => ((base.GetHashCode() << 2) ^ ItemId) << ((Flags0 + Flags1) & 7) ^ (Count << UseCount & 0x1F);
     }
 }

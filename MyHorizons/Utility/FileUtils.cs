@@ -1,9 +1,8 @@
-﻿using System;
+﻿using MyHorizons.Data;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Text;
 
 namespace MyHorizons.Utility
 {
@@ -15,9 +14,17 @@ namespace MyHorizons.Utility
             => _resourcesFolderPath ?? (_resourcesFolderPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources"));
     }
 
-
     public static class ItemDatabaseLoader
     {
+        public static Dictionary<ushort, string> ItemNameDatabase;
+
+        public static string GetNameForItem(in Item item)
+        {
+            if (ItemNameDatabase.ContainsKey(item.ItemId))
+                return ItemNameDatabase[item.ItemId];
+            return $"Unknown Item - [0x{item.ItemId}]";
+        }
+
         public static Dictionary<ushort, string> LoadItemDatabase(uint revision)
         {
             var resourcesDir = FileUtils.GetResourcesPath();
@@ -39,6 +46,7 @@ namespace MyHorizons.Utility
                             }
                         }
                     }
+                    ItemNameDatabase = dict;
                     return dict;
                 }
             }

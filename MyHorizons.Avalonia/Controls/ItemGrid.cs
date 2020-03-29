@@ -1,11 +1,13 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Layout;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.VisualTree;
 using MyHorizons.Data;
+using MyHorizons.Utility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -26,14 +28,33 @@ namespace MyHorizons.Avalonia.Controls
             }
         }
 
+        private static readonly Border ItemToolTip = new Border
+        {
+            BorderThickness = new Thickness(2),
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top,
+            BorderBrush = Brushes.White,
+            Child = new TextBlock
+            {
+                Foreground = Brushes.Black,
+                Background = Brushes.White,
+                FontSize = 14,
+                FontWeight = FontWeight.SemiBold,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                ZIndex = int.MaxValue
+            }
+        };
+
         private int itemsPerRow = 16;
         private int itemsPerCol = 16;
         private int itemSize = 32;
         private ItemCollection items;
-        private IList<Line> lineCache;
-        private IList<RectangleGeometry> itemCache;
+        private readonly IList<Line> lineCache;
+        private readonly IList<RectangleGeometry> itemCache;
         private int x = -1;
         private int y = -1;
+        private int currentIdx = -1;
 
         private bool mouseLeftDown = false;
         private bool mouseRightDown = false;
@@ -125,6 +146,40 @@ namespace MyHorizons.Avalonia.Controls
             PointerReleased += ItemGrid_PointerReleased;
         }
 
+        private void SetItem()
+        {
+            var currentItem = items[currentIdx];
+            if (currentItem != MainWindow.SelectedItem) // Poor hack
+            {
+                InvalidateVisual();
+                items[currentIdx] = MainWindow.SelectedItem.Clone();
+            }
+        }
+
+        private void ShowTip(PointerEventArgs e, bool updateText = false)
+        {
+            var grid = MainWindow.Singleton().FindControl<Grid>("MainContentGrid");
+            var point = e.GetPosition(grid as IVisual);
+
+            if (updateText)
+            {
+                if (items[currentIdx].Count > 0)
+                    (ItemToolTip.Child as TextBlock).Text = $"{ItemDatabaseLoader.GetNameForItem(items[currentIdx])} - x{items[currentIdx].Count + 1}";
+                else
+                    (ItemToolTip.Child as TextBlock).Text = ItemDatabaseLoader.GetNameForItem(items[currentIdx]);
+            }
+
+            ItemToolTip.Margin = new Thickness(point.X + 15, point.Y + 10, 0, 0);
+            if (ItemToolTip.Parent == null)
+                grid.Children.Add(ItemToolTip);
+        }
+
+        private void HideTip()
+        {
+            if (ItemToolTip.Parent != null)
+                (ItemToolTip.Parent as Grid).Children.Remove(ItemToolTip);
+        }
+
         private void ItemGrid_PointerReleased(object sender, PointerReleasedEventArgs e)
         {
             switch (e.GetCurrentPoint(this).Properties.PointerUpdateKind)
@@ -146,9 +201,16 @@ namespace MyHorizons.Avalonia.Controls
             switch (e.GetCurrentPoint(this).Properties.PointerUpdateKind)
             {
                 case PointerUpdateKind.LeftButtonPressed:
+                    if (currentIdx > -1 && currentIdx < items.Count)
+                    {
+                        SetItem();
+                        ShowTip(e, true);
+                    }
                     mouseLeftDown = true;
                     break;
                 case PointerUpdateKind.RightButtonPressed:
+                    if (currentIdx > -1 && currentIdx < items.Count)
+                        MainWindow.Singleton().SetItem(items[currentIdx]);
                     mouseRightDown = true;
                     break;
                 case PointerUpdateKind.MiddleButtonPressed:
@@ -160,7 +222,8 @@ namespace MyHorizons.Avalonia.Controls
         private void ItemGrid_PointerLeave(object sender, PointerEventArgs e)
         {
             if (x == -1 || y == -1) return;
-            x = y = -1;
+            x = y = currentIdx = -1;
+            HideTip();
             InvalidateVisual();
         }
 
@@ -169,27 +232,45 @@ namespace MyHorizons.Avalonia.Controls
             var point = e.GetPosition(sender as IVisual);
             if (point.X < 0 || point.Y < 0 || point.X >= Width || point.Y >= Height)
             {
-                x = y = -1;
+                x = y = currentIdx = -1;
                 mouseLeftDown = false;
                 mouseRightDown = false;
                 mouseMiddleDown = false;
+                HideTip();
                 InvalidateVisual();
                 return;
             }
 
             var tX = (int)point.X - (int)point.X % itemSize;
             var tY = (int)point.Y - (int)point.Y % itemSize;
+            var updateText = false;
 
             if (tX != x || tY != y)
             {
                 x = tX;
                 y = tY;
+
+                var idx = (tY / itemSize) * itemsPerRow + tX / itemSize;
+                if (idx != currentIdx)
+                {
+                    currentIdx = idx;
+                    updateText = true;
+                }
+
                 InvalidateVisual();
             }
 
-            if (mouseLeftDown)
+            if (currentIdx > -1 && currentIdx < items.Count)
             {
-
+                if (mouseLeftDown)
+                {
+                    SetItem();
+                    ShowTip(e, true);
+                    return;
+                }
+                else if (mouseRightDown)
+                    MainWindow.Singleton().SetItem(items[currentIdx]);
+                ShowTip(e, updateText);
             }
         }
 
@@ -234,20 +315,15 @@ namespace MyHorizons.Avalonia.Controls
             if (Items != null)
                 for (var i = 0; i < Items.Count; i++)
                     if (items[i].ItemId != 0xFFFE)
-                        context.DrawGeometry(new SolidColorBrush(0x7F00FF00), null, itemCache[i]);
+                        context.DrawGeometry(new SolidColorBrush(0xBB00FF00), null, itemCache[i]);
 
             // Draw highlight.
-            if (x > -1 && y > -1)
+            if (x > -1 && y > -1 && currentIdx > -1 && currentIdx < items.Count)
                 context.DrawGeometry(HighlightBrush, null, new RectangleGeometry(new Rect(x, y, itemSize, itemSize)));
 
             // Draw grid above items from gridline cache.
             foreach (var line in lineCache)
                 context.DrawLine(gridPen, line.Point0, line.Point1);
-        }
-
-        private void ValidateGridSize()
-        {
-            //if ()
         }
     }
 }
