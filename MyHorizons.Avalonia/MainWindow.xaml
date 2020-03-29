@@ -136,6 +136,9 @@
                 <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Catchphrase:</TextBlock>
                 <TextBox x:Name="CatchphraseBox" MaxLength="12" MinWidth="130" FontSize="16"/>
               </StackPanel>
+              <StackPanel x:Name="VillagerFurniturePanel" Margin="10, 10, 0, 0" Spacing="5" VerticalAlignment="Top" Orientation="Vertical">
+                <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Furniture</TextBlock>
+              </StackPanel>
             </StackPanel>
             <StackPanel x:Name="VillagerPanel" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10, 0, 0, 0" Orientation="Horizontal" Spacing="4"/>
           </Grid>
@@ -152,8 +155,14 @@
       <TextBlock x:Name="SaveInfoText" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="White" FontSize="14" FontWeight="Bold">No Save File Loaded</TextBlock>
       <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
         <ComboBox x:Name="ItemSelectBox" Width="350" Height="26" Background="White" VirtualizationMode="Simple"/>
-        <TextBlock Height="26" FontWeight="SemiBold" FontSize="16" Foreground="White" Margin="10,0,0,0">Count:</TextBlock>
-        <NumericUpDown x:Name="CountBox" Margin="5,0,0,0" Height="34" Minimum="1" Maximum="65536"/>
+        <TextBlock Height="26" FontWeight="SemiBold" FontSize="16" Foreground="White" Margin="10,0,0,0">Flag0:</TextBlock>
+        <NumericUpDown x:Name="Flag0Box" Margin="5,0,0,0" Height="34" Minimum="0" Maximum="255"/>
+        <TextBlock Height="26" FontWeight="SemiBold" FontSize="16" Foreground="White" Margin="10,0,0,0">Flag1:</TextBlock>
+        <NumericUpDown x:Name="Flag1Box" Margin="5,0,0,0" Height="34" Minimum="0" Maximum="255"/>
+        <TextBlock Height="26" FontWeight="SemiBold" FontSize="16" Foreground="White" Margin="10,0,0,0">Flag2:</TextBlock>
+        <NumericUpDown x:Name="Flag2Box" Margin="5,0,0,0" Height="34" Minimum="0" Maximum="255"/>
+        <TextBlock Height="26" FontWeight="SemiBold" FontSize="16" Foreground="White" Margin="10,0,0,0">Flag3:</TextBlock>
+        <NumericUpDown x:Name="Flag3Box" Margin="5,0,0,0" Height="34" Minimum="0" Maximum="255"/>
       </StackPanel>
       <Button Classes="rounded" x:Name="SaveButton" HorizontalAlignment="Right" Width="140" Background="#648589" VerticalAlignment="Center" Foreground="White" FontSize="14" FontWeight="Bold" Height="24">Save Changes</Button>
     </Grid>

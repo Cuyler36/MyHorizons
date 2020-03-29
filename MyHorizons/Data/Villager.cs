@@ -13,6 +13,7 @@ namespace MyHorizons.Data
         public byte VariantIdx;
         public byte Personality;
         public string Catchphrase;
+        public ItemCollection Furniture;
 
         private readonly struct Offsets
         {
@@ -23,8 +24,9 @@ namespace MyHorizons.Data
             public readonly int Variant;
             public readonly int Personality;
             public readonly int Catchphrase;
+            public readonly int Furniture;
 
-            public Offsets(int baseOffset, int size, int species, int variant, int personality, int catchphrase)
+            public Offsets(int baseOffset, int size, int species, int variant, int personality, int catchphrase, int furniture)
             {
                 BaseOffset = baseOffset;
                 Size = size;
@@ -32,13 +34,14 @@ namespace MyHorizons.Data
                 Variant = variant;
                 Personality = personality;
                 Catchphrase = catchphrase;
+                Furniture = furniture;
             }
         }
 
         private static readonly Offsets[] VillagerOffsetsByRevision =
         { 
-            new Offsets(0x110, 0x12AB0, 0, 1, 2, 0x10014),
-            new Offsets(0x120, 0x12AB0, 0, 1, 2, 0x10014)
+            new Offsets(0x110, 0x12AB0, 0, 1, 2, 0x10014, 0x105EC),
+            new Offsets(0x120, 0x12AB0, 0, 1, 2, 0x10014, 0x105EC)
         };
 
         private static Offsets GetOffsetsFromRevision() => VillagerOffsetsByRevision[MainSaveFile.Singleton().GetRevision()];
@@ -54,6 +57,11 @@ namespace MyHorizons.Data
             VariantIdx = save.ReadU8(Offset + offsets.Variant);
             Personality = save.ReadU8(Offset + offsets.Personality);
             Catchphrase = save.ReadString(Offset + offsets.Catchphrase, 12); // Not sure about the size.
+
+            var ftr = new Item[16];
+            for (var i = 0; i < 16; i++)
+                ftr[i] = new Item(save, Offset + offsets.Furniture + i * 0x2C);
+            Furniture = new ItemCollection(ftr);
         }
 
         public void Save()

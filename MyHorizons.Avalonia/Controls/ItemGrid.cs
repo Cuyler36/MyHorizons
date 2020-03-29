@@ -162,12 +162,7 @@ namespace MyHorizons.Avalonia.Controls
             var point = e.GetPosition(grid as IVisual);
 
             if (updateText)
-            {
-                if (items[currentIdx].Count > 0)
-                    (ItemToolTip.Child as TextBlock).Text = $"{ItemDatabaseLoader.GetNameForItem(items[currentIdx])} - x{items[currentIdx].Count + 1}";
-                else
-                    (ItemToolTip.Child as TextBlock).Text = ItemDatabaseLoader.GetNameForItem(items[currentIdx]);
-            }
+                (ItemToolTip.Child as TextBlock).Text = ItemDatabaseLoader.GetNameForItem(items[currentIdx]);
 
             ItemToolTip.Margin = new Thickness(point.X + 15, point.Y + 10, 0, 0);
             if (ItemToolTip.Parent == null)

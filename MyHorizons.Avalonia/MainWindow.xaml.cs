@@ -2,6 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.Layout;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -44,6 +45,7 @@ namespace MyHorizons.Avalonia
 
         private ItemGrid playerPocketsGrid;
         private ItemGrid playerStorageGrid;
+        private ItemGrid villagerFurnitureGrid;
 
         public static Item SelectedItem;
 
@@ -102,11 +104,17 @@ namespace MyHorizons.Avalonia
 
             playerPocketsGrid = new ItemGrid(40, 10, 4, 16);
             playerStorageGrid = new ItemGrid(5000, 50, 100, 16);
+            villagerFurnitureGrid = new ItemGrid(16, 8, 2, 16)
+            {
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
 
             var playersGrid = this.FindControl<StackPanel>("PocketsPanel");
             playersGrid.Children.Add(playerPocketsGrid);
 
             this.FindControl<ScrollViewer>("StorageScroller").Content = playerStorageGrid;
+
+            this.FindControl<StackPanel>("VillagerFurniturePanel").Children.Add(villagerFurnitureGrid);
 
             openBtn.IsVisible = true;
             this.FindControl<TabControl>("EditorTabControl").IsVisible = false;
@@ -125,7 +133,10 @@ namespace MyHorizons.Avalonia
                     {
                         settingItem = true;
                         this.FindControl<ComboBox>("ItemSelectBox").SelectedIndex = i;
-                        this.FindControl<NumericUpDown>("CountBox").Value = item.Count + 1;
+                        this.FindControl<NumericUpDown>("Flag0Box").Value = item.Flags0;
+                        this.FindControl<NumericUpDown>("Flag1Box").Value = item.Flags1;
+                        this.FindControl<NumericUpDown>("Flag2Box").Value = item.Flags2;
+                        this.FindControl<NumericUpDown>("Flag3Box").Value = item.Flags3;
                         settingItem = false;
                         return;
                     }
@@ -141,13 +152,28 @@ namespace MyHorizons.Avalonia
             {
                 if (!settingItem && selectBox.SelectedIndex > -1)
                     SelectedItem = new Item(itemDatabase.Keys.ElementAt(selectBox.SelectedIndex),
-                        SelectedItem.Flags0, SelectedItem.Flags1, SelectedItem.Count, SelectedItem.UseCount);
+                        SelectedItem.Flags0, SelectedItem.Flags1, SelectedItem.Flags2, SelectedItem.Flags3, SelectedItem.UseCount);
             };
 
-            this.FindControl<NumericUpDown>("CountBox").ValueChanged += (o, e) =>
+            this.FindControl<NumericUpDown>("Flag0Box").ValueChanged += (o, e) =>
             {
                 if (!settingItem)
-                    SelectedItem.Count = (ushort)(e.NewValue - 1);
+                    SelectedItem.Flags0 = (byte)e.NewValue;
+            };
+            this.FindControl<NumericUpDown>("Flag1Box").ValueChanged += (o, e) =>
+            {
+                if (!settingItem)
+                    SelectedItem.Flags1 = (byte)e.NewValue;
+            };
+            this.FindControl<NumericUpDown>("Flag2Box").ValueChanged += (o, e) =>
+            {
+                if (!settingItem)
+                    SelectedItem.Flags2 = (byte)e.NewValue;
+            };
+            this.FindControl<NumericUpDown>("Flag3Box").ValueChanged += (o, e) =>
+            {
+                if (!settingItem)
+                    SelectedItem.Flags3 = (byte)e.NewValue;
             };
         }
 
@@ -282,6 +308,7 @@ namespace MyHorizons.Avalonia
                 }
                 this.FindControl<ComboBox>("PersonalityBox").SelectedIndex = villager.Personality;
                 this.FindControl<TextBox>("CatchphraseBox").Text = villager.Catchphrase;
+                villagerFurnitureGrid.Items = villager.Furniture;
                 (villagerPanel.Children[villager.Index] as Button).Background = Brushes.LightGray;
                 selectedVillager = villager;
             }
