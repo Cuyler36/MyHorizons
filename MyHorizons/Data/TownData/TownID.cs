@@ -12,6 +12,8 @@ namespace MyHorizons.Data.TownData
 
         public TownID(ISaveFile save, int offset) => this = save.ReadStruct<TownID>(offset);
 
+        public override bool Equals(object obj) => obj is TownID id && UniqueID == id.UniqueID && GetName() == id.GetName() && Unknown == id.Unknown;
+
         public string GetName()
         {
             fixed (char* name = Name)
@@ -28,5 +30,10 @@ namespace MyHorizons.Data.TownData
         }
 
         public override string ToString() => GetName();
+
+        public override int GetHashCode() => (base.GetHashCode() << 2) ^ (int)UniqueID ^ (GetName().GetHashCode() << ((int)Unknown & 0x1F));
+
+        public static bool operator ==(TownID a, TownID b) => a.Equals(b);
+        public static bool operator !=(TownID a, TownID b) => !(a == b);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using MyHorizons.Data;
+using MyHorizons.Data.TownData;
 using System;
 
 namespace MyHorizons.Avalonia.Utility
@@ -16,7 +16,7 @@ namespace MyHorizons.Avalonia.Utility
             "rhn", "shp", "squ", "tig", "wol", "non"
         };
 
-        public static Bitmap LoadImageForVillager(in Villager villager)
+        public static Bitmap? LoadImageForVillager(in Villager villager)
         {
             if (villager.Species < villagerSpeciesNameLookupTable.Length)
             {

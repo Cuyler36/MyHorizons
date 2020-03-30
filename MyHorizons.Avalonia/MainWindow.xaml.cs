@@ -12,6 +12,7 @@ using MyHorizons.Avalonia.Utility;
 using MyHorizons.Data;
 using MyHorizons.Data.PlayerData;
 using MyHorizons.Data.Save;
+using MyHorizons.Data.TownData;
 using MyHorizons.Utility;
 using System;
 using System.Collections.Generic;

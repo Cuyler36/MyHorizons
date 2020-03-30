@@ -37,6 +37,8 @@ namespace MyHorizons.Data.Save
             }
         }
 
+        public PersonalSaveFile GetPersonalSave() => _personalSave;
+
         public bool Save(in string folderPath)
         {
             if (!Directory.Exists(folderPath))

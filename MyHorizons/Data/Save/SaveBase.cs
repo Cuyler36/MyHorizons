@@ -13,7 +13,7 @@ namespace MyHorizons.Data.Save
         protected const int HEADER_FILE_SIZE = 0x300;
 
         protected byte[] _rawData;
-        protected string _filePath;
+        protected string? _filePath;
         protected SaveRevision? _revision = null;
 
         public bool Loaded { get; protected set; } = false;
@@ -36,27 +36,28 @@ namespace MyHorizons.Data.Save
             return false;
         }
 
-        public virtual bool Load(in string headerPath, in string filePath, IProgress<float> progress)
+        public virtual bool Load(in string headerPath, in string filePath, IProgress<float>? progress)
         {
             _filePath = filePath;
             return Load(File.ReadAllBytes(headerPath), File.ReadAllBytes(filePath), progress);
         }
 
-        public virtual bool Load(in byte[] headerData, in byte[] fileData, IProgress<float> progress)
+        public virtual bool Load(in byte[] headerData, in byte[] fileData, IProgress<float>? progress)
         {
-            _rawData = null;
             try
             {
                 _rawData = SaveEncryption.Decrypt(headerData, fileData);
                 Loaded = true;
             }
             finally { }
-            return _rawData != null;
+            return Loaded;
         }
 
-        public virtual bool Save(in string filePath, IProgress<float> progress)
+        public virtual bool Save(in string? filePath, IProgress<float>? progress)
         {
-            if (_rawData != null)
+            if (filePath == null || !Directory.Exists(Path.GetDirectoryName(filePath)))
+                throw new ArgumentException("The file path is invalid!", nameof(filePath));
+            if (_rawData != null && _revision != null)
             {
                 try
                 {
@@ -75,7 +76,7 @@ namespace MyHorizons.Data.Save
             return false;
         }
 
-        public virtual bool Save(IProgress<float> progress) => Save(_filePath, progress);
+        public virtual bool Save(IProgress<float>? progress) => Save(_filePath, progress);
 
         public virtual int GetRevision() => _revision?.Revision ?? -1;
         public virtual string GetRevisionString() => _revision?.GameVersion ?? "Unknown";
@@ -277,6 +278,30 @@ namespace MyHorizons.Data.Save
         {
             fixed (byte* p = _rawData)
                 Unsafe.WriteUnaligned((void*)(p + offset), structure);
+        }
+
+        public void ReplaceAllOccurrences(in byte[] data, in byte[] newData, int startOffset = 0, int alignment = 1)
+        {
+            for (var i = startOffset; i < _rawData.Length; i += alignment)
+            {
+                if (i + data.Length > _rawData.Length)
+                    break;
+                var valid = true;
+                for (var x = 0; x < data.Length; x++)
+                {
+                    if (_rawData[i + x] != data[x])
+                    {
+                        valid = false;
+                        break;
+                    }
+                }
+
+                if (valid)
+                {
+                    Array.Copy(newData, 0, _rawData, i, newData.Length);
+                    i += newData.Length - alignment;
+                }
+            }
         }
     }
 }

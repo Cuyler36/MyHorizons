@@ -1,4 +1,5 @@
 ﻿using MyHorizons.Data.PlayerData;
+using MyHorizons.Data.TownData;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,10 +8,10 @@ namespace MyHorizons.Data.Save
 {
     public sealed class MainSaveFile : SaveBase
     {
-        private static SaveBase _saveFile;
-        private readonly List<PlayerSave> _playerSaves;
+        private static MainSaveFile? _saveFile;
+        private readonly List<PlayerSave> _playerSaves = new List<PlayerSave>();
         
-        public static SaveBase Singleton() => _saveFile;
+        public static MainSaveFile Singleton() => _saveFile ?? throw new NullReferenceException("Main save file was null!");
 
         public int NumPlayers => _playerSaves.Count;
         public readonly Villager[] Villagers = new Villager[10];
@@ -24,7 +25,6 @@ namespace MyHorizons.Data.Save
                 _saveFile = this;
 
                 // Load player save files
-                _playerSaves = new List<PlayerSave>();
                 foreach (var dir in Directory.GetDirectories(Path.GetDirectoryName(filePath)))
                 {
                     var playerSave = new PlayerSave(dir, _revision.Value);
@@ -46,7 +46,7 @@ namespace MyHorizons.Data.Save
             return base.AcceptsFile(headerPath, filePath) && new FileInfo(filePath).Length == RevisionManager.GetSaveFileSizes(_revision)?.Size_main;
         }
 
-        public override bool Save(in string filePath, IProgress<float> progress)
+        public override bool Save(in string filePath, IProgress<float>? progress)
         {
             // Save Villagers
             foreach (var villager in Villagers)

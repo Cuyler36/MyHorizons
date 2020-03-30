@@ -1,4 +1,5 @@
-﻿using MyHorizons.Data.Save;
+﻿using MyHorizons.Data.PlayerData.Offsets;
+using MyHorizons.Data.Save;
 using MyHorizons.Encryption;
 
 namespace MyHorizons.Data.PlayerData
@@ -16,40 +17,10 @@ namespace MyHorizons.Data.PlayerData
 
         private readonly PersonalSaveFile _personalFile;
 
-        private readonly struct Offsets
-        {
-            public readonly int PersonalId;
-            public readonly int Pockets;
-            public readonly int Wallet;
-            public readonly int Bank;
-            public readonly int NookMiles;
-            public readonly int Photo;
-            public readonly int Storage;
-
-            public Offsets(int pid, int pockets, int wallet, int bank, int nookMiles, int photo, int storage)
-            {
-                PersonalId = pid;
-                Pockets = pockets;
-                Wallet = wallet;
-                Bank = bank;
-                NookMiles = nookMiles;
-                Photo = photo;
-                Storage = storage;
-            }
-        }
-
-        private static readonly Offsets[] PlayerOffsetsByRevision =
-        {
-            new Offsets(0xB0A0, 0x35BD4, 0x11578, 0x68BE4, 0x11570, 0x11598, 0x35D50),
-            new Offsets(0xB0B8, 0x35C20, 0x11590, 0x68C34, 0x11588, 0x115C4, 0x35D9C)
-        };
-
-        private static Offsets GetOffsetsFromRevision() => PlayerOffsetsByRevision[MainSaveFile.Singleton().GetRevision()];
-
         public Player(int idx, PersonalSaveFile personalSave)
         {
             _personalFile = personalSave;
-            var offsets = GetOffsetsFromRevision();
+            var offsets = PersonalOffsets.GetOffsets(MainSaveFile.Singleton().GetRevision());
             Index = idx;
 
             PersonalId = new PersonalID(personalSave, offsets.PersonalId);
@@ -75,7 +46,7 @@ namespace MyHorizons.Data.PlayerData
 
         public void Save()
         {
-            var offsets = GetOffsetsFromRevision();
+            var offsets = PersonalOffsets.GetOffsets(MainSaveFile.Singleton().GetRevision());
             _personalFile.WriteStruct(offsets.PersonalId, PersonalId);
             Wallet.Write(_personalFile, offsets.Wallet);
             Bank.Write(_personalFile, offsets.Bank);
@@ -96,14 +67,8 @@ namespace MyHorizons.Data.PlayerData
 
         public byte[] GetPhotoData()
         {
-            var offset = GetOffsetsFromRevision().Photo;
-            if (_personalFile.ReadU16(offset) != 0xD8FF)
-                return null;
-            // TODO: Determine actual size buffer instead of using this.
-            var size = 2;
-            while (_personalFile.ReadU16(offset + size) != 0xD9FF)
-                size++;
-            return _personalFile.ReadArray<byte>(offset, size + 2);
+            var offset = PersonalOffsets.GetOffsets(MainSaveFile.Singleton().GetRevision()).Photo;
+            return _personalFile.ReadArray<byte>(offset + 4, _personalFile.ReadS32(offset));
         }
 
         public override string ToString() => GetName();
