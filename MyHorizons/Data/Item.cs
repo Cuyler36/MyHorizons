@@ -46,8 +46,8 @@ namespace MyHorizons.Data
             save.WriteU16(offset, ItemId);
             save.WriteU8(offset + 2, Flags0);
             save.WriteU8(offset + 3, Flags1);
-            save.WriteU8(offset + 4, Flags3);
-            save.WriteU8(offset + 5, Flags2);
+            save.WriteU8(offset + 4, Flags2);
+            save.WriteU8(offset + 5, Flags3);
             save.WriteU16(offset + 6, UseCount);
         }
 
