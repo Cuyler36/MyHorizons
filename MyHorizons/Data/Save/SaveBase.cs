@@ -180,6 +180,12 @@ namespace MyHorizons.Data.Save
             return arr;
         }
 
+        public unsafe T ReadStruct<T>(int offset) where T : struct
+        {
+            fixed (byte* p = _rawData)
+                return Unsafe.ReadUnaligned<T>((void*)(p + offset));
+        }
+
         public unsafe void WriteS8(int offset, sbyte value) => _rawData[offset] = (byte)value;
 
         public unsafe void WriteU8(int offset, byte value) => _rawData[offset] = value;
@@ -248,6 +254,13 @@ namespace MyHorizons.Data.Save
             }
         }
 
+        public void WriteString(int offset, string value, int maxSize)
+        {
+            Array.Clear(_rawData, offset, maxSize * 2);
+            var bytes = Encoding.Unicode.GetBytes(value);
+            Array.Copy(bytes, 0, _rawData, offset, bytes.Length);
+        }
+
         public unsafe void WriteArray<T>(int offset, T[] values)
         {
             var typeSize = Marshal.SizeOf<T>();
@@ -260,11 +273,10 @@ namespace MyHorizons.Data.Save
             }
         }
 
-        public void WriteString(int offset, string value, int maxSize)
+        public unsafe void WriteStruct<T>(int offset, in T structure) where T : struct
         {
-            Array.Clear(_rawData, offset, maxSize * 2);
-            var bytes = Encoding.Unicode.GetBytes(value);
-            Array.Copy(bytes, 0, _rawData, offset, bytes.Length);
+            fixed (byte* p = _rawData)
+                Unsafe.WriteUnaligned((void*)(p + offset), structure);
         }
     }
 }

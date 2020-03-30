@@ -10,6 +10,7 @@ using Avalonia.Platform;
 using MyHorizons.Avalonia.Controls;
 using MyHorizons.Avalonia.Utility;
 using MyHorizons.Data;
+using MyHorizons.Data.PlayerData;
 using MyHorizons.Data.Save;
 using MyHorizons.Utility;
 using System;
@@ -182,7 +183,7 @@ namespace MyHorizons.Avalonia
             this.FindControl<TextBox>("PlayerNameBox").GetObservable(TextBox.TextProperty).Subscribe(text =>
             {
                 if (!playerLoading && selectedPlayer != null)
-                    selectedPlayer.Name = text;
+                    selectedPlayer.SetName(text);
             });
             this.FindControl<NumericUpDown>("WalletBox").ValueChanged += (o, e) =>
             {
@@ -271,7 +272,7 @@ namespace MyHorizons.Avalonia
                     Content = img
                 };
                 button.Click += (o, e) => LoadPlayer(player);
-                ToolTip.SetTip(img, playerSave.Player.Name);
+                ToolTip.SetTip(img, playerSave.Player.GetName());
                 contentHolder.Children.Add(button);
             }
         }
@@ -282,7 +283,7 @@ namespace MyHorizons.Avalonia
             {
                 playerLoading = true;
                 selectedPlayer = player;
-                this.FindControl<TextBox>("PlayerNameBox").Text = player.Name;
+                this.FindControl<TextBox>("PlayerNameBox").Text = player.GetName();
                 this.FindControl<NumericUpDown>("WalletBox").Value = player.Wallet.Decrypt();
                 this.FindControl<NumericUpDown>("BankBox").Value = player.Bank.Decrypt();
                 this.FindControl<NumericUpDown>("NookMilesBox").Value = player.NookMiles.Decrypt();

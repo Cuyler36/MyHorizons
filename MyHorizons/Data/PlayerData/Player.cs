@@ -1,16 +1,13 @@
 ﻿using MyHorizons.Data.Save;
 using MyHorizons.Encryption;
 
-namespace MyHorizons.Data
+namespace MyHorizons.Data.PlayerData
 {
     public sealed class Player
     {
         public readonly int Index;
 
-        public string Name;
-        public uint PlayerUID;
-        public string TownName;
-        public uint TownUID;
+        public PersonalID PersonalId;
         public ItemCollection Pockets; // TODO: Detect pockets size
         public ItemCollection Storage; // TODO: Same as pockets
         public EncryptedInt32 Wallet;
@@ -54,12 +51,8 @@ namespace MyHorizons.Data
             _personalFile = personalSave;
             var offsets = GetOffsetsFromRevision();
             Index = idx;
-            // TODO: Convert this to a "PersonalID" struct
-            TownUID = personalSave.ReadU32(offsets.PersonalId);
-            TownName = personalSave.ReadString(offsets.PersonalId + 4, 10);
-            PlayerUID = personalSave.ReadU32(offsets.PersonalId + 0x1C);
-            Name = personalSave.ReadString(offsets.PersonalId + 0x20, 10);
 
+            PersonalId = new PersonalID(personalSave, offsets.PersonalId);
             Wallet = new EncryptedInt32(personalSave, offsets.Wallet);
             Bank = new EncryptedInt32(personalSave, offsets.Bank);
             NookMiles = new EncryptedInt32(personalSave, offsets.NookMiles);
@@ -83,11 +76,7 @@ namespace MyHorizons.Data
         public void Save()
         {
             var offsets = GetOffsetsFromRevision();
-            _personalFile.WriteU32(offsets.PersonalId, TownUID);
-            _personalFile.WriteString(offsets.PersonalId + 4, TownName, 10);
-            _personalFile.WriteU32(offsets.PersonalId + 0x1C, PlayerUID);
-            _personalFile.WriteString(offsets.PersonalId + 0x20, Name, 10);
-
+            _personalFile.WriteStruct(offsets.PersonalId, PersonalId);
             Wallet.Write(_personalFile, offsets.Wallet);
             Bank.Write(_personalFile, offsets.Bank);
             NookMiles.Write(_personalFile, offsets.NookMiles);
@@ -102,6 +91,9 @@ namespace MyHorizons.Data
                 Storage[i].Save(_personalFile, offsets.Storage + i * 8);
         }
 
+        public string GetName() => PersonalId.GetName();
+        public void SetName(in string newName) => PersonalId.SetName(newName);
+
         public byte[] GetPhotoData()
         {
             var offset = GetOffsetsFromRevision().Photo;
@@ -113,5 +105,7 @@ namespace MyHorizons.Data
                 size++;
             return _personalFile.ReadArray<byte>(offset, size + 2);
         }
+
+        public override string ToString() => GetName();
     }
 }

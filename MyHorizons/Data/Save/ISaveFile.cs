@@ -24,6 +24,7 @@ namespace MyHorizons.Data.Save
         double ReadF64(int offset);
         string ReadString(int offset, int size);
         T[] ReadArray<T>(int offset, int count);
+        T ReadStruct<T>(int offset) where T : struct;
 
         // Write Helpers
         void WriteS8(int offset, sbyte value);
@@ -38,6 +39,7 @@ namespace MyHorizons.Data.Save
         void WriteF64(int offset, double value);
         void WriteString(int offset, string value, int maxSize);
         void WriteArray<T>(int offset, T[] values);
+        void WriteStruct<T>(int offset, in T structure) where T : struct;
 
     }
 }
