@@ -52,8 +52,8 @@ namespace MyHorizons.Data
 
         private static readonly Offsets[] DesignPatternOffsetsByRevision =
         {
-            new Offsets(0x1D7310, 0x2A6, 0x10, 0x3C, 0x78, 0xA4), // not entirely sure
-            new Offsets(0x1D7310, 0x2A6, 0x10, 0x3C, 0x78, 0xA4)
+            new Offsets(0x1D7310, 0x2A8, 0x10, 0x38, 0x78, 0xA5), // not entirely sure
+            new Offsets(0x1D7310, 0x2A8, 0x10, 0x38, 0x78, 0xA5)
         };
 
         private static Offsets GetOffsetsFromRevision() => DesignPatternOffsetsByRevision[MainSaveFile.Singleton().GetRevision()];
