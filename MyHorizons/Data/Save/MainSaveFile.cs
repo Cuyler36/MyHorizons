@@ -9,12 +9,12 @@ namespace MyHorizons.Data.Save
     {
         private static SaveBase _saveFile;
         private readonly List<PlayerSave> _playerSaves;
-		
+        
         public static SaveBase Singleton() => _saveFile;
 
         public int NumPlayers => _playerSaves.Count;
         public readonly Villager[] Villagers = new Villager[10];
-		public readonly DesignPattern[] DesignPatterns = new DesignPattern[50];
+        public readonly DesignPattern[] DesignPatterns = new DesignPattern[50];
 
         public MainSaveFile(in string headerPath, in string filePath)
         {
@@ -36,8 +36,8 @@ namespace MyHorizons.Data.Save
                 for (var i = 0; i < 10; i++)
                     Villagers[i] = new Villager(i);
 
-				for (var i = 0; i < 50; i++)
-					DesignPatterns[i] = new DesignPattern(i);
+                for (var i = 0; i < 50; i++)
+                    DesignPatterns[i] = new DesignPattern(i);
             }
         }
 
@@ -52,8 +52,8 @@ namespace MyHorizons.Data.Save
             foreach (var villager in Villagers)
                 villager.Save();
 
-			foreach (var pattern in DesignPatterns)
-				pattern.Save();
+            foreach (var pattern in DesignPatterns)
+                pattern.Save();
 
             if (base.Save(filePath, progress))
             {
