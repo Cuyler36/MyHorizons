@@ -5,6 +5,7 @@ namespace MyHorizons.Data.TownData.Offsets
     public abstract class MainOffsets
     {
         public abstract int Offset_Vilagers { get; }
+        public abstract int Offset_Patterns { get; }
 
         #region VILLAGERS
         public abstract int Villager_Size { get; }
@@ -18,6 +19,14 @@ namespace MyHorizons.Data.TownData.Offsets
         public virtual int Villager_CatchphraseLength { get; } = 12;
         public virtual int Villager_FurnitureCount { get; } = 16;
         public virtual int Villager_SpeciesMax { get; } = 0x23;
+        #endregion
+
+        #region PATTERNS
+        public abstract int Pattern_Size { get; }
+        public abstract int Pattern_Name { get; }
+        public abstract int Pattern_PersonalID { get; }
+        public abstract int Pattern_Palette { get; }
+        public abstract int Pattern_ImageData { get; }
         #endregion
 
         public static MainOffsets GetOffsets(int rev) =>
