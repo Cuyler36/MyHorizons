@@ -2,6 +2,6 @@
 {
     public interface IRedoable : IHistoryItem
     {
-        HistoryState Redo(HistoryState previousState);
+        HistoryState? Redo(HistoryState previousState);
     }
 }

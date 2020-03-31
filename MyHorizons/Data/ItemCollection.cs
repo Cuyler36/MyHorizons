@@ -25,7 +25,7 @@ namespace MyHorizons.Data
             return true;
         }
 
-        public HistoryState Undo(HistoryState state)
+        public HistoryState? Undo(HistoryState state)
         {
             if (state.Index < 0 || state.Index >= Count || !(state.Object is Item item))
                 return null;
@@ -34,6 +34,6 @@ namespace MyHorizons.Data
             return newState;
         }
 
-        public HistoryState Redo(HistoryState state) => Undo(state); // Same logic.
+        public HistoryState? Redo(HistoryState state) => Undo(state); // Same logic.
     }
 }

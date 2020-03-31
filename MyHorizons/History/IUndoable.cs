@@ -2,6 +2,6 @@
 {
     public interface IUndoable : IHistoryItem
     {
-        HistoryState Undo(HistoryState previousState);
+        HistoryState? Undo(HistoryState previousState);
     }
 }

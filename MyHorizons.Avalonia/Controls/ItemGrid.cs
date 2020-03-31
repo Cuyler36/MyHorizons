@@ -96,7 +96,8 @@ namespace MyHorizons.Avalonia.Controls
                 if (itemSize == value) return;
                 itemSize = value;
                 Resize(itemsPerRow * itemSize, itemsPerCol * itemSize);
-                (Background as ImageBrush).DestinationRect = new RelativeRect(0, 0, itemSize, itemSize, RelativeUnit.Absolute);
+                if (Background is ImageBrush brush)
+                    brush.DestinationRect = new RelativeRect(0, 0, itemSize, itemSize, RelativeUnit.Absolute);
             }
         }
 
@@ -161,8 +162,8 @@ namespace MyHorizons.Avalonia.Controls
             var grid = MainWindow.Singleton().FindControl<Grid>("MainContentGrid");
             var point = e.GetPosition(grid as IVisual);
 
-            if (updateText)
-                (ItemToolTip.Child as TextBlock).Text = ItemDatabaseLoader.GetNameForItem(items[currentIdx]);
+            if (updateText && ItemToolTip.Child is TextBlock block)
+                block.Text = ItemDatabaseLoader.GetNameForItem(items[currentIdx]);
 
             ItemToolTip.Margin = new Thickness(point.X + 15, point.Y + 10, 0, 0);
             if (ItemToolTip.Parent == null)
@@ -171,11 +172,11 @@ namespace MyHorizons.Avalonia.Controls
 
         private void HideTip()
         {
-            if (ItemToolTip.Parent != null)
-                (ItemToolTip.Parent as Grid).Children.Remove(ItemToolTip);
+            if (ItemToolTip.Parent != null && ItemToolTip.Parent is Grid grid)
+                grid.Children.Remove(ItemToolTip);
         }
 
-        private void ItemGrid_PointerReleased(object sender, PointerReleasedEventArgs e)
+        private void ItemGrid_PointerReleased(object? sender, PointerReleasedEventArgs e)
         {
             switch (e.GetCurrentPoint(this).Properties.PointerUpdateKind)
             {
@@ -191,7 +192,7 @@ namespace MyHorizons.Avalonia.Controls
             }
         }
 
-        private void ItemGrid_PointerPressed(object sender, PointerPressedEventArgs e)
+        private void ItemGrid_PointerPressed(object? sender, PointerPressedEventArgs e)
         {
             switch (e.GetCurrentPoint(this).Properties.PointerUpdateKind)
             {
@@ -214,7 +215,7 @@ namespace MyHorizons.Avalonia.Controls
             }
         }
 
-        private void ItemGrid_PointerLeave(object sender, PointerEventArgs e)
+        private void ItemGrid_PointerLeave(object? sender, PointerEventArgs e)
         {
             if (x == -1 || y == -1) return;
             x = y = currentIdx = -1;
@@ -222,7 +223,7 @@ namespace MyHorizons.Avalonia.Controls
             InvalidateVisual();
         }
 
-        private void ItemGrid_PointerMoved(object sender, PointerEventArgs e)
+        private void ItemGrid_PointerMoved(object? sender, PointerEventArgs e)
         {
             var point = e.GetPosition(sender as IVisual);
             if (point.X < 0 || point.Y < 0 || point.X >= Width || point.Y >= Height)

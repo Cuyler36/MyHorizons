@@ -8,7 +8,7 @@ namespace MyHorizons.Utility
 {
     public static class FileUtils
     {
-        private static string _resourcesFolderPath;
+        private static string? _resourcesFolderPath;
 
         public static string GetResourcesPath()
             => _resourcesFolderPath ?? (_resourcesFolderPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Resources"));
@@ -16,16 +16,16 @@ namespace MyHorizons.Utility
 
     public static class ItemDatabaseLoader
     {
-        public static Dictionary<ushort, string> ItemNameDatabase;
+        public static Dictionary<ushort, string>? ItemNameDatabase;
 
         public static string GetNameForItem(in Item item)
         {
-            if (ItemNameDatabase.ContainsKey(item.ItemId))
+            if (ItemNameDatabase != null && ItemNameDatabase.ContainsKey(item.ItemId))
                 return ItemNameDatabase[item.ItemId];
             return $"Unknown Item - [0x{item.ItemId}]";
         }
 
-        public static Dictionary<ushort, string> LoadItemDatabase(uint revision)
+        public static Dictionary<ushort, string>? LoadItemDatabase(uint revision)
         {
             var resourcesDir = FileUtils.GetResourcesPath();
             if (Directory.Exists(resourcesDir))
@@ -57,7 +57,7 @@ namespace MyHorizons.Utility
     public static class VillagerDatabaseLoader
     {
         public const int NUM_ANIMAL_SPECIES = 35;
-        public static Dictionary<byte, string>[] LoadVillagerDatabase(uint revision)
+        public static Dictionary<byte, string>[]? LoadVillagerDatabase(uint revision)
         {
             var resourcesDir = FileUtils.GetResourcesPath();
             if (Directory.Exists(resourcesDir))

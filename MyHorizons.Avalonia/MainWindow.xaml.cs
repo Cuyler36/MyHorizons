@@ -498,7 +498,8 @@ namespace MyHorizons.Avalonia
                         // Load Item List
                         itemDatabase = ItemDatabaseLoader.LoadItemDatabase((uint)saveFile.GetRevision());
                         var itemsBox = this.FindControl<ComboBox>("ItemSelectBox");
-                        itemsBox.Items = itemDatabase.Values;
+                        if (itemDatabase != null)
+                            itemsBox.Items = itemDatabase.Values;
 
                         // Set up connections
                         SetupUniversalConnections();

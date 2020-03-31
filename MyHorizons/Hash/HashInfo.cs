@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace MyHorizons.Hash
@@ -147,7 +148,7 @@ namespace MyHorizons.Hash
 
         private readonly Dictionary<uint, HashRegionSet> _internalHashDict = new Dictionary<uint, HashRegionSet>();
 
-        public HashRegionSet this[uint index]
+        public HashRegionSet? this[uint index]
         {
             get
             {
@@ -157,6 +158,8 @@ namespace MyHorizons.Hash
             }
             set
             {
+                if (value == null)
+                    throw new ArgumentNullException(nameof(value), "Value cannot be null!");
                 if (_internalHashDict.ContainsKey(index))
                     _internalHashDict[index] = value;
                 else
