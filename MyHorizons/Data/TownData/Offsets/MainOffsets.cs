@@ -5,6 +5,7 @@ namespace MyHorizons.Data.TownData.Offsets
     public abstract class MainOffsets
     {
         public abstract int Offset_Vilagers { get; }
+        public abstract int Offset_TownId { get; }
         public abstract int Offset_Patterns { get; }
 
         #region VILLAGERS

@@ -13,10 +13,7 @@ namespace MyHorizons.Data.Save
 
         public readonly Player Player;
 
-        private PersonalSaveFile _personalSave;
-        public readonly byte[] _photo_studio_islandData;
-        public readonly byte[] _postboxData;
-        public readonly byte[] _profileData;
+        private PersonalSaveFile? _personalSave;
 
         private readonly SaveRevision _revision;
 
@@ -30,21 +27,36 @@ namespace MyHorizons.Data.Save
                     Index = idx;
                     _revision = revision;
                     ProcessFolder(folder);
+                    if (_personalSave == null)
+                        throw new NullReferenceException("Personal Save File could not be loaded!");
+                    
                     Player = new Player(idx, _personalSave);
                     // TODO: Valid should only be set to true when all player save files are found and loaded correctly.
                     Valid = true;
                 }
+                else
+                {
+                    throw new ArgumentOutOfRangeException("The player isn't a valid inde (0-7)!");
+                }
+            }
+            else
+            {
+                throw new DirectoryNotFoundException("The player directory doesn't exist!");
             }
         }
 
-        public PersonalSaveFile GetPersonalSave() => _personalSave;
+        public PersonalSaveFile GetPersonalSave() => _personalSave ?? throw new NullReferenceException("PersonalSaveFile does not exist!");
 
         public bool Save(in string folderPath)
         {
-            if (!Directory.Exists(folderPath))
-                Directory.CreateDirectory(folderPath);
-            Player.Save();
-            return _personalSave.Save(null);
+            if (_personalSave != null)
+            {
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+                Player.Save();
+                return _personalSave.Save(null);
+            }
+            return false;
         }
 
         private void ProcessFolder(in string folder)

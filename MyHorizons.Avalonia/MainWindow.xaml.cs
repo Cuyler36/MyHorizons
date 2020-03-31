@@ -23,11 +23,11 @@ namespace MyHorizons.Avalonia
 {
     public class MainWindow : Window
     {
-        private static MainWindow _singleton;
+        private static MainWindow? _singleton;
 
-        private MainSaveFile saveFile;
-        private Player selectedPlayer;
-        private Villager selectedVillager;
+        private MainSaveFile? saveFile;
+        private Player? selectedPlayer;
+        private Villager? selectedVillager;
 
         private Grid TitleBarGrid;
 
@@ -42,16 +42,16 @@ namespace MyHorizons.Avalonia
 
         private bool playerLoading = false;
         private bool settingItem = false;
-        private Dictionary<ushort, string> itemDatabase;
-        private Dictionary<byte, string>[] villagerDatabase;
+        private Dictionary<ushort, string>? itemDatabase;
+        private Dictionary<byte, string>[]? villagerDatabase;
 
         private ItemGrid playerPocketsGrid;
         private ItemGrid playerStorageGrid;
         private ItemGrid villagerFurnitureGrid;
 
-        public static Item SelectedItem;
+        public static Item SelectedItem = Item.NO_ITEM.Clone();
 
-        public static MainWindow Singleton() => _singleton;
+        public static MainWindow Singleton() => _singleton ?? throw new Exception("MainWindow singleton not constructed!");
 
         public MainWindow()
         {
@@ -59,12 +59,7 @@ namespace MyHorizons.Avalonia
 #if DEBUG
             this.AttachDevTools();
 #endif
-            _singleton = this;
-        }
 
-        private void InitializeComponent()
-        {
-            AvaloniaXamlLoader.Load(this);
             TitleBarGrid = this.FindControl<Grid>("TitleBarGrid");
             CloseGrid = this.FindControl<Grid>("CloseGrid");
             CloseButton = this.FindControl<Button>("CloseButton");
@@ -121,12 +116,18 @@ namespace MyHorizons.Avalonia
             openBtn.IsVisible = true;
             this.FindControl<TabControl>("EditorTabControl").IsVisible = false;
             this.FindControl<Grid>("BottomBar").IsVisible = false;
-            
+
+            _singleton = this;
+        }
+
+        private void InitializeComponent()
+        {
+            AvaloniaXamlLoader.Load(this);
         }
 
         public void SetItem(Item item)
         {
-            if (SelectedItem != item)
+            if (SelectedItem != item && itemDatabase != null)
             {
                 SelectedItem = item.Clone();
                 for (var i = 0; i < itemDatabase.Keys.Count; i++)
@@ -152,7 +153,7 @@ namespace MyHorizons.Avalonia
             var selectBox = this.FindControl<ComboBox>("ItemSelectBox");
             selectBox.SelectionChanged += (o, e) =>
             {
-                if (!settingItem && selectBox.SelectedIndex > -1)
+                if (!settingItem && selectBox.SelectedIndex > -1 && itemDatabase != null)
                     SelectedItem = new Item(itemDatabase.Keys.ElementAt(selectBox.SelectedIndex),
                         SelectedItem.Flags0, SelectedItem.Flags1, SelectedItem.Flags2, SelectedItem.Flags3, SelectedItem.UseCount);
             };
@@ -255,26 +256,29 @@ namespace MyHorizons.Avalonia
 
         private void AddPlayerImages()
         {
-            var contentHolder = this.FindControl<StackPanel>("PlayerSelectorPanel");
-            foreach (var playerSave in saveFile.GetPlayerSaves())
+            if (saveFile != null)
             {
-                var player = playerSave.Player;
-                var img = new Image
+                var contentHolder = this.FindControl<StackPanel>("PlayerSelectorPanel");
+                foreach (var playerSave in saveFile.GetPlayerSaves())
                 {
-                    Width = 120,
-                    Height = 120,
-                    Source = LoadPlayerPhoto(playerSave.Index),
-                    Cursor = new Cursor(StandardCursorType.Hand)
-                };
-                var button = new Button
-                {
-                    Background = Brushes.Transparent,
-                    BorderThickness = new Thickness(0),
-                    Content = img
-                };
-                button.Click += (o, e) => LoadPlayer(player);
-                ToolTip.SetTip(img, playerSave.Player.GetName());
-                contentHolder.Children.Add(button);
+                    var player = playerSave.Player;
+                    var img = new Image
+                    {
+                        Width = 120,
+                        Height = 120,
+                        Source = LoadPlayerPhoto(playerSave.Index),
+                        Cursor = new Cursor(StandardCursorType.Hand)
+                    };
+                    var button = new Button
+                    {
+                        Background = Brushes.Transparent,
+                        BorderThickness = new Thickness(0),
+                        Content = img
+                    };
+                    button.Click += (o, e) => LoadPlayer(player);
+                    ToolTip.SetTip(img, playerSave.Player.GetName());
+                    contentHolder.Children.Add(button);
+                }
             }
         }
 
@@ -299,8 +303,8 @@ namespace MyHorizons.Avalonia
             if (villager != null && villager != selectedVillager)
             {
                 var villagerPanel = this.FindControl<StackPanel>("VillagerPanel");
-                if (selectedVillager != null)
-                    (villagerPanel.Children[selectedVillager.Index] as Button).Background = Brushes.Transparent;
+                if (selectedVillager != null && villagerPanel.Children[selectedVillager.Index] is Button currentButton)
+                    currentButton.Background = Brushes.Transparent;
 
                 selectedVillager = null;
                 if (villagerDatabase != null)
@@ -311,7 +315,8 @@ namespace MyHorizons.Avalonia
                 this.FindControl<ComboBox>("PersonalityBox").SelectedIndex = villager.Personality;
                 this.FindControl<TextBox>("CatchphraseBox").Text = villager.Catchphrase;
                 villagerFurnitureGrid.Items = villager.Furniture;
-                (villagerPanel.Children[villager.Index] as Button).Background = Brushes.LightGray;
+                if (villagerPanel.Children[villager.Index] is Button btn)
+                    btn.Background = Brushes.LightGray;
                 selectedVillager = villager;
             }
         }
@@ -353,10 +358,12 @@ namespace MyHorizons.Avalonia
 
                             // Update image
                             var panel = this.FindControl<StackPanel>("VillagerPanel");
-                            var img = (panel.Children[selectedVillager.Index] as Button).Content as Image;
-                            img.Source?.Dispose();
-                            img.Source = ImageLoadingUtil.LoadImageForVillager(selectedVillager);
-                            ToolTip.SetTip(img, villagerDatabase[species][variant]);
+                            if (panel.Children[selectedVillager.Index] is Button btn && btn.Content is Image img)
+                            {
+                                img.Source?.Dispose();
+                                img.Source = ImageLoadingUtil.LoadImageForVillager(selectedVillager);
+                                ToolTip.SetTip(img, villagerDatabase[species][variant]);
+                            }
                             return;
                         }
                     }
@@ -367,28 +374,31 @@ namespace MyHorizons.Avalonia
 
         private void LoadVillagers()
         {
-            var villagerControl = this.FindControl<StackPanel>("VillagerPanel");
-            for (var i = 0; i < 10; i++)
+            if (saveFile != null && saveFile.Town != null)
             {
-                var villager = saveFile.Villagers[i];
-                var img = new Image
+                var villagerControl = this.FindControl<StackPanel>("VillagerPanel");
+                for (var i = 0; i < 10; i++)
                 {
-                    Width = 64,
-                    Height = 64,
-                    Source = ImageLoadingUtil.LoadImageForVillager(villager),
-                    Cursor = new Cursor(StandardCursorType.Hand)
-                };
-                var button = new Button
-                {
-                    Background = Brushes.Transparent,
-                    BorderThickness = new Thickness(0),
-                    Name = $"Villager{i}",
-                    Content = img
-                };
-                button.Click += (o, e) => LoadVillager(villager);
-                if (villagerDatabase != null)
-                    ToolTip.SetTip(img, villagerDatabase[villager.Species][villager.VariantIdx]);
-                villagerControl.Children.Add(button);
+                    var villager = saveFile.Town.GetVillager(i);
+                    var img = new Image
+                    {
+                        Width = 64,
+                        Height = 64,
+                        Source = ImageLoadingUtil.LoadImageForVillager(villager),
+                        Cursor = new Cursor(StandardCursorType.Hand)
+                    };
+                    var button = new Button
+                    {
+                        Background = Brushes.Transparent,
+                        BorderThickness = new Thickness(0),
+                        Name = $"Villager{i}",
+                        Content = img
+                    };
+                    button.Click += (o, e) => LoadVillager(villager);
+                    if (villagerDatabase != null)
+                        ToolTip.SetTip(img, villagerDatabase[villager.Species][villager.VariantIdx]);
+                    villagerControl.Children.Add(button);
+                }
             }
         }
 
@@ -405,7 +415,7 @@ namespace MyHorizons.Avalonia
             this.FindControl<ComboBox>("PersonalityBox").Items = Villager.Personalities;
         }
 
-        private async void OpenFileButton_Click(object o, RoutedEventArgs e)
+        private async void OpenFileButton_Click(object? o, RoutedEventArgs e)
         {
             var openFileDialog = new OpenFileDialog
             {
@@ -435,34 +445,45 @@ namespace MyHorizons.Avalonia
             {
                 // Determine whether they selected the header file or the main file
                 var file = files[0];
-                string headerPath;
-                string filePath;
-                if (file.EndsWith("Header.dat"))
+                string? headerPath = null;
+                string? filePath = null;
+                string? directory = Path.GetDirectoryName(file);
+                if (directory != null)
                 {
-                    headerPath = file;
-                    filePath = Path.Combine(Path.GetDirectoryName(file), $"{Path.GetFileNameWithoutExtension(file).Replace("Header", "")}.dat");
+                    if (file.EndsWith("Header.dat"))
+                    {
+                        headerPath = file;
+                        filePath = Path.Combine(directory, $"{Path.GetFileNameWithoutExtension(file).Replace("Header", "")}.dat");
+                    }
+                    else
+                    {
+                        filePath = file;
+                        headerPath = Path.Combine(directory, $"{Path.GetFileNameWithoutExtension(file)}Header.dat");
+                    }
                 }
                 else
                 {
-                    filePath = file;
-                    headerPath = Path.Combine(Path.GetDirectoryName(file), $"{Path.GetFileNameWithoutExtension(file)}Header.dat");
+                    return;
                 }
 
                 if (File.Exists(headerPath) && File.Exists(filePath))
                 {
                     saveFile = new MainSaveFile(headerPath, filePath);
-                    if (saveFile.Loaded)
+                    if (saveFile.Loaded && saveFile.Town != null)
                     {
                         villagerDatabase = VillagerDatabaseLoader.LoadVillagerDatabase((uint)saveFile.GetRevision());
                         LoadVillagerComboBoxItems();
-                        (o as Button).IsVisible = false;
+
+                        if (o is Button btn)
+                            btn.IsVisible = false;
+
                         this.FindControl<TabControl>("EditorTabControl").IsVisible = true;
                         this.FindControl<Grid>("BottomBar").IsVisible = true;
                         this.FindControl<TextBlock>("SaveInfoText").Text = $"Save File for Version {saveFile.GetRevisionString()} Loaded";
                         AddPlayerImages();
                         LoadPlayer(saveFile.GetPlayerSaves()[0].Player);
                         LoadVillagers();
-                        LoadVillager(saveFile.Villagers[0]);
+                        LoadVillager(saveFile.Town.GetVillager(0));
 
                         // Load Item List
                         itemDatabase = ItemDatabaseLoader.LoadItemDatabase((uint)saveFile.GetRevision());
@@ -484,35 +505,39 @@ namespace MyHorizons.Avalonia
             }
         }
 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        private void SaveButton_Click(object? sender, RoutedEventArgs e)
         {
             if (saveFile != null)
                 saveFile.Save(null);
         }
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e) => Close();
+        private void CloseButton_Click(object? sender, RoutedEventArgs e) => Close();
 
-        private void ResizeButton_Click(object sender, RoutedEventArgs e)
+        private void ResizeButton_Click(object? sender, RoutedEventArgs e)
             => WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
 
-        private void MinimizeButton_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+        private void MinimizeButton_Click(object? sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
 
-        private void CloseGrid_PointerEnter(object sender, PointerEventArgs e) => CloseGrid.Background = new SolidColorBrush(0xFF648589);
+        private void CloseGrid_PointerEnter(object? sender, PointerEventArgs e) => CloseGrid.Background = new SolidColorBrush(0xFF648589);
 
-        private void CloseGrid_PointerLeave(object sender, PointerEventArgs e) => CloseGrid.Background = Brushes.Transparent;
+        private void CloseGrid_PointerLeave(object? sender, PointerEventArgs e) => CloseGrid.Background = Brushes.Transparent;
 
-        private void ResizeGrid_PointerEnter(object sender, PointerEventArgs e) => ResizeGrid.Background = new SolidColorBrush(0xFF648589);
+        private void ResizeGrid_PointerEnter(object? sender, PointerEventArgs e) => ResizeGrid.Background = new SolidColorBrush(0xFF648589);
 
-        private void ResizeGrid_PointerLeave(object sender, PointerEventArgs e) => ResizeGrid.Background = Brushes.Transparent;
+        private void ResizeGrid_PointerLeave(object? sender, PointerEventArgs e) => ResizeGrid.Background = Brushes.Transparent;
 
-        private void MinimizeButton_PointerEnter(object sender, PointerEventArgs e) => MinimizeGrid.Background = new SolidColorBrush(0xFF648589);
+        private void MinimizeButton_PointerEnter(object? sender, PointerEventArgs e) => MinimizeGrid.Background = new SolidColorBrush(0xFF648589);
 
-        private void MinimizeButton_PointerLeave(object sender, PointerEventArgs e) => MinimizeGrid.Background = Brushes.Transparent;
+        private void MinimizeButton_PointerLeave(object? sender, PointerEventArgs e) => MinimizeGrid.Background = Brushes.Transparent;
 
-        private Bitmap LoadPlayerPhoto(int index)
+        private Bitmap? LoadPlayerPhoto(int index)
         {
-            using var memStream = new MemoryStream(saveFile.GetPlayer(index).GetPhotoData());
-            return new Bitmap(memStream);
+            if (saveFile != null)
+            {
+                using var memStream = new MemoryStream(saveFile.GetPlayer(index).GetPhotoData());
+                return new Bitmap(memStream);
+            }
+            return null;
         }
     }
 }

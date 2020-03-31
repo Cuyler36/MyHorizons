@@ -14,13 +14,12 @@ namespace MyHorizons.Data.Save
         public static MainSaveFile Singleton() => _saveFile ?? throw new NullReferenceException("Main save file was null!");
 
         public int NumPlayers => _playerSaves.Count;
-        public readonly Villager[] Villagers = new Villager[10];
-        public readonly DesignPattern[] DesignPatterns = new DesignPattern[50];
+        public readonly Town? Town;
 
         public MainSaveFile(in string headerPath, in string filePath)
         {
             // TODO: IProgress<float> needs to be passed to load
-            if (AcceptsFile(headerPath, filePath) && Load(headerPath, filePath, null))
+            if (AcceptsFile(headerPath, filePath) && Load(headerPath, filePath, null) && _revision != null)
             {
                 _saveFile = this;
 
@@ -32,12 +31,7 @@ namespace MyHorizons.Data.Save
                         _playerSaves.Add(playerSave);
                 }
 
-                // Load villagers
-                for (var i = 0; i < 10; i++)
-                    Villagers[i] = new Villager(i);
-
-                for (var i = 0; i < 50; i++)
-                    DesignPatterns[i] = new DesignPattern(i);
+                Town = new Town();
             }
         }
 
@@ -46,14 +40,9 @@ namespace MyHorizons.Data.Save
             return base.AcceptsFile(headerPath, filePath) && new FileInfo(filePath).Length == RevisionManager.GetSaveFileSizes(_revision)?.Size_main;
         }
 
-        public override bool Save(in string filePath, IProgress<float>? progress)
+        public override bool Save(in string? filePath, IProgress<float>? progress)
         {
-            // Save Villagers
-            foreach (var villager in Villagers)
-                villager.Save();
-
-            foreach (var pattern in DesignPatterns)
-                pattern.Save();
+            Town?.Save();
 
             if (base.Save(filePath, progress))
             {

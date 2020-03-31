@@ -27,6 +27,8 @@ namespace MyHorizons.Data.TownData
             {
                 this = MainSaveFile.Singleton().ReadStruct<DesignColor>(offset);
             }
+
+            public uint ToArgb() => 0xFF000000 | ((uint)R << 16) | ((uint)G << 8) | B;
         }
 
         public DesignPattern(int idx)
@@ -56,6 +58,14 @@ namespace MyHorizons.Data.TownData
                 return (byte) (Pixels[(x / 2) + y * 16] & 0x0F);
             else
                 return (byte) ((Pixels[(x / 2) + y * 16] & 0xF0) >> 4);
+        }
+
+        public uint GetPixelArgb(int x, int y)
+        {
+            var paletteIdx = GetPixel(x, y);
+            if (paletteIdx == 15)
+                return 0; // Transparent
+            return Palette[paletteIdx].ToArgb();
         }
 
         public void SetPixel(int x, int y, byte paletteColorIndex)

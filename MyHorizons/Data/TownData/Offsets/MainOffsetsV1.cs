@@ -3,6 +3,7 @@
     public sealed class MainOffsetsV1 : MainOffsets
     {
         public override int Offset_Vilagers => 0x120;
+        public override int Offset_TownId => 0x1D72F0;
         public override int Offset_Patterns => 0x1D7310;
 
         public override int Villager_Size => 0x12AB0;
