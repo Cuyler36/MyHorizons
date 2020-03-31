@@ -45,9 +45,9 @@ namespace MyHorizons.Avalonia
         private Dictionary<ushort, string>? itemDatabase;
         private Dictionary<byte, string>[]? villagerDatabase;
 
-        private ItemGrid playerPocketsGrid;
-        private ItemGrid playerStorageGrid;
-        private ItemGrid villagerFurnitureGrid;
+        private readonly ItemGrid playerPocketsGrid;
+        private readonly ItemGrid playerStorageGrid;
+        private readonly ItemGrid villagerFurnitureGrid;
 
         public static Item SelectedItem = Item.NO_ITEM.Clone();
 
@@ -113,6 +113,8 @@ namespace MyHorizons.Avalonia
 
             this.FindControl<StackPanel>("VillagerFurniturePanel").Children.Add(villagerFurnitureGrid);
 
+            SetSelectedItemIndex();
+
             openBtn.IsVisible = true;
             this.FindControl<TabControl>("EditorTabControl").IsVisible = false;
             this.FindControl<Grid>("BottomBar").IsVisible = false;
@@ -125,26 +127,34 @@ namespace MyHorizons.Avalonia
             AvaloniaXamlLoader.Load(this);
         }
 
+        private void SetSelectedItemIndex()
+        {
+            if (itemDatabase != null)
+            {
+                for (var i = 0; i < itemDatabase.Keys.Count; i++)
+                {
+                    if (itemDatabase.Keys.ElementAt(i) == SelectedItem.ItemId)
+                    {
+                        settingItem = true;
+                        this.FindControl<ComboBox>("ItemSelectBox").SelectedIndex = i;
+                        this.FindControl<NumericUpDown>("Flag0Box").Value = SelectedItem.Flags0;
+                        this.FindControl<NumericUpDown>("Flag1Box").Value = SelectedItem.Flags1;
+                        this.FindControl<NumericUpDown>("Flag2Box").Value = SelectedItem.Flags2;
+                        this.FindControl<NumericUpDown>("Flag3Box").Value = SelectedItem.Flags3;
+                        settingItem = false;
+                        return;
+                    }
+                }
+            }
+            this.FindControl<ComboBox>("ItemSelectBox").SelectedIndex = -1;
+        }
+
         public void SetItem(Item item)
         {
             if (SelectedItem != item && itemDatabase != null)
             {
                 SelectedItem = item.Clone();
-                for (var i = 0; i < itemDatabase.Keys.Count; i++)
-                {
-                    if (itemDatabase.Keys.ElementAt(i) == item.ItemId)
-                    {
-                        settingItem = true;
-                        this.FindControl<ComboBox>("ItemSelectBox").SelectedIndex = i;
-                        this.FindControl<NumericUpDown>("Flag0Box").Value = item.Flags0;
-                        this.FindControl<NumericUpDown>("Flag1Box").Value = item.Flags1;
-                        this.FindControl<NumericUpDown>("Flag2Box").Value = item.Flags2;
-                        this.FindControl<NumericUpDown>("Flag3Box").Value = item.Flags3;
-                        settingItem = false;
-                        return;
-                    }
-                }
-                this.FindControl<ComboBox>("ItemSelectBox").SelectedIndex = -1;
+                SetSelectedItemIndex();
             }
         }
 
@@ -494,8 +504,6 @@ namespace MyHorizons.Avalonia
                         SetupUniversalConnections();
                         SetupPlayerTabConnections();
                         SetupVillagerTabConnections();
-
-                        SetItem(Item.NO_ITEM);
                     }
                     else
                     {

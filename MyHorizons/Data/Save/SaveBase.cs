@@ -12,7 +12,7 @@ namespace MyHorizons.Data.Save
     {
         protected const int HEADER_FILE_SIZE = 0x300;
 
-        protected byte[] _rawData = new byte[0];
+        protected byte[] _rawData = Array.Empty<byte>();
         protected string? _filePath;
         protected SaveRevision? _revision = null;
 
