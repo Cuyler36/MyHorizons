@@ -12,6 +12,7 @@ namespace MyHorizons.Data.TownData
         public TownID TownId;
         public Villager[] Villagers = new Villager[10];
         public DesignPattern[] Patterns = new DesignPattern[50];
+        public Building[] Buildings = new Building[46];
 
         public Town()
         {
@@ -28,6 +29,10 @@ namespace MyHorizons.Data.TownData
             // Load Patterns
             for (var i = 0; i < 50; i++)
                 Patterns[i] = new DesignPattern(i);
+
+            // Load Buildings
+            for (var i = 0; i < 46; i++)
+                Buildings[i] = new Building(i);
         }
 
         public string GetName() => TownId.GetName();

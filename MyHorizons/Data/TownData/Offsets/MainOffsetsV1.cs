@@ -5,6 +5,7 @@
         public override int Offset_Vilagers => 0x120;
         public override int Offset_TownId => 0x1D72F0;
         public override int Offset_Patterns => 0x1D7310;
+        public override int Offset_Buildings => 0x2D0F1C;
 
         public override int Villager_Size => 0x12AB0;
         public override int Villager_Species => 0x00;
