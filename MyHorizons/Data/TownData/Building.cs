@@ -11,7 +11,8 @@ namespace MyHorizons.Data.TownData
         public ushort Id;
         public ushort CoordinateX;
         public ushort CoordinateY;
-        public fixed byte Unknown[14];
+        public ushort CoordinateZ;
+        public fixed byte Unknown[12];
 
         public Building(int index)
         {
@@ -20,6 +21,15 @@ namespace MyHorizons.Data.TownData
             if (index >= offsets.Building_Count)
                 throw new IndexOutOfRangeException("Index was greater than the number of building slots!");
             this = save.ReadStruct<Building>(offsets.Offset_Buildings + index * 0x14);
+        }
+
+        public void Save(int index)
+        {
+            var save = MainSaveFile.Singleton();
+            var offsets = MainOffsets.GetOffsets(save.GetRevision());
+            if (index >= offsets.Building_Count)
+                throw new IndexOutOfRangeException("Index was greater than the number of building slots!");
+            save.WriteStruct(offsets.Offset_Buildings + index * 0x14, this);
         }
     }
 }
