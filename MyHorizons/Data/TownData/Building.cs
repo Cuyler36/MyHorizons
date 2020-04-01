@@ -11,7 +11,7 @@ namespace MyHorizons.Data.TownData
         public ushort Id;
         public ushort CoordinateX;
         public ushort CoordinateY;
-        public ushort CoordinateZ;
+        public ushort Rotation;
         public fixed byte Unknown[12];
 
         public Building(int index)
