@@ -69,7 +69,7 @@ namespace MyHorizons.Data.Save
         // Gets the revision info for a given file data.
         public static SaveRevision? GetFileRevision(in byte[] data)
         {
-            // Revision data seems to be 0x40 in length. First one is current revision, second one is either "prev revision" or "creation revision"
+            // Revision data seems to be 0x40 in length. First one is current revision, second one is "creation revision"
             if (data.Length < 0x80) return null;
             var maj = BitConverter.ToUInt32(data, 0);
             var min = BitConverter.ToUInt32(data, 4);
