@@ -12,7 +12,7 @@ namespace MyHorizons.Data.Save
 
         public override bool AcceptsFile(in string headerPath, in string filePath)
         {
-            return base.AcceptsFile(headerPath, filePath) && new FileInfo(filePath).Length == RevisionManager.GetSaveFileSizes(_revision)?.Size_personal;
+            return base.AcceptsFile(headerPath, filePath) && new FileInfo(filePath).Length == RevisionManager.GetSaveFileSizes(_revision).Size_personal;
         }
     }
 }

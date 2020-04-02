@@ -14,7 +14,7 @@ namespace MyHorizons.Data.Save
 
         protected byte[] _rawData = Array.Empty<byte>();
         protected string? _filePath;
-        protected SaveRevision? _revision = null;
+        protected SaveRevision _revision;
 
         public bool Loaded { get; protected set; } = false;
 
@@ -28,7 +28,18 @@ namespace MyHorizons.Data.Save
                     {
                         var data = new byte[128];
                         if (reader.Read(data, 0, 128) == 128)
-                            return (_revision = RevisionManager.GetFileRevision(data)) != null;
+                        {
+                            try
+                            {
+                                _revision = RevisionManager.GetFileRevision(data);
+                            }
+                            catch
+                            {
+                                return false;
+                            }
+
+                            return true;
+                        }
                     }
                 }
             }
@@ -57,12 +68,12 @@ namespace MyHorizons.Data.Save
         {
             if (filePath == null || !Directory.Exists(Path.GetDirectoryName(filePath)))
                 throw new ArgumentException("The file path is invalid!", nameof(filePath));
-            if (_rawData != null && _revision != null)
+            if (_rawData != null)
             {
                 try
                 {
                     // Update hashes
-                    TryUpdateFileHashes(_rawData, _revision.Value);
+                    TryUpdateFileHashes(_rawData, _revision);
 
                     // Encrypt and save file + header
                     var (fileData, headerData) = SaveEncryption.Encrypt(_rawData, (uint)DateTime.Now.Ticks);
@@ -78,8 +89,8 @@ namespace MyHorizons.Data.Save
 
         public virtual bool Save(IProgress<float>? progress) => Save(_filePath, progress);
 
-        public virtual int GetRevision() => _revision?.Revision ?? -1;
-        public virtual string GetRevisionString() => _revision?.GameVersion ?? "Unknown";
+        public virtual int GetRevision() => _revision.Revision;
+        public virtual string GetRevisionString() => _revision.GameVersion;
 
         private static void TryUpdateFileHashes(in byte[] data, in SaveRevision revision)
         {

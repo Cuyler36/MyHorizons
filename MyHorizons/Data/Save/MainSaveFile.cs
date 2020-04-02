@@ -19,14 +19,14 @@ namespace MyHorizons.Data.Save
         public MainSaveFile(in string headerPath, in string filePath)
         {
             // TODO: IProgress<float> needs to be passed to load
-            if (AcceptsFile(headerPath, filePath) && Load(headerPath, filePath, null) && _revision != null)
+            if (AcceptsFile(headerPath, filePath) && Load(headerPath, filePath, null))
             {
                 _saveFile = this;
 
                 // Load player save files
                 foreach (var dir in Directory.GetDirectories(Path.GetDirectoryName(filePath)))
                 {
-                    var playerSave = new PlayerSave(dir, _revision.Value);
+                    var playerSave = new PlayerSave(dir, _revision);
                     if (playerSave.Valid)
                         _playerSaves.Add(playerSave);
                 }
@@ -37,7 +37,7 @@ namespace MyHorizons.Data.Save
 
         public override bool AcceptsFile(in string headerPath, in string filePath)
         {
-            return base.AcceptsFile(headerPath, filePath) && new FileInfo(filePath).Length == RevisionManager.GetSaveFileSizes(_revision)?.Size_main;
+            return base.AcceptsFile(headerPath, filePath) && new FileInfo(filePath).Length == RevisionManager.GetSaveFileSizes(_revision).Size_main;
         }
 
         public override bool Save(in string? filePath, IProgress<float>? progress)

@@ -1,29 +1,48 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace MyHorizons.Data.Save
 {
-    public readonly struct SaveRevision
+    public readonly struct SaveRevisionHeader
     {
         public readonly uint Major;
         public readonly uint Minor;
-        public readonly ushort HeaderFileRevision; // ?
         public readonly ushort Unk1;
-        public readonly ushort SaveFileRevision; // ?
+        public readonly ushort HeaderFileRevision; // ?
         public readonly ushort Unk2;
+        public readonly ushort SaveFileRevision; // 
+
+        public SaveRevisionHeader(uint maj, uint min, ushort u1, ushort headerR, ushort u2, ushort saveR)
+        {
+            Major = maj;
+            Minor = min;
+            Unk1 = u1;
+            HeaderFileRevision = headerR;
+            Unk2 = u2;
+            SaveFileRevision = saveR;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is SaveRevisionHeader rev && Major == rev.Major && Minor == rev.Minor && Unk1 == rev.Unk1
+                && HeaderFileRevision == rev.HeaderFileRevision && Unk2 == rev.Unk2 && SaveFileRevision == rev.SaveFileRevision;
+        }
+
+        public static bool operator ==(SaveRevisionHeader a, SaveRevisionHeader b) => a.Equals(b);
+        public static bool operator !=(SaveRevisionHeader a, SaveRevisionHeader b) => !(a == b);
+    }
+
+    public readonly struct SaveRevision
+    {
+        public readonly SaveRevisionHeader Header;
 
         public readonly string GameVersion; // Game version string
         public readonly int HashVersion; // What HashInfo values to use when updating hashes.
         public readonly int Revision; // MyHorizons Revision Id
 
-        public SaveRevision(uint maj, uint min, ushort headerR, ushort u1, ushort saveR, ushort u2, string gameVersion, int hashVer, int rev)
+        public SaveRevision(uint maj, uint min, ushort u1, ushort headerR, ushort u2, ushort saveR, string gameVersion, int hashVer, int rev)
         {
-            Major = maj;
-            Minor = min;
-            HeaderFileRevision = headerR;
-            Unk1 = u1;
-            SaveFileRevision = saveR;
-            Unk2 = u2;
-
+            Header = new SaveRevisionHeader(maj, min, u1, headerR, u2, saveR);
             GameVersion = gameVersion;
             HashVersion = hashVer;
             Revision = rev;
@@ -53,10 +72,10 @@ namespace MyHorizons.Data.Save
         // Table of known revision data for each game version
         private static readonly SaveRevision[] KnownRevisions =
         {
-            new SaveRevision(0x67, 0x6F, 0, 2, 0, 2, "1.0.0", 0, 0), // 1.0.0
-            new SaveRevision(0x6D, 0x78, 0, 2, 1, 2, "1.1.0", 1, 1), // 1.1.0
-            new SaveRevision(0x6D, 0x78, 0, 2, 2, 2, "1.1.1", 1, 1), // 1.1.1
-            new SaveRevision(0x6D, 0x78, 0, 2, 3, 2, "1.1.2", 1, 1)  // 1.1.2
+            new SaveRevision(0x67, 0x6F, 2, 0, 2, 0, "1.0.0", 0, 0), // 1.0.0
+            new SaveRevision(0x6D, 0x78, 2, 0, 2, 1, "1.1.0", 1, 1), // 1.1.0
+            new SaveRevision(0x6D, 0x78, 2, 0, 2, 2, "1.1.1", 1, 1), // 1.1.1
+            new SaveRevision(0x6D, 0x78, 2, 0, 2, 3, "1.1.2", 1, 1)  // 1.1.2
         };
 
         // Table of save file sizes by revision
@@ -67,48 +86,30 @@ namespace MyHorizons.Data.Save
         };
 
         // Gets the revision info for a given file data.
-        public static SaveRevision? GetFileRevision(in byte[] data)
+        public static unsafe SaveRevision GetFileRevision(in byte[] data)
         {
             // Revision data seems to be 0x40 in length. First one is current revision, second one is "creation revision"
-            if (data.Length < 0x80) return null;
-            var maj = BitConverter.ToUInt32(data, 0);
-            var min = BitConverter.ToUInt32(data, 4);
-            var unk1 = BitConverter.ToUInt16(data, 8);
-            var headerRev = BitConverter.ToUInt16(data, 10);
-            var unk2 = BitConverter.ToUInt16(data, 12);
-            var saveRev = BitConverter.ToUInt16(data, 14);
+            if (data.Length < 0x80) throw new ArgumentException("Data must be at least 128 bytes long to detect save revision!");
+
+            SaveRevisionHeader fileRevision;
+            fixed (byte* p = data)
+                fileRevision = Unsafe.ReadUnaligned<SaveRevisionHeader>(p);
 
             foreach (var revision in KnownRevisions)
-                if (revision.Major == maj && revision.Minor == min
-                 && revision.HeaderFileRevision == headerRev && revision.Unk1 == unk1
-                 && revision.SaveFileRevision == saveRev && revision.Unk2 == unk2)
+                if (revision.Header == fileRevision)
                     return revision;
-            return null;
+            throw new ArgumentOutOfRangeException("Couldn't find a known save revision for the supplied file!");
         }
-
-        // Checks whether the file data has a known revision.
-        public static bool IsKnownRevision(in byte[] data) => GetFileRevision(data) != null;
-
-        // Gets the version string for for the supplied data.
-        public static string GetGameVersionFromRevision(in byte[] data) => GetFileRevision(data)?.GameVersion ?? "Unknown Version";
 
         // Gets the save file sizes set for the given data.
-        public static SaveFileSizes? GetSaveFileSizes(in byte[] data) => GetSaveFileSizes(GetFileRevision(data));
+        public static SaveFileSizes GetSaveFileSizes(in byte[] data) => GetSaveFileSizes(GetFileRevision(data));
 
         // Gets the save file sizes for a given revision
-        public static SaveFileSizes? GetSaveFileSizes(SaveRevision? revision)
+        public static SaveFileSizes GetSaveFileSizes(SaveRevision revision)
         {
-            if (revision?.Revision < SizesByRevision.Length)
-                return SizesByRevision[revision.Value.Revision];
-            return null;
-        }
-
-        // Determines whether the given file data matches any known save file for a revision.
-        public static bool IsSaveSizeValid(in byte[] data)
-        {
-            var sizes = GetSaveFileSizes(data);
-            return data.Length == sizes?.Size_main || data.Length == sizes?.Size_personal || data.Length == sizes?.Size_photo_studio_island
-                || data.Length == sizes?.Size_postbox || data.Length == sizes?.Size_profile;
+            if (revision.Revision < SizesByRevision.Length)
+                return SizesByRevision[revision.Revision];
+            throw new IndexOutOfRangeException("The given save revision doesn't have a set of save file sizes associated with it!");
         }
     }
 }

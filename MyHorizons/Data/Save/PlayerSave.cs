@@ -61,23 +61,19 @@ namespace MyHorizons.Data.Save
 
         private void ProcessFolder(in string folder)
         {
-            var saveSizesNullable = RevisionManager.GetSaveFileSizes(_revision);
-            if (saveSizesNullable != null)
+            var saveSizes = RevisionManager.GetSaveFileSizes(_revision);
+            foreach (var file in Directory.GetFiles(folder, "*.dat"))
             {
-                var saveSizes = saveSizesNullable.Value;
-                foreach (var file in Directory.GetFiles(folder, "*.dat"))
+                if (!file.EndsWith("Header.dat"))
                 {
-                    if (!file.EndsWith("Header.dat"))
+                    var headerFile = Path.Combine(folder, $"{Path.GetFileNameWithoutExtension(file)}Header.dat");
+                    var fileSize = new FileInfo(file).Length;
+                    if (fileSize == saveSizes.Size_personal && File.Exists(headerFile))
                     {
-                        var headerFile = Path.Combine(folder, $"{Path.GetFileNameWithoutExtension(file)}Header.dat");
-                        var fileSize = new FileInfo(file).Length;
-                        if (fileSize == saveSizes.Size_personal && File.Exists(headerFile))
-                        {
-                            if (_personalSave == null)
-                                _personalSave = new PersonalSaveFile(headerFile, file);
-                        }
-                        // TODO: other files
+                        if (_personalSave == null)
+                            _personalSave = new PersonalSaveFile(headerFile, file);
                     }
+                    // TODO: other files
                 }
             }
         }
