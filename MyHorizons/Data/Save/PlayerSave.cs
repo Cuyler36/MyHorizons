@@ -14,6 +14,9 @@ namespace MyHorizons.Data.Save
         public readonly Player Player;
 
         private PersonalSaveFile? _personalSave;
+        private PhotoStudioIslandSaveFile? _photoStudioIslandSave;
+        private PostBoxSaveFile? _postBoxSave;
+        private ProfileSaveFile? _profileSave;
 
         private readonly SaveRevision _revision;
 
@@ -49,14 +52,19 @@ namespace MyHorizons.Data.Save
 
         public bool Save(in string folderPath)
         {
+            if (!Directory.Exists(folderPath))
+                Directory.CreateDirectory(folderPath);
+            Player.Save();
+            var success = false;
             if (_personalSave != null)
-            {
-                if (!Directory.Exists(folderPath))
-                    Directory.CreateDirectory(folderPath);
-                Player.Save();
-                return _personalSave.Save(null);
-            }
-            return false;
+                success |= !_personalSave.Save(null);
+            if (_photoStudioIslandSave != null)
+                success |= !_photoStudioIslandSave.Save(null);
+            if (_postBoxSave != null)
+                success |= !_postBoxSave.Save(null);
+            if (_profileSave != null)
+                success |= !_profileSave.Save(null);
+            return !success;
         }
 
         private void ProcessFolder(in string folder)
@@ -73,7 +81,25 @@ namespace MyHorizons.Data.Save
                         if (_personalSave == null)
                             _personalSave = new PersonalSaveFile(headerFile, file);
                     }
-                    // TODO: other files
+                    else if (fileSize == saveSizes.Size_photo_studio_island)
+                    {
+                        if (_photoStudioIslandSave == null)
+                            _photoStudioIslandSave = new PhotoStudioIslandSaveFile(headerFile, file);
+                    }
+                    else if (fileSize == saveSizes.Size_postbox)
+                    {
+                        if (_postBoxSave == null)
+                            _postBoxSave = new PostBoxSaveFile(headerFile, file);
+                    }
+                    else if (fileSize == saveSizes.Size_profile)
+                    {
+                        if (_profileSave == null)
+                            _profileSave = new ProfileSaveFile(headerFile, file);
+                    }
+                    else
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(file), "An invalid file was found in the Villager directory!"); 
+                    }
                 }
             }
         }
