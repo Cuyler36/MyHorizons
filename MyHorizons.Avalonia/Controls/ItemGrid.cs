@@ -11,23 +11,13 @@ using MyHorizons.Utility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using MyHorizons.Avalonia.Utility;
+using static MyHorizons.Avalonia.Utility.GridUtil;
 
 namespace MyHorizons.Avalonia.Controls
 {
     class ItemGrid : Canvas
     {
-        private struct Line
-        {
-            public Point Point0;
-            public Point Point1;
-
-            public Line(Point p0, Point p1)
-            {
-                Point0 = p0;
-                Point1 = p1;
-            }
-        }
-
         private static readonly Border ItemToolTip = new Border
         {
             BorderThickness = new Thickness(2),
@@ -50,7 +40,7 @@ namespace MyHorizons.Avalonia.Controls
         private int itemsPerCol = 16;
         private int itemSize = 32;
         private ItemCollection items;
-        private readonly IList<Line> lineCache;
+        private IReadOnlyList<Line> lineCache;
         private readonly IList<RectangleGeometry> itemCache;
         private int x = -1;
         private int y = -1;
@@ -63,7 +53,8 @@ namespace MyHorizons.Avalonia.Controls
         private const uint GridColor = 0xFF999999;
         private const uint HighlightColor = 0x7FFFFF00;
         private static readonly Pen gridPen = new Pen(new SolidColorBrush(GridColor), 2, null, PenLineCap.Flat, PenLineJoin.Bevel);
-        private static readonly SolidColorBrush HighlightBrush = new SolidColorBrush(HighlightColor);
+        private static readonly SolidColorBrush highlightBrush = new SolidColorBrush(HighlightColor);
+        private static readonly SolidColorBrush itemBrush = new SolidColorBrush(0xBB00FF00);
         private static readonly Bitmap background = new Bitmap(AvaloniaLocator.Current.GetService<IAssetLoader>().Open(new Uri("resm:MyHorizons.Avalonia.Resources.ItemGridBackground.png")));
 
         public int ItemsPerRow
@@ -278,15 +269,7 @@ namespace MyHorizons.Avalonia.Controls
             CreateAndCacheItemRects();
         }
 
-        private void CreateAndCacheGridLines()
-        {
-            // Clear previous entries.
-            lineCache.Clear();
-            for (var x = 0; x < Width; x += itemSize)
-                lineCache.Add(new Line(new Point(x, -0.5), new Point(x, Height)));
-            for (var y = 0; y < Height; y += itemSize)
-                lineCache.Add(new Line(new Point(-0.5, y), new Point(Width, y)));
-        }
+        private void CreateAndCacheGridLines() => lineCache = GetGridCache(Width, Height, itemSize);
 
         private void CreateAndCacheItemRects()
         {
@@ -311,11 +294,11 @@ namespace MyHorizons.Avalonia.Controls
             if (Items != null)
                 for (var i = 0; i < Items.Count; i++)
                     if (items[i].ItemId != 0xFFFE)
-                        context.DrawGeometry(new SolidColorBrush(0xBB00FF00), null, itemCache[i]);
+                        context.DrawGeometry(itemBrush, null, itemCache[i]);
 
             // Draw highlight.
             if (x > -1 && y > -1 && currentIdx > -1 && currentIdx < items.Count)
-                context.DrawGeometry(HighlightBrush, null, new RectangleGeometry(new Rect(x, y, itemSize, itemSize)));
+                context.FillRectangle(highlightBrush, new Rect(x, y, itemSize, itemSize));
 
             // Draw grid above items from gridline cache.
             foreach (var line in lineCache)

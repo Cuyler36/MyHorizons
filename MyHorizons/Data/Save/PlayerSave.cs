@@ -1,8 +1,6 @@
 ﻿using MyHorizons.Data.PlayerData;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace MyHorizons.Data.Save
 {
