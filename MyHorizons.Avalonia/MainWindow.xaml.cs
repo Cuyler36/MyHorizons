@@ -308,6 +308,16 @@ namespace MyHorizons.Avalonia
             }
         }
 
+        private void LoadPatterns()
+        {
+            if (saveFile?.Town != null)
+            {
+                var panel = this.FindControl<StackPanel>("DesignsPanel");
+                for (var i = 0; i < 50; i++)
+                    panel.Children.Add(new PatternVisualizer(saveFile.Town.Patterns[i]));
+            }
+        }
+
         private void LoadVillager(Villager villager)
         {
             if (villager != null && villager != selectedVillager)
@@ -494,6 +504,7 @@ namespace MyHorizons.Avalonia
                         LoadPlayer(saveFile.GetPlayerSaves()[0].Player);
                         LoadVillagers();
                         LoadVillager(saveFile.Town.GetVillager(0));
+                        LoadPatterns();
 
                         // Load Item List
                         itemDatabase = ItemDatabaseLoader.LoadItemDatabase((uint)saveFile.GetRevision());

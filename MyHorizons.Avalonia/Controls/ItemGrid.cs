@@ -269,7 +269,7 @@ namespace MyHorizons.Avalonia.Controls
             CreateAndCacheItemRects();
         }
 
-        private void CreateAndCacheGridLines() => lineCache = GetGridCache(Width, Height, itemSize);
+        private void CreateAndCacheGridLines() => lineCache = GetGridCache(Width, Height, itemSize, itemSize);
 
         private void CreateAndCacheItemRects()
         {

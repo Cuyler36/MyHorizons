@@ -17,12 +17,12 @@ namespace MyHorizons.Avalonia.Utility
             }
         }
 
-        public static IReadOnlyList<Line> GetGridCache(in double width, in double height, in double step)
+        public static IReadOnlyList<Line> GetGridCache(in double width, in double height, in double stepX, in double stepY)
         {
-            var gridLineCache = new List<Line>((int)(width / step) + (int)(height / step) + 1);
-            for (var x = 0d; x < width; x += step)
+            var gridLineCache = new List<Line>((int)(width / stepX) + (int)(height / stepY) + 1);
+            for (var x = 0d; x < width; x += stepX)
                 gridLineCache.Add(new Line(new Point(x, -0.5), new Point(x, height)));
-            for (var y = 0d; y < height; y += step)
+            for (var y = 0d; y < height; y += stepY)
                 gridLineCache.Add(new Line(new Point(-0.5, y), new Point(width, y)));
             return gridLineCache;
         }

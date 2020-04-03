@@ -140,11 +140,16 @@
                 <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Furniture</TextBlock>
               </StackPanel>
             </StackPanel>
-            <StackPanel x:Name="VillagerPanel" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10, 0, 0, 0" Orientation="Horizontal" Spacing="4"/>
+            <StackPanel x:Name="VillagerPanel" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10, 0, 0, 10" Orientation="Horizontal" Spacing="4"/>
           </Grid>
         </TabItem>
         <TabItem Header="Town">
           
+        </TabItem>
+        <TabItem Header="Designs">
+          <ScrollViewer HorizontalScrollBarVisibility="Auto">
+            <StackPanel x:Name="DesignsPanel" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10, 0, 0, 10" Orientation="Horizontal" Spacing="4"/>
+          </ScrollViewer>
         </TabItem>
       </TabControl>
       <Button x:Name="OpenSaveButton" Height="40" Width="300" FontSize="22" FontWeight="Bold" IsVisible="False">

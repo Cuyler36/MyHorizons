@@ -1,32 +1,57 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using MyHorizons.Data.TownData;
+using System;
 
 namespace MyHorizons.Avalonia.Controls
 {
-    public sealed class PatternVisualizer : Canvas
+    public class PatternVisualizer : Canvas
     {
-        private const int PATTERN_WIDTH = 32;
-        private const int PATTERN_HEIGHT = 32;
+        protected const int PATTERN_WIDTH = 32;
+        protected const int PATTERN_HEIGHT = 32;
 
         public readonly DesignPattern Pattern;
 
-        public PatternVisualizer(DesignPattern pattern)
+        private IBitmap? bitmap;
+
+        public PatternVisualizer(DesignPattern pattern, double width = 32, double height = 32)
         {
+            Width = width;
+            Height = height;
             Pattern = pattern;
+            UpdateBitmap();
             ToolTip.SetTip(this, Pattern.Name);
         }
 
-        public override void Render(DrawingContext context)
+        ~PatternVisualizer()
         {
-            base.Render(context);
-            var scaleX = Width / PATTERN_WIDTH;
-            var scaleY = Height / PATTERN_HEIGHT;
+            bitmap?.Dispose();
+        }
 
-            for (var y = 0; y < PATTERN_HEIGHT; y++)
-                for (var x = 0; x < PATTERN_WIDTH; x++)
-                    context.FillRectangle(new SolidColorBrush(Pattern.GetPixelArgb(x, y)), new Rect(x * scaleX, y * scaleY, scaleX, scaleY));
+        protected unsafe void UpdateBitmap()
+        {
+            bitmap?.Dispose();
+
+            var data = new uint[PATTERN_WIDTH * PATTERN_HEIGHT];
+            var x = 0;
+            var y = 0;
+            for (var i = 0; i < data.Length; i++, x++)
+            {
+                if (x == PATTERN_WIDTH)
+                {
+                    x = 0;
+                    y++;
+                }
+
+                data[i] = Pattern.GetPixelArgb(x, y);
+            }
+
+            fixed(uint* p = data)
+                bitmap = new Bitmap(PixelFormat.Bgra8888, (IntPtr)p, new PixelSize(PATTERN_WIDTH, PATTERN_HEIGHT), new Vector(96, 96), sizeof(uint) * PATTERN_WIDTH);
+            Background = new ImageBrush(bitmap);
         }
     }
 }
