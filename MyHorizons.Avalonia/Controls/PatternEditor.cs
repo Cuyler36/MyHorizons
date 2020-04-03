@@ -12,19 +12,21 @@ namespace MyHorizons.Avalonia.Controls
         private IReadOnlyList<Line>? lineCache;
         private static readonly Pen gridPen = new Pen(new SolidColorBrush(0xFF999999), 2, null, PenLineCap.Flat, PenLineJoin.Bevel);
 
-        public PatternEditor(DesignPattern pattern) : base(pattern)
+        public PatternEditor(DesignPattern pattern, double width = 32, double height = 32) : base(pattern, width, height)
         {
             Resize(Width, Height);
 
-            this.GetObservable(WidthProperty).Subscribe(width => Resize(width, Height));
-            this.GetObservable(HeightProperty).Subscribe(height => Resize(Width, height));
+            this.GetObservable(WidthProperty).Subscribe(newWidth => Resize(newWidth, Height));
+            this.GetObservable(HeightProperty).Subscribe(newHeight => Resize(Width, newHeight));
         }
 
         private void Resize(double width, double height)
         {
-            lineCache = GetGridCache(width, height, width / PATTERN_WIDTH, height / PATTERN_HEIGHT);
+            lineCache = GetGridCache(width + 1, height + 1, width / PATTERN_WIDTH, height / PATTERN_HEIGHT);
             InvalidateVisual();
         }
+
+        public void SetDesign(DesignPattern? design) => Design = design;
 
         public override void Render(DrawingContext context)
         {

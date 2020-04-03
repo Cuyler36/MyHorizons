@@ -313,8 +313,14 @@ namespace MyHorizons.Avalonia
             if (saveFile?.Town != null)
             {
                 var panel = this.FindControl<StackPanel>("DesignsPanel");
+                var editor = new PatternEditor(saveFile.Town.Patterns[0], 256, 256);
                 for (var i = 0; i < 50; i++)
-                    panel.Children.Add(new PatternVisualizer(saveFile.Town.Patterns[i]));
+                {
+                    var visualizer = new PatternVisualizer(saveFile.Town.Patterns[i]);
+                    visualizer.PointerPressed += (o, e) => editor.SetDesign(visualizer.Design);
+                    panel.Children.Add(visualizer);
+                }
+                this.FindControl<Grid>("DesignsContent").Children.Insert(0, editor);
             }
         }
 

@@ -147,9 +147,11 @@
           
         </TabItem>
         <TabItem Header="Designs">
-          <ScrollViewer HorizontalScrollBarVisibility="Auto">
-            <StackPanel x:Name="DesignsPanel" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10, 0, 0, 10" Orientation="Horizontal" Spacing="4"/>
-          </ScrollViewer>
+          <Grid x:Name="DesignsContent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10, 0, 0, 10" >
+              <StackPanel x:Name="DesignsPanel" Orientation="Horizontal" Spacing="4"/>
+            </ScrollViewer>
+          </Grid>
         </TabItem>
       </TabControl>
       <Button x:Name="OpenSaveButton" Height="40" Width="300" FontSize="22" FontWeight="Bold" IsVisible="False">
