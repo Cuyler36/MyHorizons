@@ -6,9 +6,9 @@ namespace MyHorizons.Data.PlayerData.Offsets
     {
         public abstract int PersonalId { get; }
         public abstract int NookMiles { get; }
-        public abstract int Wallet { get; }
         public abstract int Photo { get; }
         public abstract int Pockets { get; }
+        public abstract int Wallet { get; }
         public abstract int Storage { get; }
         public abstract int Bank { get; }
 
