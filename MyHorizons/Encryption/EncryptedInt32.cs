@@ -1,27 +1,21 @@
 ﻿using MyHorizons.Data.Save;
+using System.Runtime.InteropServices;
 
 namespace MyHorizons.Encryption
 {
-    public sealed class EncryptedInt32
+
+    [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 8)]
+    public struct EncryptedInt32
     {
         // Encryption constant used to encrypt the int.
         private const uint ENCRYPTION_CONSTANT = 0x80E32B11;
         // Base shift count used in the encryption.
         private const byte SHIFT_BASE = 3;
 
-        private uint EncryptedValue;
-
-        private ushort Adjust;
-        private byte Shift;
-        private byte Checksum;
-
-        public EncryptedInt32()
-        {
-            EncryptedValue = 0;
-            Adjust = 0;
-            Shift = 0;
-            Checksum = 0;
-        }
+        public uint EncryptedValue;
+        public ushort Adjust;
+        public byte Shift;
+        public byte Checksum;
 
         public EncryptedInt32(uint encryptedValue, ushort adjust, byte shift, byte checksum)
         {
@@ -31,11 +25,9 @@ namespace MyHorizons.Encryption
             Checksum = checksum;
         }
 
-        public EncryptedInt32(ISaveFile save, int offset)
-            : this(save.ReadU32(offset), save.ReadU16(offset + 4),
-                   save.ReadU8(offset + 6), save.ReadU8(offset + 7)) { }
+        public EncryptedInt32(ISaveFile save, int offset) => this = save.ReadStruct<EncryptedInt32>(offset);
 
-        public EncryptedInt32(uint value) => Set(value);
+        public EncryptedInt32(uint value) : this() => Set(value);
 
         // Quickhand method to determine if the encrypted int is still valid.
         public bool IsValid() => Checksum == CalculateChecksum();
