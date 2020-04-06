@@ -32,8 +32,7 @@ namespace MyHorizons.Data.Save
                         throw new NullReferenceException("Personal Save File could not be loaded!");
                     
                     Player = new Player(idx, _personalSave);
-                    // TODO: Valid should only be set to true when all player save files are found and loaded correctly.
-                    Valid = true;
+                    Valid = _personalSave != null && _photoStudioIslandSave != null && _postBoxSave != null && _profileSave != null;
                 }
                 else
                 {
