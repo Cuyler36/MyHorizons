@@ -8,7 +8,7 @@ using System.Text;
 
 namespace MyHorizons.Data.Save
 {
-    public unsafe abstract class SaveBase : ISaveFile
+    public abstract unsafe class SaveBase : ISaveFile
     {
         protected const int HEADER_FILE_SIZE = 0x300;
 
