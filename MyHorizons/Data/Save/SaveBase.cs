@@ -33,8 +33,9 @@ namespace MyHorizons.Data.Save
                             {
                                 _revision = RevisionManager.GetFileRevision(data);
                             }
-                            catch
+                            catch(Exception e)
                             {
+                                _ = e;
                                 return false;
                             }
 

@@ -9,6 +9,8 @@ namespace MyHorizons.Data.TownData.Offsets
         public abstract int Offset_Patterns { get; }
         public abstract int Offset_Buildings { get; }
 
+        public abstract int Offset_Turnips { get; }
+
         public virtual int Building_Count { get; } = 46; // Unsure.
 
         #region VILLAGERS

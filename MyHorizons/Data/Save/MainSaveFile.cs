@@ -3,6 +3,7 @@ using MyHorizons.Data.TownData;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using MyHorizons.Data.TurnipsData;
 
 namespace MyHorizons.Data.Save
 {
@@ -12,6 +13,7 @@ namespace MyHorizons.Data.Save
         
         public int NumPlayers => _playerSaves.Count;
         public readonly Town? Town;
+        public readonly Turnips? Turnips;
 
         public MainSaveFile(in string headerPath, in string filePath)
         {
@@ -27,6 +29,7 @@ namespace MyHorizons.Data.Save
                 }
 
                 Town = new Town(this);
+                Turnips = new Turnips(this);
             }
         }
 
