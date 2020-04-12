@@ -13,6 +13,7 @@ namespace MyHorizons.Data.TownData
         public Villager[] Villagers = new Villager[10];
         public DesignPattern[] Patterns = new DesignPattern[50];
         public Building[] Buildings = new Building[46];
+        public StalkMarket StalkMarket { get; }
 
         private MainSaveFile MainSaveFile { get; }
 
@@ -35,6 +36,8 @@ namespace MyHorizons.Data.TownData
             // Load Buildings
             for (var i = 0; i < 46; i++)
                 Buildings[i] = new Building(mainSaveFile, i);
+
+            StalkMarket = new StalkMarket(MainSaveFile);
         }
 
         public string GetName() => TownId.GetName();
