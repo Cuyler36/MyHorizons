@@ -15,20 +15,20 @@ namespace MyHorizons.Data.TownData
         public fixed byte Unknown[12];
 
 
-        public Building(MainSaveFile mainSaveFile, int index)
+        public Building(ISaveFile saveFile, int index)
         {
-            var offsets = MainOffsets.GetOffsets(mainSaveFile.GetRevision());
+            var offsets = MainOffsets.GetOffsets(saveFile.GetRevision());
             if (index >= offsets.Building_Count)
                 throw new IndexOutOfRangeException("Index was greater than the number of building slots!");
-            this = mainSaveFile.ReadStruct<Building>(offsets.Offset_Buildings + index * 0x14);
+            this = saveFile.ReadStruct<Building>(offsets.Offset_Buildings + index * 0x14);
         }
 
-        public void Save(MainSaveFile mainSaveFile, int index)
+        public void Save(ISaveFile saveFile, int index)
         {
-            var offsets = MainOffsets.GetOffsets(mainSaveFile.GetRevision());
+            var offsets = MainOffsets.GetOffsets(saveFile.GetRevision());
             if (index >= offsets.Building_Count)
                 throw new IndexOutOfRangeException("Index was greater than the number of building slots!");
-            mainSaveFile.WriteStruct(offsets.Offset_Buildings + index * 0x14, this);
+            saveFile.WriteStruct(offsets.Offset_Buildings + index * 0x14, this);
         }
     }
 }
