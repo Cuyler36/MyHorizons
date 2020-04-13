@@ -18,7 +18,7 @@ namespace MyHorizons.Data.Save
 
         private readonly SaveRevision _revision;
 
-        public PlayerSave(MainSaveFile mainSaveFile, in string folder, in SaveRevision revision)
+        public PlayerSave(ISaveFile saveFile, in string folder, in SaveRevision revision)
         {
             if (Directory.Exists(folder))
             {
@@ -31,7 +31,7 @@ namespace MyHorizons.Data.Save
                     if (_personalSave == null)
                         throw new NullReferenceException("Personal Save File could not be loaded!");
                     
-                    Player = new Player(mainSaveFile, idx, _personalSave);
+                    Player = new Player(saveFile, idx, _personalSave);
                     Valid = _personalSave != null && _photoStudioIslandSave != null && _postBoxSave != null && _profileSave != null;
                 }
                 else

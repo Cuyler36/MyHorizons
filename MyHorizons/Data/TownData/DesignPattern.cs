@@ -16,7 +16,7 @@ namespace MyHorizons.Data.TownData
 
         private readonly int Offset;
 
-        private MainSaveFile MainSaveFile { get; }
+        private ISaveFile SaveFile { get; }
 
         [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 3)]
         public struct DesignColor
@@ -25,28 +25,28 @@ namespace MyHorizons.Data.TownData
             public byte G;
             public byte B;
 
-            public DesignColor(MainSaveFile mainSaveFile, int offset)
+            public DesignColor(ISaveFile saveFile, int offset)
             {
-                this = mainSaveFile.ReadStruct<DesignColor>(offset);
+                this = saveFile.ReadStruct<DesignColor>(offset);
             }
 
             public uint ToArgb() => 0xFF000000 | ((uint)R << 16) | ((uint)G << 8) | B;
         }
 
-        public DesignPattern(MainSaveFile mainSaveFile, int idx)
+        public DesignPattern(ISaveFile saveFile, int idx)
         {
-            MainSaveFile = mainSaveFile;
+            SaveFile = saveFile;
             Index = idx;
-            var offsets = MainOffsets.GetOffsets(MainSaveFile.GetRevision());
+            var offsets = MainOffsets.GetOffsets(SaveFile.GetRevision());
             Offset = offsets.Offset_Patterns + idx * offsets.Pattern_Size;
 
-            Name = MainSaveFile.ReadString(Offset + offsets.Pattern_Name, 20);
-            PersonalID = MainSaveFile.ReadStruct<PersonalID>(Offset + offsets.Pattern_PersonalID);
+            Name = SaveFile.ReadString(Offset + offsets.Pattern_Name, 20);
+            PersonalID = SaveFile.ReadStruct<PersonalID>(Offset + offsets.Pattern_PersonalID);
 
             for (int i = 0; i < 15; i++)
-                Palette[i] = new DesignColor(mainSaveFile, Offset + offsets.Pattern_Palette + i * 3);
+                Palette[i] = new DesignColor(saveFile, Offset + offsets.Pattern_Palette + i * 3);
 
-            Pixels = MainSaveFile.ReadArray<byte>(Offset + offsets.Pattern_ImageData, Pixels.Length);
+            Pixels = SaveFile.ReadArray<byte>(Offset + offsets.Pattern_ImageData, Pixels.Length);
         }
 
         public byte GetPixel(int x, int y)
@@ -88,15 +88,15 @@ namespace MyHorizons.Data.TownData
 
         public void Save()
         {
-            var offsets = MainOffsets.GetOffsets(MainSaveFile.GetRevision());
+            var offsets = MainOffsets.GetOffsets(SaveFile.GetRevision());
 
-            MainSaveFile.WriteString(Offset + offsets.Pattern_Name, Name, 20);
-            MainSaveFile.WriteStruct(Offset + offsets.Pattern_PersonalID, PersonalID);
+            SaveFile.WriteString(Offset + offsets.Pattern_Name, Name, 20);
+            SaveFile.WriteStruct(Offset + offsets.Pattern_PersonalID, PersonalID);
 
             for (int i = 0; i < 15; i++)
-                MainSaveFile.WriteStruct(Offset + offsets.Pattern_Palette + i * 3, Palette[i]);
+                SaveFile.WriteStruct(Offset + offsets.Pattern_Palette + i * 3, Palette[i]);
 
-            MainSaveFile.WriteArray(Offset + offsets.Pattern_ImageData, Pixels);
+            SaveFile.WriteArray(Offset + offsets.Pattern_ImageData, Pixels);
         }
     }
 }

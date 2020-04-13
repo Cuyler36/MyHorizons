@@ -16,38 +16,38 @@ namespace MyHorizons.Data.TownData
         public string Catchphrase;
         public ItemCollection Furniture;
 
-        private MainSaveFile MainSaveFile { get; }
+        private ISaveFile SaveFile { get; }
 
-        public Villager(MainSaveFile mainSaveFile, int idx)
+        public Villager(ISaveFile saveFile, int idx)
         {
-            MainSaveFile = mainSaveFile;
+            SaveFile = saveFile;
             Index = idx;
             
-            var offsets = MainOffsets.GetOffsets(MainSaveFile.GetRevision());
+            var offsets = MainOffsets.GetOffsets(SaveFile.GetRevision());
             Offset = offsets.Offset_Vilagers + idx * offsets.Villager_Size;
 
-            Species = MainSaveFile.ReadU8(Offset + offsets.Villager_Species);
-            VariantIdx = MainSaveFile.ReadU8(Offset + offsets.Villager_Variant);
-            Personality = MainSaveFile.ReadU8(Offset + offsets.Villager_Personality);
-            Catchphrase = MainSaveFile.ReadString(Offset + offsets.Villager_Catchphrase, offsets.Villager_CatchphraseLength); // Not sure about the size.
+            Species = SaveFile.ReadU8(Offset + offsets.Villager_Species);
+            VariantIdx = SaveFile.ReadU8(Offset + offsets.Villager_Variant);
+            Personality = SaveFile.ReadU8(Offset + offsets.Villager_Personality);
+            Catchphrase = SaveFile.ReadString(Offset + offsets.Villager_Catchphrase, offsets.Villager_CatchphraseLength); // Not sure about the size.
 
             var ftr = new Item[offsets.Villager_FurnitureCount];
             for (var i = 0; i < ftr.Length; i++)
-                ftr[i] = new Item(MainSaveFile, Offset + offsets.Villager_Furniture + i * 0x2C);
+                ftr[i] = new Item(SaveFile, Offset + offsets.Villager_Furniture + i * 0x2C);
             Furniture = new ItemCollection(ftr);
         }
 
         public void Save()
         {
-            var offsets = MainOffsets.GetOffsets(MainSaveFile.GetRevision());
+            var offsets = MainOffsets.GetOffsets(SaveFile.GetRevision());
 
-            MainSaveFile.WriteU8(Offset + offsets.Villager_Species, Species);
-            MainSaveFile.WriteU8(Offset + offsets.Villager_Variant, VariantIdx);
-            MainSaveFile.WriteU8(Offset + offsets.Villager_Personality, Personality);
-            MainSaveFile.WriteString(Offset + offsets.Villager_Catchphrase, Catchphrase, 12);
+            SaveFile.WriteU8(Offset + offsets.Villager_Species, Species);
+            SaveFile.WriteU8(Offset + offsets.Villager_Variant, VariantIdx);
+            SaveFile.WriteU8(Offset + offsets.Villager_Personality, Personality);
+            SaveFile.WriteString(Offset + offsets.Villager_Catchphrase, Catchphrase, 12);
 
             for (var i = 0; i < Furniture.Count; i++)
-                Furniture[i].Save(MainSaveFile, Offset + offsets.Villager_Furniture + i * 0x2C);
+                Furniture[i].Save(SaveFile, Offset + offsets.Villager_Furniture + i * 0x2C);
         }
     }
 }

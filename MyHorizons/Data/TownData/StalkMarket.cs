@@ -23,10 +23,10 @@ namespace MyHorizons.Data.TownData
         public DayPrices Friday;
         public DayPrices Saturday;
 
-        public StalkMarket(MainSaveFile mainSaveFile)
+        public StalkMarket(ISaveFile saveFile)
         {
-            var offsets = MainOffsets.GetOffsets(mainSaveFile.GetRevision());
-            this = mainSaveFile.ReadStruct<StalkMarket>(offsets.Offset_Turnips);
+            var offsets = MainOffsets.GetOffsets(saveFile.GetRevision());
+            this = saveFile.ReadStruct<StalkMarket>(offsets.Offset_Turnips);
         }
     }
 }
