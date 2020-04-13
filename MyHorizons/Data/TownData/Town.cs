@@ -13,26 +13,31 @@ namespace MyHorizons.Data.TownData
         public Villager[] Villagers = new Villager[10];
         public DesignPattern[] Patterns = new DesignPattern[50];
         public Building[] Buildings = new Building[46];
+        public StalkMarket StalkMarket { get; }
 
-        public Town()
+        private MainSaveFile MainSaveFile { get; }
+
+        public Town(MainSaveFile mainSaveFile)
         {
-            var save = MainSaveFile.Singleton();
-            var offsets = MainOffsets.GetOffsets(save.GetRevision());
+            MainSaveFile = mainSaveFile;
+            var offsets = MainOffsets.GetOffsets(MainSaveFile.GetRevision());
 
             // Load Town Data
-            TownId = save.ReadStruct<TownID>(offsets.Offset_TownId);
+            TownId = MainSaveFile.ReadStruct<TownID>(offsets.Offset_TownId);
 
             // Load Villagers
             for (var i = 0; i < 10; i++)
-                Villagers[i] = new Villager(i);
+                Villagers[i] = new Villager(mainSaveFile, i);
 
             // Load Patterns
             for (var i = 0; i < 50; i++)
-                Patterns[i] = new DesignPattern(i);
+                Patterns[i] = new DesignPattern(mainSaveFile, i);
 
             // Load Buildings
             for (var i = 0; i < 46; i++)
-                Buildings[i] = new Building(i);
+                Buildings[i] = new Building(mainSaveFile, i);
+
+            StalkMarket = new StalkMarket(MainSaveFile);
         }
 
         public string GetName() => TownId.GetName();
@@ -41,10 +46,8 @@ namespace MyHorizons.Data.TownData
         {
             if (newName != TownId.GetName())
             {
-                var save = MainSaveFile.Singleton();
-
                 // Update any player references first
-                foreach (var playerSave in save.GetPlayerSaves())
+                foreach (var playerSave in MainSaveFile.GetPlayerSaves())
                     if (playerSave.Player.PersonalId.TownId == TownId)
                         playerSave.Player.PersonalId.TownId.SetName(newName);
 
@@ -60,10 +63,10 @@ namespace MyHorizons.Data.TownData
                     Unsafe.WriteUnaligned(p, TownId);
 
                 // Main Save File
-                save.ReplaceAllOccurrences(bytes, newBytes, 0x100);
+                MainSaveFile.ReplaceAllOccurrences(bytes, newBytes, 0x100);
 
                 // Player Save Files
-                foreach (var playerSave in save.GetPlayerSaves())
+                foreach (var playerSave in MainSaveFile.GetPlayerSaves())
                     playerSave.GetPersonalSave().ReplaceAllOccurrences(bytes, newBytes, 0x100);
             }
         }
@@ -76,9 +79,8 @@ namespace MyHorizons.Data.TownData
 
         public void Save()
         {
-            var save = MainSaveFile.Singleton();
-            var offsets = MainOffsets.GetOffsets(save.GetRevision());
-            save.WriteStruct(offsets.Offset_TownId, TownId);
+            var offsets = MainOffsets.GetOffsets(MainSaveFile.GetRevision());
+            MainSaveFile.WriteStruct(offsets.Offset_TownId, TownId);
 
             foreach (var villager in Villagers)
                 villager.Save();

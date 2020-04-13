@@ -8,11 +8,8 @@ namespace MyHorizons.Data.Save
 {
     public sealed class MainSaveFile : SaveBase
     {
-        private static MainSaveFile? _saveFile;
         private readonly List<PlayerSave> _playerSaves = new List<PlayerSave>();
         
-        public static MainSaveFile Singleton() => _saveFile ?? throw new NullReferenceException("Main save file was null!");
-
         public int NumPlayers => _playerSaves.Count;
         public readonly Town? Town;
 
@@ -21,17 +18,15 @@ namespace MyHorizons.Data.Save
             // TODO: IProgress<float> needs to be passed to load
             if (AcceptsFile(headerPath, filePath) && Load(headerPath, filePath, null))
             {
-                _saveFile = this;
-
                 // Load player save files
                 foreach (var dir in Directory.GetDirectories(Path.GetDirectoryName(filePath)))
                 {
-                    var playerSave = new PlayerSave(dir, _revision);
+                    var playerSave = new PlayerSave(this, dir, _revision);
                     if (playerSave.Valid)
                         _playerSaves.Add(playerSave);
                 }
 
-                Town = new Town();
+                Town = new Town(this);
             }
         }
 

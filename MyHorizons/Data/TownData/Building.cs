@@ -14,22 +14,21 @@ namespace MyHorizons.Data.TownData
         public ushort Rotation;
         public fixed byte Unknown[12];
 
-        public Building(int index)
+
+        public Building(MainSaveFile mainSaveFile, int index)
         {
-            var save = MainSaveFile.Singleton();
-            var offsets = MainOffsets.GetOffsets(save.GetRevision());
+            var offsets = MainOffsets.GetOffsets(mainSaveFile.GetRevision());
             if (index >= offsets.Building_Count)
                 throw new IndexOutOfRangeException("Index was greater than the number of building slots!");
-            this = save.ReadStruct<Building>(offsets.Offset_Buildings + index * 0x14);
+            this = mainSaveFile.ReadStruct<Building>(offsets.Offset_Buildings + index * 0x14);
         }
 
-        public void Save(int index)
+        public void Save(MainSaveFile mainSaveFile, int index)
         {
-            var save = MainSaveFile.Singleton();
-            var offsets = MainOffsets.GetOffsets(save.GetRevision());
+            var offsets = MainOffsets.GetOffsets(mainSaveFile.GetRevision());
             if (index >= offsets.Building_Count)
                 throw new IndexOutOfRangeException("Index was greater than the number of building slots!");
-            save.WriteStruct(offsets.Offset_Buildings + index * 0x14, this);
+            mainSaveFile.WriteStruct(offsets.Offset_Buildings + index * 0x14, this);
         }
     }
 }

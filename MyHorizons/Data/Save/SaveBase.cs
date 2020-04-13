@@ -8,7 +8,7 @@ using System.Text;
 
 namespace MyHorizons.Data.Save
 {
-    public unsafe abstract class SaveBase : ISaveFile
+    public abstract unsafe class SaveBase : ISaveFile
     {
         protected const int HEADER_FILE_SIZE = 0x300;
 
@@ -33,8 +33,9 @@ namespace MyHorizons.Data.Save
                             {
                                 _revision = RevisionManager.GetFileRevision(data);
                             }
-                            catch
+                            catch(Exception e)
                             {
+                                _ = e;
                                 return false;
                             }
 
