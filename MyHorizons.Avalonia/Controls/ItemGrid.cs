@@ -11,7 +11,6 @@ using MyHorizons.Utility;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using MyHorizons.Avalonia.Utility;
 using static MyHorizons.Avalonia.Utility.GridUtil;
 
 namespace MyHorizons.Avalonia.Controls
