@@ -29,16 +29,16 @@ namespace MyHorizons.Avalonia
         private Player? selectedPlayer;
         private Villager? selectedVillager;
 
-        private Grid TitleBarGrid;
+        private readonly Grid TitleBarGrid;
 
-        private Grid CloseGrid;
-        private Button CloseButton;
+        private readonly Grid CloseGrid;
+        private readonly Button CloseButton;
 
-        private Grid ResizeGrid;
-        private Button ResizeButton;
+        private readonly Grid ResizeGrid;
+        private readonly Button ResizeButton;
 
-        private Grid MinimizeGrid;
-        private Button MinimizeButton;
+        private readonly Grid MinimizeGrid;
+        private readonly Button MinimizeButton;
 
         private bool playerLoading = false;
         private bool settingItem = false;
@@ -313,14 +313,20 @@ namespace MyHorizons.Avalonia
             if (saveFile?.Town != null)
             {
                 var panel = this.FindControl<StackPanel>("DesignsPanel");
-                var editor = new PatternEditor(saveFile.Town.Patterns[0], 256, 256);
+                var editor = new PatternEditor(saveFile.Town.Patterns[0], 384, 384);
+                var paletteSelector = new PaletteSelector(saveFile.Town.Patterns[0]) { Margin = new Thickness(410, 0, 0, 0) };
                 for (var i = 0; i < 50; i++)
                 {
                     var visualizer = new PatternVisualizer(saveFile.Town.Patterns[i]);
-                    visualizer.PointerPressed += (o, e) => editor.SetDesign(visualizer.Design);
+                    visualizer.PointerPressed += (o, e) =>
+                    {
+                        editor.SetDesign(visualizer.Design);
+                        paletteSelector.SetDesign(visualizer.Design);
+                    };
                     panel.Children.Add(visualizer);
                 }
                 this.FindControl<Grid>("DesignsContent").Children.Insert(0, editor);
+                this.FindControl<Grid>("DesignsContent").Children.Insert(1, paletteSelector);
             }
         }
 
