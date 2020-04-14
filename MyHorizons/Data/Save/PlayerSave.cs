@@ -18,31 +18,33 @@ namespace MyHorizons.Data.Save
 
         private readonly SaveRevision _revision;
 
-        public PlayerSave(MainSaveFile mainSaveFile, in string folder, in SaveRevision revision)
+        public PlayerSave(ISaveFile saveFile, in string folder, in SaveRevision revision)
         {
             if (Directory.Exists(folder))
             {
                 var folderName = new DirectoryInfo(folder).Name;
-                if (folderName.StartsWith("Villager") && int.TryParse(folderName.Substring(8, 1), out var idx) && idx > -1 && idx < 8)
+                if (folderName.StartsWith("Villager") && int.TryParse(folderName.Substring(folderName.Length - 1, 1), out var index) && index >= 0 && index <= 7)
                 {
-                    Index = idx;
+                    Index = index;
                     _revision = revision;
                     ProcessFolder(folder);
                     if (_personalSave == null)
                         throw new NullReferenceException("Personal Save File could not be loaded!");
                     
-                    Player = new Player(mainSaveFile, idx, _personalSave);
+                    Player = new Player(saveFile, index, _personalSave);
                     Valid = _personalSave != null && _photoStudioIslandSave != null && _postBoxSave != null && _profileSave != null;
                 }
+                /* removed until a proper Exception handling
                 else
                 {
-                    throw new ArgumentOutOfRangeException("The player isn't a valid inde (0-7)!");
-                }
+                    throw new ArgumentOutOfRangeException("The player isn't a valid index (0-7)!");
+                }*/
             }
+            /* removed until a proper Exception handling
             else
             {
                 throw new DirectoryNotFoundException("The player directory doesn't exist!");
-            }
+            }*/
         }
 
         public PersonalSaveFile GetPersonalSave() => _personalSave ?? throw new NullReferenceException("PersonalSaveFile does not exist!");

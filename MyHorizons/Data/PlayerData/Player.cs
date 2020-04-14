@@ -17,13 +17,13 @@ namespace MyHorizons.Data.PlayerData
 
         private readonly PersonalSaveFile _personalFile;
 
-        private MainSaveFile MainSaveFile { get; }
+        private ISaveFile SaveFile { get; }
 
-        public Player(MainSaveFile mainSaveFile, int idx, PersonalSaveFile personalSave)
+        public Player(ISaveFile saveFile, int idx, PersonalSaveFile personalSave)
         {
-            MainSaveFile = mainSaveFile;
+            SaveFile = saveFile;
             _personalFile = personalSave;
-            var offsets = PersonalOffsets.GetOffsets(MainSaveFile.GetRevision());
+            var offsets = PersonalOffsets.GetOffsets(SaveFile.GetRevision());
             Index = idx;
 
             PersonalId = new PersonalID(personalSave, offsets.PersonalId);
@@ -49,7 +49,7 @@ namespace MyHorizons.Data.PlayerData
 
         public void Save()
         {
-            var offsets = PersonalOffsets.GetOffsets(MainSaveFile.GetRevision());
+            var offsets = PersonalOffsets.GetOffsets(SaveFile.GetRevision());
             _personalFile.WriteStruct(offsets.PersonalId, PersonalId);
             Wallet.Write(_personalFile, offsets.Wallet);
             Bank.Write(_personalFile, offsets.Bank);
@@ -70,7 +70,7 @@ namespace MyHorizons.Data.PlayerData
 
         public byte[] GetPhotoData()
         {
-            var offset = PersonalOffsets.GetOffsets(MainSaveFile.GetRevision()).Photo;
+            var offset = PersonalOffsets.GetOffsets(SaveFile.GetRevision()).Photo;
             return _personalFile.ReadArray<byte>(offset + 4, _personalFile.ReadS32(offset));
         }
 
