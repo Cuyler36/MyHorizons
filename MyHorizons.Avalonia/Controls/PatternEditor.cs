@@ -12,6 +12,7 @@ namespace MyHorizons.Avalonia.Controls
 {
     public sealed class PatternEditor : PatternVisualizer
     {
+        private PaletteSelector _paletteSelector;
         private IReadOnlyList<Line>? lineCache;
         private int cellX = -1;
         private int cellY = -1;
@@ -19,11 +20,15 @@ namespace MyHorizons.Avalonia.Controls
         private double stepX;
         private double stepY;
 
+        private bool leftDown = false;
+        private bool rightDown = false;
+
         private static readonly Pen gridPen = new Pen(new SolidColorBrush(0xFF999999), 2, null, PenLineCap.Flat, PenLineJoin.Bevel);
         private static readonly Pen highlightPen = new Pen(new SolidColorBrush(0xFFFFFF00), 2, null, PenLineCap.Flat, PenLineJoin.Bevel);
 
-        public PatternEditor(DesignPattern pattern, double width = 32, double height = 32) : base(pattern, width, height)
+        public PatternEditor(DesignPattern pattern, PaletteSelector selector, double width = 32, double height = 32) : base(pattern, width, height)
         {
+            _paletteSelector = selector;
             Resize(Width, Height);
             ToolTip.SetTip(this, null);
 
@@ -35,6 +40,8 @@ namespace MyHorizons.Avalonia.Controls
                 cellX = cellY = -1;
                 InvalidateVisual();
             };
+            PointerPressed += OnPointerPressed;
+            PointerReleased += OnPointerReleased;
         }
 
         private void Resize(double width, double height)
@@ -45,7 +52,11 @@ namespace MyHorizons.Avalonia.Controls
             InvalidateVisual();
         }
 
-        public void SetDesign(DesignPattern? design) => Design = design;
+        public void SetDesign(DesignPattern? design)
+        {
+            Design = design;
+            _paletteSelector.SetDesign(design);
+        }
 
         private void OnPointerMoved(object? sender, PointerEventArgs e)
         {
@@ -68,8 +79,62 @@ namespace MyHorizons.Avalonia.Controls
                 {
                     cellX = tX;
                     cellY = tY;
+
+                    if (leftDown)
+                    {
+                        if (Design?.GetPixel(cellX, cellY) != _paletteSelector.SelectedIndex)
+                        {
+                            Design?.SetPixel(cellX, cellY, (byte)_paletteSelector.SelectedIndex);
+                            UpdateBitmap();
+                        }
+                    }
+                    else if (rightDown)
+                    {
+                        _paletteSelector.SelectedIndex = Design?.GetPixel(cellX, cellY) ?? -1;
+                    }
+
                     InvalidateVisual();
                 }
+            }
+        }
+
+        private void OnPointerPressed(object? sender, PointerPressedEventArgs e)
+        {
+            switch (e.GetCurrentPoint(this).Properties.PointerUpdateKind)
+            {
+                case PointerUpdateKind.LeftButtonPressed:
+                    {
+                        if (Design?.GetPixel(cellX, cellY) != _paletteSelector.SelectedIndex)
+                        {
+                            Design?.SetPixel(cellX, cellY, (byte)_paletteSelector.SelectedIndex);
+                            UpdateBitmap();
+                        }
+                        leftDown = true;
+                        break;
+                    }
+                case PointerUpdateKind.RightButtonPressed:
+                    {
+                        _paletteSelector.SelectedIndex = Design?.GetPixel(cellX, cellY) ?? -1;
+                        rightDown = true;
+                        break;
+                    }
+            }
+        }
+
+        private void OnPointerReleased(object? sender, PointerReleasedEventArgs e)
+        {
+            switch (e.GetCurrentPoint(this).Properties.PointerUpdateKind)
+            {
+                case PointerUpdateKind.LeftButtonReleased:
+                    {
+                        leftDown = false;
+                        break;
+                    }
+                case PointerUpdateKind.RightButtonReleased:
+                    {
+                        rightDown = false;
+                        break;
+                    }
             }
         }
 
