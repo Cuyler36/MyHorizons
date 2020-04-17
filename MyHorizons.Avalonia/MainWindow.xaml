@@ -139,6 +139,10 @@
               <StackPanel x:Name="VillagerFurniturePanel" Margin="10, 10, 0, 0" Spacing="5" VerticalAlignment="Top" Orientation="Vertical">
                 <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Furniture</TextBlock>
               </StackPanel>
+              <StackPanel x:Name="VillagerMovingOutPanel" Margin="10, 10, 0, 0" Spacing="5" VerticalAlignment="Top" Orientation="Horizontal">
+                <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Moving Out:</TextBlock>
+                <CheckBox x:Name="VillagerMovingOutBox"/>
+              </StackPanel>
             </StackPanel>
             <StackPanel x:Name="VillagerPanel" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="10, 0, 0, 10" Orientation="Horizontal" Spacing="4"/>
           </Grid>

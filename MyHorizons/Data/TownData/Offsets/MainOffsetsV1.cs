@@ -14,6 +14,7 @@
         public override int Villager_Personality => 0x02;
         public override int Villager_Catchphrase => 0x10014;
         public override int Villager_Furniture => 0x105EC;
+        public override int Villager_StateFlags => 0x11EFA;
 
         public override int Pattern_Size => 0x2A8;
         public override int Pattern_Name => 0x10;

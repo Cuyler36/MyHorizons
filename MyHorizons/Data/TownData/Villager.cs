@@ -37,6 +37,24 @@ namespace MyHorizons.Data.TownData
             Furniture = new ItemCollection(ftr);
         }
 
+        public bool IsMovingOut()
+        {
+            var offsets = MainOffsets.GetOffsets(SaveFile.GetRevision());
+            return (SaveFile.ReadU8(Offset + offsets.Villager_StateFlags) & offsets.Villager_StateFlagMovingOut) != 0;
+        }
+
+        public void SetIsMovingOut(bool movingOut)
+        {
+            var offsets = MainOffsets.GetOffsets(SaveFile.GetRevision());
+            var flags = SaveFile.ReadU8(Offset + offsets.Villager_StateFlags);
+            if (movingOut)
+                flags |= (byte)offsets.Villager_StateFlagMovingOut;
+            else
+                flags &= (byte)~offsets.Villager_StateFlagMovingOut;
+            SaveFile.WriteU8(Offset + offsets.Villager_StateFlags, flags);
+            // TODO: StateFlags + 0x10 always? changes from 0x0A => 0x00 when moving out. Not sure if that's needed.
+        }
+
         public void Save()
         {
             var offsets = MainOffsets.GetOffsets(SaveFile.GetRevision());

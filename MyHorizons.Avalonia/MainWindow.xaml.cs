@@ -229,6 +229,10 @@ namespace MyHorizons.Avalonia
                 if (selectedVillager != null)
                     selectedVillager.Catchphrase = text;
             });
+            this.FindControl<CheckBox>("VillagerMovingOutBox").GetObservable(CheckBox.IsCheckedProperty).Subscribe(isChecked => {
+                if (selectedVillager != null && isChecked != null)
+                    selectedVillager.SetIsMovingOut(isChecked.Value);
+            });
         }
 
         private void SetupSide(string name, StandardCursorType cursor, WindowEdge edge)
@@ -346,6 +350,7 @@ namespace MyHorizons.Avalonia
                 if (villagerPanel.Children[villager.Index] is Button btn)
                     btn.Background = Brushes.LightGray;
                 selectedVillager = villager;
+                this.FindControl<CheckBox>("VillagerMovingOutBox").IsChecked = villager.IsMovingOut();
             }
         }
 
