@@ -48,6 +48,8 @@ namespace MyHorizons.Avalonia
         private readonly ItemGrid playerPocketsGrid;
         private readonly ItemGrid playerStorageGrid;
         private readonly ItemGrid villagerFurnitureGrid;
+        private readonly ItemGrid villagerWallpaperGrid;
+        private readonly ItemGrid villagerFlooringGrid;
 
         public static Item SelectedItem = Item.NO_ITEM.Clone();
 
@@ -105,6 +107,14 @@ namespace MyHorizons.Avalonia
             {
                 HorizontalAlignment = HorizontalAlignment.Left
             };
+            villagerWallpaperGrid = new ItemGrid(1, 1, 1, 16)
+            {
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            villagerFlooringGrid = new ItemGrid(1, 1, 1, 16)
+            {
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
 
             var playersGrid = this.FindControl<StackPanel>("PocketsPanel");
             playersGrid.Children.Add(playerPocketsGrid);
@@ -112,13 +122,15 @@ namespace MyHorizons.Avalonia
             this.FindControl<ScrollViewer>("StorageScroller").Content = playerStorageGrid;
 
             this.FindControl<StackPanel>("VillagerFurniturePanel").Children.Add(villagerFurnitureGrid);
+            this.FindControl<StackPanel>("VillagerWallpaperPanel").Children.Add(villagerWallpaperGrid);
+            this.FindControl<StackPanel>("VillagerFlooringPanel").Children.Add(villagerFlooringGrid);
 
             SetSelectedItemIndex();
-
+            
             openBtn.IsVisible = true;
             this.FindControl<TabControl>("EditorTabControl").IsVisible = false;
             this.FindControl<Grid>("BottomBar").IsVisible = false;
-
+            
             _singleton = this;
         }
 
@@ -347,6 +359,8 @@ namespace MyHorizons.Avalonia
                 this.FindControl<ComboBox>("PersonalityBox").SelectedIndex = villager.Personality;
                 this.FindControl<TextBox>("CatchphraseBox").Text = villager.Catchphrase;
                 villagerFurnitureGrid.Items = villager.Furniture;
+                villagerWallpaperGrid.Items = villager.Wallpaper;
+                villagerFlooringGrid.Items = villager.Flooring;
                 if (villagerPanel.Children[villager.Index] is Button btn)
                     btn.Background = Brushes.LightGray;
                 selectedVillager = villager;

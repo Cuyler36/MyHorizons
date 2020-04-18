@@ -15,6 +15,8 @@ namespace MyHorizons.Data.TownData
         public byte Personality;
         public string Catchphrase;
         public ItemCollection Furniture;
+        public ItemCollection Wallpaper;
+        public ItemCollection Flooring;
 
         private ISaveFile SaveFile { get; }
 
@@ -35,6 +37,9 @@ namespace MyHorizons.Data.TownData
             for (var i = 0; i < ftr.Length; i++)
                 ftr[i] = new Item(SaveFile, Offset + offsets.Villager_Furniture + i * 0x2C);
             Furniture = new ItemCollection(ftr);
+
+            Wallpaper = new ItemCollection(new Item[1] { new Item(SaveFile, Offset + offsets.Villager_Wallpaper) });
+            Flooring = new ItemCollection(new Item[1] { new Item(SaveFile, Offset + offsets.Villager_Flooring) });
         }
 
         public bool IsMovingOut()
@@ -66,6 +71,8 @@ namespace MyHorizons.Data.TownData
 
             for (var i = 0; i < Furniture.Count; i++)
                 Furniture[i].Save(SaveFile, Offset + offsets.Villager_Furniture + i * 0x2C);
+            Wallpaper[0].Save(SaveFile, Offset + offsets.Villager_Wallpaper);
+            Flooring[0].Save(SaveFile, Offset + offsets.Villager_Flooring);
         }
     }
 }

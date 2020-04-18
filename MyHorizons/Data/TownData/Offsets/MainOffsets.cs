@@ -21,6 +21,8 @@ namespace MyHorizons.Data.TownData.Offsets
         public abstract int Villager_Catchphrase { get; }
         public abstract int Villager_Furniture { get; }
         public abstract int Villager_StateFlags { get; }
+        public abstract int Villager_Wallpaper { get; }
+        public abstract int Villager_Flooring { get; }
 
         // Sizes
         public virtual int Villager_CatchphraseLength { get; } = 12;
