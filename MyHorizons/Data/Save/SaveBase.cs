@@ -88,6 +88,26 @@ namespace MyHorizons.Data.Save
             return false;
         }
 
+        public virtual bool SaveDecrypted(in string? filePath)
+        {
+            if (filePath == null || !Directory.Exists(Path.GetDirectoryName(filePath)))
+                throw new ArgumentException("The file path is invalid!", nameof(filePath));
+            if (_rawData != null)
+            {
+                try
+                {
+                    // Update hashes
+                    TryUpdateFileHashes(_rawData, _revision);
+
+                    // Save file
+                    File.WriteAllBytes(filePath, _rawData);
+                    return true;
+                }
+                finally { }
+            }
+            return false;
+        }
+
         public virtual bool Save(IProgress<float>? progress) => Save(_filePath, progress);
 
         public virtual int GetRevision() => _revision.Revision;

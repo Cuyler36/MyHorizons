@@ -22,6 +22,7 @@ namespace MyHorizons.Data.PlayerData.Offsets
             {
                 0 => new PersonalOffsetsV0(),
                 1 => new PersonalOffsetsV1(),
+                2 => new PersonalOffsetsV2(),
                 _ => throw new IndexOutOfRangeException("Unknown Save Revision!")
             };
     }

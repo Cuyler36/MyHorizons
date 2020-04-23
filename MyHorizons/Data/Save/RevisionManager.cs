@@ -72,19 +72,21 @@ namespace MyHorizons.Data.Save
         // Table of known revision data for each game version
         private static readonly SaveRevision[] KnownRevisions =
         {
-            new SaveRevision(0x67, 0x6F, 2, 0, 2, 0, "1.0.0", 0, 0), // 1.0.0
-            new SaveRevision(0x6D, 0x78, 2, 0, 2, 1, "1.1.0", 1, 1), // 1.1.0
-            new SaveRevision(0x6D, 0x78, 2, 0, 2, 2, "1.1.1", 1, 1), // 1.1.1
-            new SaveRevision(0x6D, 0x78, 2, 0, 2, 3, "1.1.2", 1, 1), // 1.1.2
-            new SaveRevision(0x6D, 0x78, 2, 0, 2, 4, "1.1.3", 1, 1), // 1.1.3
-            new SaveRevision(0x6D, 0x78, 2, 0, 2, 5, "1.1.4", 1, 1), // 1.1.4
+            new SaveRevision(   0x67,    0x6F, 2, 0, 2, 0, "1.0.0", 0, 0), // 1.0.0
+            new SaveRevision(   0x6D,    0x78, 2, 0, 2, 1, "1.1.0", 1, 1), // 1.1.0
+            new SaveRevision(   0x6D,    0x78, 2, 0, 2, 2, "1.1.1", 1, 1), // 1.1.1
+            new SaveRevision(   0x6D,    0x78, 2, 0, 2, 3, "1.1.2", 1, 1), // 1.1.2
+            new SaveRevision(   0x6D,    0x78, 2, 0, 2, 4, "1.1.3", 1, 1), // 1.1.3
+            new SaveRevision(   0x6D,    0x78, 2, 0, 2, 5, "1.1.4", 1, 1), // 1.1.4
+            new SaveRevision(0x20006, 0x20008, 2, 0, 2, 6, "1.2.0", 2, 2)  // 1.2.0
         };
 
         // Table of save file sizes by revision
         private static readonly SaveFileSizes[] SizesByRevision =
         {
             new SaveFileSizes(0xAC0938, 0x6BC50, 0x263B4, 0xB44580, 0x69508),
-            new SaveFileSizes(0xAC2AA0, 0x6BED0, 0x263C0, 0xB44590, 0x69560)
+            new SaveFileSizes(0xAC2AA0, 0x6BED0, 0x263C0, 0xB44590, 0x69560),
+            new SaveFileSizes(0xACECD0, 0x6D6C0, 0x2C9C0, 0xB44590, 0x69560)
         };
 
         // Gets the revision info for a given file data.

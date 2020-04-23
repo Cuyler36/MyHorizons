@@ -31,6 +31,12 @@
     <None Update="Resources\v1\Text\Villagers\VillagerNames_en.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\v2\Text\Items\ItemNames_en.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\v2\Text\Villagers\VillagerNames_en.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

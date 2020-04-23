@@ -46,6 +46,7 @@ namespace MyHorizons.Data.TownData.Offsets
             {
                 0 => new MainOffsetsV0(),
                 1 => new MainOffsetsV1(),
+                2 => new MainOffsetsV2(),
                 _ => throw new IndexOutOfRangeException("Unknown Save Revision!")
             };
     }

@@ -49,7 +49,7 @@ namespace MyHorizons.Hash
 
         #endregion
 
-        #region REVISION 1.1.0
+        #region REVISION 1.1.X
 
         private const uint REVISION_110_ID = 1;
         private const int REV_110_MAIN_SAVE_SIZE = 0xAC2AA0;
@@ -57,6 +57,17 @@ namespace MyHorizons.Hash
         private const int REV_110_POSTBOX_SAVE_SIZE = 0xB44590;
         private const int REV_110_PHOTO_STUDIO_ISLAND_SIZE = 0x263C0;
         private const int REV_110_PROFILE_SIZE = 0x69560;
+
+        #endregion
+
+        #region REVISION 1.2.X
+
+        private const uint REVISION_120_ID = 2;
+        private const int REV_120_MAIN_SAVE_SIZE = 0xACECD0;
+        private const int REV_120_PERSONAL_SAVE_SIZE = 0x6D6C0;
+        private const int REV_120_POSTBOX_SAVE_SIZE = 0xB44590;
+        private const int REV_120_PHOTO_STUDIO_ISLAND_SIZE = 0x2C9C0;
+        private const int REV_120_PROFILE_SIZE = 0x69560;
 
         #endregion
 
@@ -138,6 +149,46 @@ namespace MyHorizons.Hash
                     new HashRegion(0x000100, 0x00104, 0x262BC)
                 }),
                 new HashRegionSet("profile.dat", REV_110_PROFILE_SIZE, new HashRegion[]
+                {
+                    new HashRegion(0x000100, 0x00104, 0x6945C)
+                }),
+            }),
+            new HashInfo(REVISION_120_ID, new HashRegionSet[] {
+                new HashRegionSet("main.dat", REV_120_MAIN_SAVE_SIZE, new HashRegion[] {
+                    new HashRegion(0x000110, 0x000114, 0x1D6D5C),
+                    new HashRegion(0x1D6E70, 0x1D6E74, 0x323EBC),
+                    new HashRegion(0x4FAE40, 0x4FAE44, 0x035D2C),
+                    new HashRegion(0x530B70, 0x530B74, 0x03787C),
+                    new HashRegion(0x568500, 0x568504, 0x035D2C),
+                    new HashRegion(0x59E230, 0x59E234, 0x03787C),
+                    new HashRegion(0x5D5BC0, 0x5D5BC4, 0x035D2C),
+                    new HashRegion(0x60B8F0, 0x60B8F4, 0x03787C),
+                    new HashRegion(0x643280, 0x643284, 0x035D2C),
+                    new HashRegion(0x678FB0, 0x678FB4, 0x03787C),
+                    new HashRegion(0x6B0940, 0x6B0944, 0x035D2C),
+                    new HashRegion(0x6E6670, 0x6E6674, 0x03787C),
+                    new HashRegion(0x71E000, 0x71E004, 0x035D2C),
+                    new HashRegion(0x753D30, 0x753D34, 0x03787C),
+                    new HashRegion(0x78B6C0, 0x78B6C4, 0x035D2C),
+                    new HashRegion(0x7C13F0, 0x7C13F4, 0x03787C),
+                    new HashRegion(0x7F8D80, 0x7F8D84, 0x035D2C),
+                    new HashRegion(0x82EAB0, 0x82EAB4, 0x03787C),
+                    new HashRegion(0x866330, 0x866334, 0x26899C)
+                }),
+                new HashRegionSet("personal.dat", REV_120_PERSONAL_SAVE_SIZE, new HashRegion[]
+                {
+                    new HashRegion(0x00110, 0x00114, 0x35D2C),
+                    new HashRegion(0x35E40, 0x35E44, 0x3787C)
+                }),
+                new HashRegionSet("postbox.dat", REV_120_POSTBOX_SAVE_SIZE, new HashRegion[]
+                {
+                    new HashRegion(0x000100, 0x00104, 0xB4448C)
+                }),
+                new HashRegionSet("photo_studio_island.dat", REV_120_PHOTO_STUDIO_ISLAND_SIZE, new HashRegion[]
+                {
+                    new HashRegion(0x000100, 0x00104, 0x2C8BC)
+                }),
+                new HashRegionSet("profile.dat", REV_120_PROFILE_SIZE, new HashRegion[]
                 {
                     new HashRegion(0x000100, 0x00104, 0x6945C)
                 }),
