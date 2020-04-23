@@ -1,36 +1,36 @@
 0002, scenic painting
-0005, graceful painting
+0005, graceful painting (forgery)
 0006, graceful painting
-0009, quaint painting
+0009, quaint painting (forgery)
 000A, quaint painting
-000D, basic painting
+000D, basic painting (forgery)
 000E, basic painting
-0011, famous painting
+0011, famous painting (forgery)
 0012, famous painting
 0014, perfect painting
-0017, serene painting
+0017, serene painting (forgery)
 0018, serene painting
-001B, wistful painting
+001B, wistful painting (forgery)
 001C, wistful painting
-001F, moving painting
+001F, moving painting (forgery)
 0020, moving painting
 0022, warm painting
 0026, dynamic painting
-0029, jolly painting
+0029, jolly painting (forgery)
 002A, jolly painting
 002C, common painting
 002E, proper painting
 0030, nice painting
 0032, flowery painting
 0034, moody painting
-0037, amazing painting
+0037, amazing painting (forgery)
 0038, amazing painting
-0041, scary painting
+0041, scary painting (forgery)
 0042, scary painting
 0044, worthy painting
-0047, solemn painting
+0047, solemn painting (forgery)
 0048, solemn painting
-004B, wild painting right half
+004B, wild painting right half (forgery)
 004C, wild painting right half
 004E, calm painting
 0050, clackercart
@@ -321,20 +321,20 @@
 0531, podium
 0532, basic teacher's desk
 0533, motherly statue
-0534, motherly statue
+0534, motherly statue (forgery)
 0535, gallant statue
-0536, gallant statue
+0536, gallant statue (forgery)
 0537, robust statue
-0538, robust statue
+0538, robust statue (forgery)
 0539, ancient statue
-053A, ancient statue
+053A, ancient statue (forgery)
 053B, great statue
 053D, beautiful statue
-053E, beautiful statue
+053E, beautiful statue (forgery)
 053F, mystic statue
-0540, mystic statue
+0540, mystic statue (forgery)
 0541, valiant statue
-0542, valiant statue
+0542, valiant statue (forgery)
 0544, hamster cage
 055E, sea snail
 055F, venus comb
@@ -8393,13 +8393,13 @@
 30E5, Bunny Day wreath
 30F4, FtrEggBalloonPyn
 30F5, rock-head statue 
-30F6, rock-head statue 
+30F6, rock-head statue (forgery) 
 30F7, informative statue
-30F8, informative statue
+30F8, informative statue (forgery)
 30F9, tremendous statue
-30FA, tremendous statue
+30FA, tremendous statue (forgery)
 30FB, warrior statue
-30FC, warrior statue
+30FC, warrior statue (forgery)
 30FD, familiar statue
 30FF, Nintendo Switch
 3100, egg message bottle
@@ -8409,7 +8409,7 @@
 3105, TopsTexTopTshirtsLAlp00
 3115, Reese & Cyrus photo plate
 311A, wild painting left half
-311B, wild painting left half
+311B, wild painting left half (forgery)
 311F, Red handmade cape
 3120, Red handmade crown
 3121, Yellow summer-solstice crown
