@@ -36,8 +36,8 @@ namespace MyHorizons.Avalonia.Controls
         };
 
         private int itemsPerRow = 16;
-        private int itemsPerCol = 16;
         private int itemSize = 32;
+        private int itemCount = 0;
         private ItemCollection items;
         private IReadOnlyList<Line> lineCache;
         private readonly IList<RectangleGeometry> itemCache;
@@ -63,19 +63,13 @@ namespace MyHorizons.Avalonia.Controls
             {
                 if (itemsPerRow == value) return;
                 itemsPerRow = value;
-                Resize(itemsPerRow * itemSize, itemsPerCol * itemSize);
+                Resize(itemsPerRow * itemSize, (itemCount / itemsPerRow) * itemSize);
             }
         }
 
         public int ItemsPerCol
         {
-            get => itemsPerCol;
-            set
-            {
-                if (itemsPerCol == value) return;
-                itemsPerCol = value;
-                Resize(itemsPerRow * itemSize, itemsPerCol * itemSize);
-            }
+            get => itemCount / itemsPerRow;
         }
 
         public int ItemSize
@@ -85,9 +79,23 @@ namespace MyHorizons.Avalonia.Controls
             {
                 if (itemSize == value) return;
                 itemSize = value;
-                Resize(itemsPerRow * itemSize, itemsPerCol * itemSize);
+                Resize(itemsPerRow * itemSize, (itemCount / itemsPerRow) * itemSize);
                 if (Background is ImageBrush brush)
                     brush.DestinationRect = new RelativeRect(0, 0, itemSize, itemSize, RelativeUnit.Absolute);
+            }
+        }
+
+        public int ItemCount
+        {
+            get => itemCount;
+            set
+            {
+                if (value != itemCount)
+                {
+                    itemCount = value;
+                    Resize(itemsPerRow * itemSize, (itemCount / itemsPerRow) * itemSize);
+                    InvalidateVisual();
+                }
             }
         }
 
@@ -99,6 +107,7 @@ namespace MyHorizons.Avalonia.Controls
                 if (value == null) return;
 
                 items = value;
+                itemCount = items.Count;
                 items.PropertyChanged += Items_PropertyChanged;
                 InvalidateVisual(); // Invalidate the visual state so we re-render the image.
             }
@@ -110,19 +119,19 @@ namespace MyHorizons.Avalonia.Controls
                 InvalidateVisual();
         }
 
-        public ItemGrid(int numItems, int itemsPerRow, int itemsPerCol, int itemSize = 32)
+        public ItemGrid(int numItems, int itemsPerRow, int itemSize = 32)
         {
             this.itemsPerRow = itemsPerRow;
-            this.itemsPerCol = itemsPerCol;
             this.itemSize = itemSize;
 
             var itms = new Item[numItems];
             for (var i = 0; i < numItems; i++)
                 itms[i] = Item.NO_ITEM;
             items = new ItemCollection(itms);
+            itemCount = items.Count;
             lineCache = new List<Line>();
             itemCache = new List<RectangleGeometry>();
-            Resize(itemsPerRow * itemSize, itemsPerCol * itemSize);
+            Resize(itemsPerRow * itemSize, (itemCount / itemsPerRow) * itemSize);
             Background = new ImageBrush(background)
             {
                 Stretch = Stretch.Uniform,
@@ -291,12 +300,12 @@ namespace MyHorizons.Avalonia.Controls
             // Draw items.
             // TODO?: Caching the brushes in ItemColorManager may increase performance.
             if (Items != null)
-                for (var i = 0; i < Items.Count; i++)
+                for (var i = 0; i < ItemCount; i++)
                     if (items[i].ItemId != 0xFFFE)
                         context.DrawGeometry(itemBrush, null, itemCache[i]);
 
             // Draw highlight.
-            if (x > -1 && y > -1 && currentIdx > -1 && currentIdx < items.Count)
+            if (x > -1 && y > -1 && currentIdx > -1 && currentIdx < ItemCount)
                 context.FillRectangle(highlightBrush, new Rect(x, y, itemSize, itemSize));
 
             // Draw grid above items from gridline cache.

@@ -1,6 +1,7 @@
 ﻿using MyHorizons.Data.PlayerData.Offsets;
 using MyHorizons.Data.Save;
 using MyHorizons.Encryption;
+using System;
 
 namespace MyHorizons.Data.PlayerData
 {
@@ -73,6 +74,23 @@ namespace MyHorizons.Data.PlayerData
             var offset = PersonalOffsets.GetOffsets(SaveFile.GetRevision()).Photo;
             return _personalFile.ReadArray<byte>(offset + 4, _personalFile.ReadS32(offset));
         }
+
+        public byte GetPocketsExpandCount() => _personalFile.ReadU8(PersonalOffsets.GetOffsets(SaveFile.GetRevision()).Pockets + 0x178);
+
+        public void SetPocketsExpandCount(byte value)
+        {
+            if (value > 2)
+                throw new ArgumentOutOfRangeException(nameof(value), "ExtendBaggage value must be between 0 and 2!");
+            _personalFile.WriteU8(PersonalOffsets.GetOffsets(SaveFile.GetRevision()).Pockets + 0x178, value);
+        }
+
+        public int GetPocketsSize() => GetPocketsExpandCount() switch
+        {
+            0 => 20,
+            1 => 30,
+            2 => 40,
+            _ => throw new ArgumentOutOfRangeException("Unexpected value for ExtendBaggage state!")
+        };
 
         public override string ToString() => GetName();
     }

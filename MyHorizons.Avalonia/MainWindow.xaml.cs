@@ -102,17 +102,17 @@ namespace MyHorizons.Avalonia
 
             this.FindControl<Button>("SaveButton").Click += SaveButton_Click;
 
-            playerPocketsGrid = new ItemGrid(40, 10, 4, 16);
-            playerStorageGrid = new ItemGrid(5000, 50, 100, 16);
-            villagerFurnitureGrid = new ItemGrid(32, 8, 4, 16)
+            playerPocketsGrid = new ItemGrid(40, 10, 16);
+            playerStorageGrid = new ItemGrid(5000, 50, 16);
+            villagerFurnitureGrid = new ItemGrid(32, 8, 16)
             {
                 HorizontalAlignment = HorizontalAlignment.Left
             };
-            villagerWallpaperGrid = new ItemGrid(1, 1, 1, 16)
+            villagerWallpaperGrid = new ItemGrid(1, 1, 16)
             {
                 HorizontalAlignment = HorizontalAlignment.Left
             };
-            villagerFlooringGrid = new ItemGrid(1, 1, 1, 16)
+            villagerFlooringGrid = new ItemGrid(1, 1, 16)
             {
                 HorizontalAlignment = HorizontalAlignment.Left
             };
@@ -328,6 +328,7 @@ namespace MyHorizons.Avalonia
                 this.FindControl<NumericUpDown>("BankBox").Value = player.Bank.Decrypt();
                 this.FindControl<NumericUpDown>("NookMilesBox").Value = player.NookMiles.Decrypt();
                 playerPocketsGrid.Items = player.Pockets;
+                playerPocketsGrid.ItemCount = player.GetPocketsSize();
                 playerStorageGrid.Items = player.Storage;
                 playerLoading = false;
             }
