@@ -7,25 +7,23 @@ namespace MyHorizons.Data.Save
     {
         public readonly uint Major;
         public readonly uint Minor;
-        public readonly ushort Unk1;
-        public readonly ushort HeaderFileRevision; // ?
-        public readonly ushort Unk2;
-        public readonly ushort SaveFileRevision; // 
+        public readonly uint SaveHeaderVersion;
+        public readonly ushort Unk;
+        public readonly ushort RomReleaseVersion;
 
-        public SaveRevisionHeader(uint maj, uint min, ushort u1, ushort headerR, ushort u2, ushort saveR)
+        public SaveRevisionHeader(uint maj, uint min, uint headerR, ushort unk, ushort saveR)
         {
             Major = maj;
             Minor = min;
-            Unk1 = u1;
-            HeaderFileRevision = headerR;
-            Unk2 = u2;
-            SaveFileRevision = saveR;
+            SaveHeaderVersion = headerR;
+            Unk = unk;
+            RomReleaseVersion = saveR;
         }
 
         public override bool Equals(object obj)
         {
-            return obj is SaveRevisionHeader rev && Major == rev.Major && Minor == rev.Minor && Unk1 == rev.Unk1
-                && HeaderFileRevision == rev.HeaderFileRevision && Unk2 == rev.Unk2 && SaveFileRevision == rev.SaveFileRevision;
+            return obj is SaveRevisionHeader rev && Major == rev.Major && Minor == rev.Minor && SaveHeaderVersion == rev.SaveHeaderVersion
+                                                 && Unk == rev.Unk && RomReleaseVersion == rev.RomReleaseVersion;
         }
 
         public static bool operator ==(SaveRevisionHeader a, SaveRevisionHeader b) => a.Equals(b);
@@ -40,9 +38,9 @@ namespace MyHorizons.Data.Save
         public readonly int HashVersion; // What HashInfo values to use when updating hashes.
         public readonly int Revision; // MyHorizons Revision Id
 
-        public SaveRevision(uint maj, uint min, ushort u1, ushort headerR, ushort u2, ushort saveR, string gameVersion, int hashVer, int rev)
+        public SaveRevision(uint maj, uint min, uint headerR, ushort unk, ushort saveR, string gameVersion, int hashVer, int rev)
         {
-            Header = new SaveRevisionHeader(maj, min, u1, headerR, u2, saveR);
+            Header = new SaveRevisionHeader(maj, min, headerR, unk, saveR);
             GameVersion = gameVersion;
             HashVersion = hashVer;
             Revision = rev;
@@ -72,13 +70,13 @@ namespace MyHorizons.Data.Save
         // Table of known revision data for each game version
         private static readonly SaveRevision[] KnownRevisions =
         {
-            new SaveRevision(   0x67,    0x6F, 2, 0, 2, 0, "1.0.0", 0, 0), // 1.0.0
-            new SaveRevision(   0x6D,    0x78, 2, 0, 2, 1, "1.1.0", 1, 1), // 1.1.0
-            new SaveRevision(   0x6D,    0x78, 2, 0, 2, 2, "1.1.1", 1, 1), // 1.1.1
-            new SaveRevision(   0x6D,    0x78, 2, 0, 2, 3, "1.1.2", 1, 1), // 1.1.2
-            new SaveRevision(   0x6D,    0x78, 2, 0, 2, 4, "1.1.3", 1, 1), // 1.1.3
-            new SaveRevision(   0x6D,    0x78, 2, 0, 2, 5, "1.1.4", 1, 1), // 1.1.4
-            new SaveRevision(0x20006, 0x20008, 2, 0, 2, 6, "1.2.0", 2, 2)  // 1.2.0
+            new SaveRevision(   0x67,    0x6F, 2, 2, 0, "1.0.0", 0, 0), // 1.0.0
+            new SaveRevision(   0x6D,    0x78, 2, 2, 1, "1.1.0", 1, 1), // 1.1.0
+            new SaveRevision(   0x6D,    0x78, 2, 2, 2, "1.1.1", 1, 1), // 1.1.1
+            new SaveRevision(   0x6D,    0x78, 2, 2, 3, "1.1.2", 1, 1), // 1.1.2
+            new SaveRevision(   0x6D,    0x78, 2, 2, 4, "1.1.3", 1, 1), // 1.1.3
+            new SaveRevision(   0x6D,    0x78, 2, 2, 5, "1.1.4", 1, 1), // 1.1.4
+            new SaveRevision(0x20006, 0x20008, 2, 2, 6, "1.2.0", 2, 2)  // 1.2.0
         };
 
         // Table of save file sizes by revision
