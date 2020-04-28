@@ -126,7 +126,7 @@
             <StackPanel>
               <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
                 <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Villager:</TextBlock>
-                <ComboBox x:Name="VillagerBox" MinWidth="130" FontSize="16"/>
+                <AutoCompleteBox x:Name="VillagerBox" MinWidth="130" FontSize="16" MaxDropDownHeight="300"/>
               </StackPanel>
               <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
                 <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Personality:</TextBlock>

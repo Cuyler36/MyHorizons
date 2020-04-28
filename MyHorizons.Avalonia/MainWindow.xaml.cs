@@ -44,6 +44,7 @@ namespace MyHorizons.Avalonia
         private bool settingItem = false;
         private Dictionary<ushort, string>? itemDatabase;
         private Dictionary<byte, string>[]? villagerDatabase;
+        private List<string> villagerList;
 
         private readonly ItemGrid playerPocketsGrid;
         private readonly ItemGrid playerStorageGrid;
@@ -232,8 +233,12 @@ namespace MyHorizons.Avalonia
 
         private void SetupVillagerTabConnections()
         {
-            var villagerBox = this.FindControl<ComboBox>("VillagerBox");
-            villagerBox.SelectionChanged += (o, e) => SetVillagerFromIndex(villagerBox.SelectedIndex);
+            var villagerBox = this.FindControl<AutoCompleteBox>("VillagerBox");
+            villagerBox.SelectionChanged += (o, e) =>
+            {
+                if (selectedVillager != null && villagerBox.SelectedItem is string selected)
+                    SetVillagerFromIndex(selected);
+            };
             var personalityBox = this.FindControl<ComboBox>("PersonalityBox");
             personalityBox.SelectionChanged += (o, e) =>
             {
@@ -357,8 +362,8 @@ namespace MyHorizons.Avalonia
                 selectedVillager = null;
                 if (villagerDatabase != null)
                 {
-                    var comboBox = this.FindControl<ComboBox>("VillagerBox");
-                    comboBox.SelectedIndex = GetIndexFromVillagerName(villagerDatabase[villager.Species][villager.VariantIdx]);
+                    var villagerBox = this.FindControl<AutoCompleteBox>("VillagerBox");
+                    villagerBox.SelectedItem = villagerList[GetIndexFromVillagerName(villagerDatabase[villager.Species][villager.VariantIdx])];
                 }
                 this.FindControl<ComboBox>("PersonalityBox").SelectedIndex = villager.Personality;
                 this.FindControl<TextBox>("CatchphraseBox").Text = villager.Catchphrase;
@@ -390,35 +395,39 @@ namespace MyHorizons.Avalonia
             return -1;
         }
 
-        private void SetVillagerFromIndex(int index)
+        private void SetVillagerFromIndex(string selected)
         {
-            if (villagerDatabase != null && selectedVillager != null && index > -1)
+            if (villagerDatabase != null && selectedVillager != null && !string.IsNullOrWhiteSpace(selected))
             {
-                var count = 0;
-                for (var i = 0; i < villagerDatabase.Length; i++)
+                var index = villagerList.IndexOf(selected);
+                if (index > -1)
                 {
-                    var speciesDict = villagerDatabase[i];
-                    if (count + speciesDict.Count > index)
+                    var count = 0;
+                    for (var i = 0; i < villagerDatabase.Length; i++)
                     {
-                        var species = (byte)i;
-                        var variant = speciesDict.Keys.ElementAt(index - count);
-                        if (selectedVillager.Species != species || selectedVillager.VariantIdx != variant)
+                        var speciesDict = villagerDatabase[i];
+                        if (count + speciesDict.Count > index)
                         {
-                            selectedVillager.Species = species;
-                            selectedVillager.VariantIdx = variant;
-
-                            // Update image
-                            var panel = this.FindControl<StackPanel>("VillagerPanel");
-                            if (panel.Children[selectedVillager.Index] is Button btn && btn.Content is Image img)
+                            var species = (byte)i;
+                            var variant = speciesDict.Keys.ElementAt(index - count);
+                            if (selectedVillager.Species != species || selectedVillager.VariantIdx != variant)
                             {
-                                img.Source?.Dispose();
-                                img.Source = ImageLoadingUtil.LoadImageForVillager(selectedVillager);
-                                ToolTip.SetTip(img, villagerDatabase[species][variant]);
+                                selectedVillager.Species = species;
+                                selectedVillager.VariantIdx = variant;
+
+                                // Update image
+                                var panel = this.FindControl<StackPanel>("VillagerPanel");
+                                if (panel.Children[selectedVillager.Index] is Button btn && btn.Content is Image img)
+                                {
+                                    img.Source?.Dispose();
+                                    img.Source = ImageLoadingUtil.LoadImageForVillager(selectedVillager);
+                                    ToolTip.SetTip(img, villagerDatabase[species][variant]);
+                                }
                             }
                             return;
                         }
+                        count += speciesDict.Count;
                     }
-                    count += speciesDict.Count;
                 }
             }
         }
@@ -457,11 +466,11 @@ namespace MyHorizons.Avalonia
         {
             if (villagerDatabase != null)
             {
-                var comboBox = this.FindControl<ComboBox>("VillagerBox");
-                var villagerList = new List<string>();
+                var villagerBox = this.FindControl<AutoCompleteBox>("VillagerBox");
+                villagerList = new List<string>();
                 foreach (var speciesList in villagerDatabase)
                     villagerList.AddRange(speciesList.Values);
-                comboBox.Items = villagerList;
+                villagerBox.Items = villagerList;
             }
             this.FindControl<ComboBox>("PersonalityBox").Items = Villager.Personalities;
         }
