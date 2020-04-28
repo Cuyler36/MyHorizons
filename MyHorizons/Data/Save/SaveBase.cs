@@ -113,6 +113,8 @@ namespace MyHorizons.Data.Save
         public virtual int GetRevision() => _revision.Revision;
         public virtual string GetRevisionString() => _revision.GameVersion;
 
+        public virtual byte[] GetRawData() => _rawData;
+
         private static void TryUpdateFileHashes(in byte[] data, in SaveRevision revision)
         {
             var selectedInfo = HashInfo.VersionHashInfoList[revision.HashVersion];

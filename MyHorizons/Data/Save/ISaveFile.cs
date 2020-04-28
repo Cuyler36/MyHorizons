@@ -11,6 +11,8 @@ namespace MyHorizons.Data.Save
 
         int GetRevision();
 
+        byte[] GetRawData();
+
         // Read Helpers
         sbyte ReadS8(int offset);
         byte ReadU8(int offset);

@@ -16,6 +16,7 @@ namespace MyHorizons.Data.PlayerData.Offsets
         public virtual int PocketSlotsCount { get; } = 40;
         public virtual int StorageSlotsCount { get; } = 5000;
         public virtual int MaxRecipeId { get; } = 0x2A0;
+        public virtual int MaxPhotoSize { get; } = 0x23000;
 
         public static PersonalOffsets GetOffsets(int rev) =>
             rev switch
