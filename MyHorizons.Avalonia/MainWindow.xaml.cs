@@ -103,7 +103,7 @@ namespace MyHorizons.Avalonia
 
             playerPocketsGrid = new ItemGrid(40, 10, 4, 16);
             playerStorageGrid = new ItemGrid(5000, 50, 100, 16);
-            villagerFurnitureGrid = new ItemGrid(16, 8, 2, 16)
+            villagerFurnitureGrid = new ItemGrid(32, 8, 4, 16)
             {
                 HorizontalAlignment = HorizontalAlignment.Left
             };
@@ -148,7 +148,7 @@ namespace MyHorizons.Avalonia
                     if (itemDatabase.Keys.ElementAt(i) == SelectedItem.ItemId)
                     {
                         settingItem = true;
-                        this.FindControl<ComboBox>("ItemSelectBox").SelectedIndex = i;
+                        this.FindControl<AutoCompleteBox>("ItemSelectBox").SelectedItem = itemDatabase.Values.ElementAt(i);
                         this.FindControl<NumericUpDown>("Flag0Box").Value = SelectedItem.Flags0;
                         this.FindControl<NumericUpDown>("Flag1Box").Value = SelectedItem.Flags1;
                         this.FindControl<NumericUpDown>("Flag2Box").Value = SelectedItem.Flags2;
@@ -158,7 +158,7 @@ namespace MyHorizons.Avalonia
                     }
                 }
             }
-            this.FindControl<ComboBox>("ItemSelectBox").SelectedIndex = -1;
+            this.FindControl<AutoCompleteBox>("ItemSelectBox").Text = string.Empty;
         }
 
         public void SetItem(Item item)
@@ -172,12 +172,16 @@ namespace MyHorizons.Avalonia
 
         private void SetupUniversalConnections()
         {
-            var selectBox = this.FindControl<ComboBox>("ItemSelectBox");
+            var selectBox = this.FindControl<AutoCompleteBox>("ItemSelectBox");
+
             selectBox.SelectionChanged += (o, e) =>
             {
-                if (!settingItem && selectBox.SelectedIndex > -1 && itemDatabase != null)
-                    SelectedItem = new Item(itemDatabase.Keys.ElementAt(selectBox.SelectedIndex),
-                        SelectedItem.Flags0, SelectedItem.Flags1, SelectedItem.Flags2, SelectedItem.Flags3, SelectedItem.UseCount);
+                if (!settingItem && selectBox.SelectedItem is string selItem && !string.IsNullOrWhiteSpace(selItem) && itemDatabase != null)
+                {
+                    var item = itemDatabase.FirstOrDefault(o => o.Value == selItem);
+                    if (!string.IsNullOrEmpty(item.Value))
+                        SelectedItem = new Item(item.Key, SelectedItem.Flags0, SelectedItem.Flags1, SelectedItem.Flags2, SelectedItem.Flags3, SelectedItem.UseCount);
+                }
             };
 
             this.FindControl<NumericUpDown>("Flag0Box").ValueChanged += (o, e) =>
@@ -535,7 +539,7 @@ namespace MyHorizons.Avalonia
 
                         // Load Item List
                         itemDatabase = ItemDatabaseLoader.LoadItemDatabase((uint)saveFile.GetRevision());
-                        var itemsBox = this.FindControl<ComboBox>("ItemSelectBox");
+                        var itemsBox = this.FindControl<AutoCompleteBox>("ItemSelectBox");
                         if (itemDatabase != null)
                             itemsBox.Items = itemDatabase.Values;
 
