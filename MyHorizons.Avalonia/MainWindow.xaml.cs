@@ -44,7 +44,7 @@ namespace MyHorizons.Avalonia
         private bool settingItem = false;
         private Dictionary<ushort, string>? itemDatabase;
         private Dictionary<byte, string>[]? villagerDatabase;
-        private List<string> villagerList;
+        private List<string>? villagerList;
 
         private readonly ItemGrid playerPocketsGrid;
         private readonly ItemGrid playerStorageGrid;
@@ -360,7 +360,7 @@ namespace MyHorizons.Avalonia
                     currentButton.Background = Brushes.Transparent;
 
                 selectedVillager = null;
-                if (villagerDatabase != null)
+                if (villagerDatabase != null && villagerList != null)
                 {
                     var villagerBox = this.FindControl<AutoCompleteBox>("VillagerBox");
                     villagerBox.SelectedItem = villagerList[GetIndexFromVillagerName(villagerDatabase[villager.Species][villager.VariantIdx])];
@@ -397,7 +397,7 @@ namespace MyHorizons.Avalonia
 
         private void SetVillagerFromIndex(string selected)
         {
-            if (villagerDatabase != null && selectedVillager != null && !string.IsNullOrWhiteSpace(selected))
+            if (villagerDatabase != null && villagerList != null && selectedVillager != null && !string.IsNullOrWhiteSpace(selected))
             {
                 var index = villagerList.IndexOf(selected);
                 if (index > -1)
