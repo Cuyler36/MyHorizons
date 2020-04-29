@@ -312,6 +312,82 @@ namespace MyHorizons.Avalonia
                     };
                     button.Click += (o, e) => LoadPlayer(player);
                     ToolTip.SetTip(img, playerSave.Player.GetName());
+
+                    var export = new MenuItem
+                    {
+                        Header = "Export"
+                    };
+                    export.Click += async (o, e) =>
+                    {
+                        var dialog = new SaveFileDialog();
+                        dialog.Filters.Add(new FileDialogFilter
+                        {
+                            Name = "JPEG Image",
+                            Extensions = new List<string>
+                            {
+                                "jpg"
+                            }
+                        });
+
+                        var file = await dialog.ShowAsync(this);
+                        if (!string.IsNullOrEmpty(file))
+                        {
+                            try
+                            {
+                                using var stream = File.Create(file);
+                                stream.Write(player.GetPhotoData());
+                            }
+                            catch
+                            {
+                                Console.WriteLine("Failed to export image!");
+                            }
+                        }
+                    };
+
+                    var import = new MenuItem
+                    {
+                        Header = "Import"
+                    };
+                    import.Click += async (o, e) =>
+                    {
+                        var dialog = new OpenFileDialog();
+                        dialog.Filters.Add(new FileDialogFilter
+                        {
+                            Name = "JPEG Image",
+                            Extensions = new List<string>
+                            {
+                                "jpg"
+                            }
+                        });
+
+                        var files = await dialog.ShowAsync(this);
+                        if (files.Length > 0)
+                        {
+                            try
+                            {
+                                using var file = File.OpenRead(files[0]);
+                                using var bmp = new Bitmap(file);
+                                if (bmp.Size.Width != 500 || bmp.Size.Height != 500)
+                                    throw new ArgumentOutOfRangeException(nameof(bmp.Size), "Image must be 500x500!");
+                                player.UpdatePhoto(File.ReadAllBytes(files[0]));
+                                if (img != null)
+                                {
+                                    img.Source?.Dispose();
+                                    img.Source = LoadPlayerPhoto(player.Index);
+                                }
+                            }
+                            catch
+                            {
+                                Console.WriteLine("Failed to export image!");
+                            }
+                        }
+                    };
+
+                    var contextMenu = new ContextMenu
+                    {
+                        Items = new List<MenuItem> { import, export }
+                    };
+                    button.ContextMenu = contextMenu;
                     contentHolder.Children.Add(button);
                 }
             }
