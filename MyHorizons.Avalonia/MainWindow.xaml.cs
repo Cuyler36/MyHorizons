@@ -684,8 +684,12 @@ namespace MyHorizons.Avalonia
         {
             if (saveFile != null)
             {
-                using var memStream = new MemoryStream(saveFile.GetPlayer(index).GetPhotoData());
-                return new Bitmap(memStream);
+                var player = saveFile.GetPlayer(index);
+                if (player != null)
+                {
+                    using var memStream = new MemoryStream(player.GetPhotoData());
+                    return new Bitmap(memStream);
+                }
             }
             return null;
         }
