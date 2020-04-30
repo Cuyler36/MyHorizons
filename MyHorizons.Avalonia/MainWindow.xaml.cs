@@ -7,6 +7,9 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using MessageBox.Avalonia;
+using MessageBox.Avalonia.DTO;
+using MessageBox.Avalonia.Enums;
 using MyHorizons.Avalonia.Controls;
 using MyHorizons.Avalonia.Utility;
 using MyHorizons.Data;
@@ -368,7 +371,14 @@ namespace MyHorizons.Avalonia
                                 using var file = File.OpenRead(files[0]);
                                 using var bmp = new Bitmap(file);
                                 if (bmp.Size.Width != 500 || bmp.Size.Height != 500)
-                                    throw new ArgumentOutOfRangeException(nameof(bmp.Size), "Image must be 500x500!");
+                                {
+                                    var msgBox = MessageBoxManager.GetMessageBoxStandardWindow("Player Photo Import Error",
+                                        "Error importing photo! It must be a 500x500 jpg image!",
+                                        ButtonEnum.Ok, MessageBox.Avalonia.Enums.Icon.Error);
+                                    await msgBox.ShowDialog(this);
+                                    return;
+                                }
+                                    
                                 player.UpdatePhoto(File.ReadAllBytes(files[0]));
                                 if (img != null)
                                 {
