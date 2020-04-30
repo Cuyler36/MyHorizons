@@ -48,7 +48,7 @@ namespace MyHorizons.Data.TownData
             {
                 // Update any player references first
                 foreach (var playerSave in SaveFile.GetPlayerSaves())
-                    if (playerSave.Player.PersonalId.TownId == TownId)
+                    if (playerSave.Valid && playerSave.Player != null && playerSave.Player.PersonalId.TownId == TownId)
                         playerSave.Player.PersonalId.TownId.SetName(newName);
 
                 var townIdSize = Marshal.SizeOf(TownId);

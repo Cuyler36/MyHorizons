@@ -53,7 +53,7 @@ namespace MyHorizons.Data.Save
             return false;
         }
 
-        public Player GetPlayer(int index) => _playerSaves[index].Player;
+        public Player? GetPlayer(int index) => _playerSaves[index].Player;
 
         public List<PlayerSave> GetPlayerSaves() => _playerSaves;
     }

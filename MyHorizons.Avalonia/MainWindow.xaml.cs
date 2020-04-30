@@ -299,111 +299,114 @@ namespace MyHorizons.Avalonia
                 var contentHolder = this.FindControl<StackPanel>("PlayerSelectorPanel");
                 foreach (var playerSave in saveFile.GetPlayerSaves())
                 {
-                    var player = playerSave.Player;
-                    var img = new Image
+                    if (playerSave.Valid && playerSave.Player != null)
                     {
-                        Width = 120,
-                        Height = 120,
-                        Source = LoadPlayerPhoto(playerSave.Index),
-                        Cursor = new Cursor(StandardCursorType.Hand)
-                    };
-                    var button = new Button
-                    {
-                        Background = Brushes.Transparent,
-                        BorderThickness = new Thickness(0),
-                        Content = img
-                    };
-                    button.Click += (o, e) => LoadPlayer(player);
-                    ToolTip.SetTip(img, playerSave.Player.GetName());
-
-                    var export = new MenuItem
-                    {
-                        Header = "Export"
-                    };
-                    export.Click += async (o, e) =>
-                    {
-                        var dialog = new SaveFileDialog();
-                        dialog.Filters.Add(new FileDialogFilter
+                        var player = playerSave.Player;
+                        var img = new Image
                         {
-                            Name = "JPEG Image",
-                            Extensions = new List<string>
-                            {
-                                "jpg"
-                            }
-                        });
-
-                        var file = await dialog.ShowAsync(this);
-                        if (!string.IsNullOrEmpty(file))
+                            Width = 120,
+                            Height = 120,
+                            Source = LoadPlayerPhoto(playerSave.Index),
+                            Cursor = new Cursor(StandardCursorType.Hand)
+                        };
+                        var button = new Button
                         {
-                            try
-                            {
-                                using var stream = File.Create(file);
-                                stream.Write(player.GetPhotoData());
-                            }
-                            catch
-                            {
-                                Console.WriteLine("Failed to export image!");
-                            }
-                        }
-                    };
+                            Background = Brushes.Transparent,
+                            BorderThickness = new Thickness(0),
+                            Content = img
+                        };
+                        button.Click += (o, e) => LoadPlayer(player);
+                        ToolTip.SetTip(img, playerSave.Player.GetName());
 
-                    var import = new MenuItem
-                    {
-                        Header = "Import"
-                    };
-                    import.Click += async (o, e) =>
-                    {
-                        var dialog = new OpenFileDialog();
-                        dialog.Filters.Add(new FileDialogFilter
+                        var export = new MenuItem
                         {
-                            Name = "JPEG Image",
-                            Extensions = new List<string>
-                            {
-                                "jpg"
-                            }
-                        });
-
-                        var files = await dialog.ShowAsync(this);
-                        if (files.Length > 0)
+                            Header = "Export"
+                        };
+                        export.Click += async (o, e) =>
                         {
-                            try
+                            var dialog = new SaveFileDialog();
+                            dialog.Filters.Add(new FileDialogFilter
                             {
-                                using var file = File.OpenRead(files[0]);
-                                using var bmp = new Bitmap(file);
-                                if (bmp.Size.Width != 500 || bmp.Size.Height != 500)
+                                Name = "JPEG Image",
+                                Extensions = new List<string>
                                 {
-                                    var msgBox = MessageBoxManager.GetMessageBoxStandardWindow("Player Photo Import Error",
-                                        "Error importing photo! It must be a 500x500 jpg image!",
-                                        ButtonEnum.Ok, MessageBox.Avalonia.Enums.Icon.Error);
-                                    await msgBox.ShowDialog(this);
-                                    return;
+                                "jpg"
                                 }
-                                    
-                                player.UpdatePhoto(File.ReadAllBytes(files[0]));
-                                if (img != null)
+                            });
+
+                            var file = await dialog.ShowAsync(this);
+                            if (!string.IsNullOrEmpty(file))
+                            {
+                                try
                                 {
-                                    img.Source?.Dispose();
-                                    img.Source = LoadPlayerPhoto(player.Index);
+                                    using var stream = File.Create(file);
+                                    stream.Write(player.GetPhotoData());
+                                }
+                                catch
+                                {
+                                    Console.WriteLine("Failed to export image!");
                                 }
                             }
-                            catch
-                            {
-                                Console.WriteLine("Failed to export image!");
-                            }
-                        }
-                    };
+                        };
 
-                    var contextMenu = new ContextMenu
-                    {
-                        Items = new List<MenuItem> { import, export }
-                    };
-                    button.ContextMenu = contextMenu;
-                    contentHolder.Children.Add(button);
+                        var import = new MenuItem
+                        {
+                            Header = "Import"
+                        };
+                        import.Click += async (o, e) =>
+                        {
+                            var dialog = new OpenFileDialog();
+                            dialog.Filters.Add(new FileDialogFilter
+                            {
+                                Name = "JPEG Image",
+                                Extensions = new List<string>
+                                {
+                                "jpg"
+                                }
+                            });
+
+                            var files = await dialog.ShowAsync(this);
+                            if (files.Length > 0)
+                            {
+                                try
+                                {
+                                    using var file = File.OpenRead(files[0]);
+                                    using var bmp = new Bitmap(file);
+                                    if (bmp.Size.Width != 500 || bmp.Size.Height != 500)
+                                    {
+                                        var msgBox = MessageBoxManager.GetMessageBoxStandardWindow("Player Photo Import Error",
+                                            "Error importing photo! It must be a 500x500 jpg image!",
+                                            ButtonEnum.Ok, MessageBox.Avalonia.Enums.Icon.Error);
+                                        await msgBox.ShowDialog(this);
+                                        return;
+                                    }
+
+                                    player.UpdatePhoto(File.ReadAllBytes(files[0]));
+                                    if (img != null)
+                                    {
+                                        img.Source?.Dispose();
+                                        img.Source = LoadPlayerPhoto(player.Index);
+                                    }
+                                }
+                                catch
+                                {
+                                    Console.WriteLine("Failed to export image!");
+                                }
+                            }
+                        };
+
+                        var contextMenu = new ContextMenu
+                        {
+                            Items = new List<MenuItem> { import, export }
+                        };
+                        button.ContextMenu = contextMenu;
+                        contentHolder.Children.Add(button);
+                    }
                 }
             }
         }
 
-        private void LoadPlayer(Player player)
+        private void LoadPlayer(Player? player)
         {
             if (player != null && player != selectedPlayer)
             {

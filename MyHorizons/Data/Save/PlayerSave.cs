@@ -9,7 +9,7 @@ namespace MyHorizons.Data.Save
         public readonly int Index;
         public readonly bool Valid;
 
-        public readonly Player Player;
+        public readonly Player? Player;
 
         private PersonalSaveFile? _personalSave;
         private PhotoStudioIslandSaveFile? _photoStudioIslandSave;
@@ -51,19 +51,23 @@ namespace MyHorizons.Data.Save
 
         public bool Save(in string folderPath)
         {
-            if (!Directory.Exists(folderPath))
-                Directory.CreateDirectory(folderPath);
-            Player.Save();
-            var success = false;
-            if (_personalSave != null)
-                success |= !_personalSave.Save(null);
-            if (_photoStudioIslandSave != null)
-                success |= !_photoStudioIslandSave.Save(null);
-            if (_postBoxSave != null)
-                success |= !_postBoxSave.Save(null);
-            if (_profileSave != null)
-                success |= !_profileSave.Save(null);
-            return !success;
+            if (Valid && Player != null)
+            {
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+                Player.Save();
+                var success = false;
+                if (_personalSave != null)
+                    success |= !_personalSave.Save(null);
+                if (_photoStudioIslandSave != null)
+                    success |= !_photoStudioIslandSave.Save(null);
+                if (_postBoxSave != null)
+                    success |= !_postBoxSave.Save(null);
+                if (_profileSave != null)
+                    success |= !_profileSave.Save(null);
+                return !success;
+            }
+            return false;
         }
 
         private void ProcessFolder(in string folder)
