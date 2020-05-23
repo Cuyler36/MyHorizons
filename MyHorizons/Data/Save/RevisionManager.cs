@@ -76,7 +76,8 @@ namespace MyHorizons.Data.Save
             new SaveRevision(   0x6D,    0x78, 2, 2, 3, "1.1.2", 1, 1), // 1.1.2
             new SaveRevision(   0x6D,    0x78, 2, 2, 4, "1.1.3", 1, 1), // 1.1.3
             new SaveRevision(   0x6D,    0x78, 2, 2, 5, "1.1.4", 1, 1), // 1.1.4
-            new SaveRevision(0x20006, 0x20008, 2, 2, 6, "1.2.0", 2, 2)  // 1.2.0
+            new SaveRevision(0x20006, 0x20008, 2, 2, 6, "1.2.0", 2, 2), // 1.2.0
+            new SaveRevision(0x20006, 0x20008, 2, 2, 7, "1.2.1", 2, 2)  // 1.2.1
         };
 
         // Table of save file sizes by revision
