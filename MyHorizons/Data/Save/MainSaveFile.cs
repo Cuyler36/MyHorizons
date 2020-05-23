@@ -3,6 +3,7 @@ using MyHorizons.Data.TownData;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using MyHorizons.Exceptions;
 
 namespace MyHorizons.Data.Save
 {
@@ -16,17 +17,24 @@ namespace MyHorizons.Data.Save
         public MainSaveFile(in string headerPath, in string filePath)
         {
             // TODO: IProgress<float> needs to be passed to load
-            if (AcceptsFile(headerPath, filePath) && Load(headerPath, filePath, null))
+            if (AcceptsFile(headerPath, filePath))
             {
-                // Load player save files
-                foreach (var dir in Directory.GetDirectories(Path.GetDirectoryName(filePath)))
+                if (Load(headerPath, filePath, null))
                 {
-                    var playerSave = new PlayerSave(this, dir, _revision);
-                    if (playerSave.Valid)
-                        _playerSaves.Add(playerSave);
-                }
+                    // Load player save files
+                    foreach (var dir in Directory.GetDirectories(Path.GetDirectoryName(filePath)))
+                    {
+                        var playerSave = new PlayerSave(this, dir, _revision);
+                        if (playerSave.Valid)
+                            _playerSaves.Add(playerSave);
+                    }
 
-                Town = new Town(this);
+                    Town = new Town(this);
+                }
+            }
+            else
+            {
+                throw new UnsupportedVersionException("The version of the save game is not supported");
             }
         }
 

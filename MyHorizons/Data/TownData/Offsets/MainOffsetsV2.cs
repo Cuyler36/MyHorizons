@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MyHorizons.Data.TownData.Offsets
+﻿namespace MyHorizons.Data.TownData.Offsets
 {
     public sealed class MainOffsetsV2 : MainOffsets
     {
