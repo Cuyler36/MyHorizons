@@ -8,6 +8,6 @@
         public override int Pockets => 0x35E50;
         public override int Wallet => 0x35FC0;
         public override int Storage => 0x35FCC;
-        public override int Bank => 0x6AA24;
+        public override int Bank => 0x6A424;
     }
 }

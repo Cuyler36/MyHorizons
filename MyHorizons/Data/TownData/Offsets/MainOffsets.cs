@@ -26,7 +26,7 @@ namespace MyHorizons.Data.TownData.Offsets
 
         // Sizes
         public virtual int Villager_CatchphraseLength { get; } = 12;
-        public virtual int Villager_FurnitureCount { get; } = 16;
+        public virtual int Villager_FurnitureCount { get; } = 32;
         public virtual int Villager_SpeciesMax { get; } = 0x23;
 
         // Flags

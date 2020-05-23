@@ -126,7 +126,7 @@
             <StackPanel>
               <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
                 <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Villager:</TextBlock>
-                <ComboBox x:Name="VillagerBox" MinWidth="130" FontSize="16"/>
+                <AutoCompleteBox x:Name="VillagerBox" MinWidth="130" FontSize="16" MaxDropDownHeight="300"/>
               </StackPanel>
               <StackPanel Orientation="Horizontal" Margin="10, 10, 0, 0" Spacing="5" Height="34" VerticalAlignment="Top">
                 <TextBlock Height="26" FontWeight="SemiBold" FontSize="16">Personality:</TextBlock>
@@ -171,7 +171,7 @@
     <Grid x:Name="BottomBar" Grid.Row="3" Grid.Column="1" Background="#7EA9AE">
       <TextBlock x:Name="SaveInfoText" VerticalAlignment="Center" Margin="10,0,0,0" Foreground="White" FontSize="14" FontWeight="Bold">No Save File Loaded</TextBlock>
       <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
-        <ComboBox x:Name="ItemSelectBox" Width="350" Height="26" Background="White" VirtualizationMode="Simple"/>
+        <AutoCompleteBox x:Name="ItemSelectBox" Width="350" Height="26" Background="White" MaxDropDownHeight="300"/>
         <TextBlock Height="26" FontWeight="SemiBold" FontSize="16" Foreground="White" Margin="10,0,0,0">Flag0:</TextBlock>
         <NumericUpDown x:Name="Flag0Box" Margin="5,0,0,0" Height="34" Minimum="0" Maximum="255"/>
         <TextBlock Height="26" FontWeight="SemiBold" FontSize="16" Foreground="White" Margin="10,0,0,0">Flag1:</TextBlock>
